@@ -1,3 +1,6 @@
+#include "../unic.c"
+#include "../debug.c"
+
 obj newClass() {
 
 
@@ -50,13 +53,15 @@ obj newClass() {
            );
 
     }
-//	set_fun(main,int,main,2);
-//new(newClass,obj,0);
-//proto(my_print,old_print);
-//proto(old_print,my_print);
-//unset_fun("newClass");
-   // fun(uni,test,i,"test\n");    
+int main(int argc, char **argv) {    
+	set_fun(main,int,main,2);
+new(newClass,obj,0);
+proto(my_print,old_print);
+proto(old_print,my_print);
+unset_fun("newClass");
+  fun(uni,test,i,"test\n");    
     
     proc(void*,my_print,"prosto","test","teest",t);
     proc(void*,old_print,"abc","def","gik");
-    
+return 0;
+}    

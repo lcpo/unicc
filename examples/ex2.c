@@ -1,3 +1,6 @@
+#include "../unic.c"
+#include "../debug.c"
+int main(int argc, char **argv) {
 	char* t=var(t,char*,main);
 	char* out=var(out,char*,main);
 	char* tmp=var(tmp,char*,main);
@@ -5,3 +8,5 @@
 	float tf=var(tf,float,main);
 	double td=var(td,double,main);
 	long double ltd=var(ltd,long double,main);
+return 0;
+}
