@@ -1,5 +1,3 @@
-static char out_Hstr_rep[64];
-static char _Hslong[48];
 //!---------------------------------------------------------------------
 size_t 		hiddenCount(void** v) {
     size_t i=0;
@@ -237,3 +235,5 @@ int 		hiddenIs_num(char* str) {
     }
 }
 //!---------------------------------------------------------------------
+void fun_null(void){return;}
+

@@ -1,66 +1,36 @@
-#ifndef _TYPE_UNIC_C
-#define _TYPE_UNIC_C
-
-	#ifndef $
-#define $ unic_
-	#endif
-
-	#ifndef NULL
-#define NULL ((void*)0)
-	#endif
-//----------------------------------------------------------------------
-	#ifndef EOF
-#define EOF ((void*)-1)
-	#endif
-//----------------------------------------------------------------------
-
-		#ifndef uni_t
-#undef uni_t
-
-	#ifdef __i386__
-#define  uni_t int
-	#endif
-
-	#ifdef __x86_64__
-#define uni_t long
-	#endif
-
+///----------------------------------------------------------------------type
+#ifndef _UNIC_C_STRUCTURE_TYPE
+#define _UNIC_C_STRUCTURE_TYPE
+static char ** 	type_$t;
+static uni		type_$l;
+static uni		type_$z;
+static char *** type_$i;						//! Синонимы типа
+#define set_type($_arg) set_type_item(#$_arg) 	//! Регистрация типа
 #endif
 
-//----------------------------------------------------------------------
-
-
-
-	#ifdef __i386__
-typedef unsigned int size; 
-	#endif
-
-	#ifdef __x86_64__
-typedef unsigned long size; 
-	#endif
-
-#ifndef wchar
-typedef void* wchar;
+///----------------------------------------------------------------------var
+#ifndef _UNIC_C_STRUCTURE_VARIABLE
+#define _UNIC_C_STRUCTURE_VARIABLE
+static uni  ** 		var_$;		//!Адрес переменной в памяти
+static uni  *  		var_$t; 	//!номер зарегистрированного типа
+static char ** 		var_$n; 	//!Имя переменной
+static uni  *  		var_$f; 	//!Адрес функции где появилась переменная
+static uni 			var_$l; 	//!Количество записей структуры
 #endif
+///----------------------------------------------------------------------func
+#ifndef _UNIC_C_STRUCTURE_FUNCTION
+#define _UNIC_C_STRUCTURE_FUNCTION
+typedef uni * (*func)(uni *p,...);
+typedef uni * object,Object,class,Class,new,obj,Obj,function;
 
-//----------------------------------------------------------------------
-typedef uni_t uni;
-//----------------------------------------------------------------------
-#define MAX_ARG 1024*32
-#define swap(x, y) do { typeof(x) __temp = x; x = y; y = __temp; } while (0)
+static func * 	fun_$;  		//! адрес функции
+static char ** 	fun_$n; 		//! название функции
+static uni  * 	fun_$o;			//! то что возвращает функция
+static uni  * 	fun_$p;			//! функция прородитель, в случае первичной является родителем себя самой:)
+static uni  * 	fun_$a;			//! Количество аргументов|-1 бесконечное
+static uni 		fun_$l; 		//! количество записей
+static char *** fun_$i;			//! Синонимы функции
 #endif
-
-#ifdef __i386__
-#define $_MEM_STEP 64
-#endif
-
-#ifdef __x86_64__
-#define $_MEM_STEP 128
-#endif
-
-
-
-
 
 
 

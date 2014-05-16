@@ -25,6 +25,7 @@ test:
 	./$(EXECUTABLE)
 
 clear:
+	clear
 	rm -rf *.o $(EXECUTABLE)
 
 clearall:
@@ -33,7 +34,7 @@ break:
 	rm -rf *.o
 index:
 	git config --global user.email "lcpo.net@yandex.com"
-	git config --global user.name "S.Korotaev"
+	git config --global user.name  "S.Korotaev"
 	git add -A
 	git add *.c
 	git add *.h
