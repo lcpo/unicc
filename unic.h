@@ -5,11 +5,11 @@
 //#include "external/mysql/mysql.h"
 
 
-#include "utype.c"
+#include "type/type.h"
+#include "type/type.c"
+
 #include "var/var.h"
 
-//#include "sys/arg.c"
-//#include "sys/sys.c"
 
 #include "libc/libc.h"
 #include "libuc/libuc.h"

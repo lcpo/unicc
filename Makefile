@@ -31,3 +31,13 @@ clearall:
 	rm -rf *.o $(EXECUTABLE) lib$(EXECUTABLE).a $(EXECUTABLE).so 
 break:
 	rm -rf *.o
+index:
+	git config --global user.email "lcpo.net@yandex.com"
+	git config --global user.name "S.Korotaev"
+	git add -A
+	git add *.c
+	git add *.h
+	git commit -a -m `date +%Y-%m-%d`
+	git push origin master
+
+	

@@ -34,7 +34,7 @@ pub("\n");
 
 	i++;}
 
-   print_var();
+ //  print_var();
 
 
 /*
