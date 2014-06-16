@@ -1,38 +1,39 @@
 #include "unic.c"
 
 
-///todo
-///1. написать выгрузку методов по объекту родителю
-///2. написать наследование и замену методов (Полиморфизм)
-///3. написать ассоциатор (прогроматор) типов данных
-///4. написать очистку и выгрузку переменных
-///5. написать очистку и выгрузку типов данных
-///6. написать инкапсуляцию методов										
-///7. написать ассoциатор имен методов 									(написано)
-///8. написать очистку и выгрузку методов
-
- 
 //----------------------------------------------------------------------
 int main(int argc, char **argv) {
 	set_fun(main,int,main,2);
+	
+
+new(libc,obj,0);
+proto(print2,prints);
+int out=fun(int,print2,"test");
+printf("%i\n",out);
+int out2=fun(int,prints,"test2");
+printf("%i\n",out2);
+
+print_fun();
+/*	set_fun(main,int,main,2);
 	char* t=var(t,char*,main);
 	char** r=var(r,char**,main);
 	int i=var(i,int,main);
 i=0;
-
-while(i<9){
+*/
+/*
+while(i<9999){
 r[i]=var(r[i],char*,main);
 i++;}
 
 i=0;
-while(i<9){
+while(i<9999){
 r[i]=val(r[i],tos(i));
 pub(r[i]);
 pub("\n");
 //delete(r[i]);
 
 	i++;}
-
+*/
  //  print_var();
 
 
@@ -40,6 +41,6 @@ pub("\n");
 print_fun();
 print_reg_type();
 */
-    return 0;
+   return 0;
     }
 

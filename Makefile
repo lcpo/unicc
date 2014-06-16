@@ -16,12 +16,12 @@ all:
 	$(CC) -shared -nostdlib -o $(EXECUTABLE).so $(OBJECTSLIB)	
 	make break
 	$(CC) -c $(SOURCES)
-	$(CC) -O3 -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
+	$(CC) -O2 -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 	make break
 test:
 	make clear
 	$(CC) -c $(SOURCES)
-	$(CC) -O3 -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
+	$(CC) -O2 -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 	./$(EXECUTABLE)
 
 clear:

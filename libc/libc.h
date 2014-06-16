@@ -9,4 +9,4 @@
 #include "strncmp.c"
 #include "strstr.c"
 #include "strpos.c"
-
+#include "libc.c"

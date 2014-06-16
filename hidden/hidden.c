@@ -8,7 +8,7 @@ size_t 		hiddenCount(void** v) {
 }
 //!---------------------------------------------------------------------
 size_t 		hiddenStrlen(char *str) {
-    register const char *s;
+    register char *s;
     for (s = str; *s; ++s);
     return(s - str);
 }
@@ -91,7 +91,7 @@ uni 		hiddenSubstr_count(char* str_s, char* sub_s) {
 //!---------------------------------------------------------------------
 void *		hiddenMemcpy (void *dest, void *src, size_t n) {
     register char *r1 = dest;
-    register const char *r2 = src;
+    register char *r2 = src;
     while (n) {
         *r1++ = *r2++;
         --n;
@@ -99,13 +99,13 @@ void *		hiddenMemcpy (void *dest, void *src, size_t n) {
     return dest;
 }
 //!---------------------------------------------------------------------
-int 		hiddenStrncmp(const char* s1, const char* s2, size num) {
+int 		hiddenStrncmp(char* s1, char* s2, size num) {
     if (num == 0) {
         return 0;
     }
     do {
         if (*s1 != *s2++) {
-            return (*(const unsigned char *)s1 - *(const unsigned char *)(s2 - 1));
+            return (*(unsigned char *)s1 - *(unsigned char *)(s2 - 1));
         }
         if (*s1++ == 0) {
             break;

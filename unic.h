@@ -60,11 +60,11 @@ typedef uni_t uni;
 #endif
 
 #ifdef __i386__
-#define $_MEM_STEP 64
+#define $_MEM_STEP 32
 #endif
 
 #ifdef __x86_64__
-#define $_MEM_STEP 128
+#define $_MEM_STEP 64
 #endif
 
 
