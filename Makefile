@@ -1,11 +1,12 @@
 CC=gcc
 LIBCOMP=ranlib
 LIBCOMPA=ar rc
-LIBS=-lgc
+LIBS=
 EXECUTABLE=unic
 SOURCES=main.c unic.c
 OBJECTS=main.o
 OBJECTSLIB=unic.o
+SOPTS= -nostdlib -nostartfiles # -O2
 
 all:
 	$(CC) -c $(SOURCES)
@@ -16,12 +17,13 @@ all:
 	$(CC) -shared -nostdlib -o $(EXECUTABLE).so $(OBJECTSLIB)	
 	make break
 	$(CC) -c $(SOURCES)
-	$(CC) -O2 -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
+	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 	make break
 test:
 	make clear
 	$(CC) -c $(SOURCES)
-	$(CC) -O2 -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
+	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
+	#strace
 	./$(EXECUTABLE)
 
 clear:
