@@ -23,9 +23,14 @@ test:
 	make clear
 	$(CC) -c $(SOURCES)
 	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
-#	strace	
 	./$(EXECUTABLE)
 
+testlog:
+	make clear
+	$(CC) -c $(SOURCES)
+	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
+	strace ./$(EXECUTABLE)	
+	
 clear:
 	clear
 	rm -rf *.o $(EXECUTABLE)

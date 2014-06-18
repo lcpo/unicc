@@ -223,16 +223,6 @@ size write(int fd, void* buf, size count) {
 #endif
 
 //----------------------------------------------------------------------
-
-extern size strlen(char* str);
-uni print(char * buf){
-return write(0, (void*)buf, strlen(buf));
-}
-
-
- 
-
-//----------------------------------------------------------------------
 #ifdef __i386__
 uni munmap(void *__addr, uni __len) {
         int ret;
@@ -301,43 +291,4 @@ extern long __syscall6(long n, long a, long b, long c, long d, long e, long f);
 void*  mmap(void* addr, size len, int prot, int flags, int fd, unsigned long offset){return (void*)__syscall6(__NR_mmap,(long)&addr,len,prot,flags,fd,offset);}
 
 
-//----------------------------------------------------------------------
-void *malloc(size __size){
-void *result;
-result = mmap(NULL, __size+sizeof(void*) * sizeof(void*) , PROT_READ | PROT_WRITE,MMAP_FLAGS, 0, 0);//+ sizeof(size_t)
-if (result == MAP_FAILED){return NULL;}
-* (size *) result = __size;
-return(result + sizeof(void*));
-}
-//----------------------------------------------------------------------
-extern void *memcpy (void *dest, void *src, size n);
-extern void *malloc(size __size);
-extern uni count(void** Arrs);
-extern void free(void* ptr);
 
-void *realloc(void *ptr, size __size)
-{
-        void *newptr = NULL;
- 
-        if (!ptr)
-                return malloc(__size);
-        if (!__size) {
-                free(ptr);
-                return malloc(0);
-        }
- 
-        newptr = malloc(__size);
-        if (newptr) {
-                size old_size = *((size *) (ptr - sizeof(size)));
-				 memcpy(newptr, ptr, count(ptr)*sizeof(ptr));//(old_size < size ? old_size : size));
-                free(ptr);
-        }
-        return newptr;
-}
-//----------------------------------------------------------------------
-void free(void *ptr){
-
-if (ptr == NULL){return;}
-ptr -= sizeof(size);
-munmap(ptr, * (size *) ptr + sizeof(size));
-}

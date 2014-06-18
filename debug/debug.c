@@ -1,33 +1,15 @@
-//#include <stdio.h>
 ///---------------------------------------------------------------------
 ///Отладка
 ///---------------------------------------------------------------------
-
 void print_fun(void) {
     int i=0;
-    print("regs fun:\n");
+    printf("regs fun:\n");
     while(i<fun_$l) {
-print(itos(i));
-print("\t| $=");
-print(ltos((long)fun_$[i]));
-print("\t|$n= ");
-print(fun_$n[i]);
-print(" | \t$o=");
-print(type_$t[fun_$o[i]]);
-print(" |\t $p=");
-print(ltos((long)fun_$p[i]));
-print("|\t $a=");
-print(ltos((long)fun_$a[i]));
-print("|\t $i:");
+        printf("%i\t| $=%l\t|$n= %s | \t$o=%s |\t $p=%l|\t $a=%l|\t $i:",i,(long)fun_$[i],fun_$n[i],type_$t[fun_$o[i]],(long)fun_$p[i],(long)fun_$a[i]);
     int n=0;
-    while(fun_$i[i][n]!=0){
-print(ltos((long)n));
-print("(");
-print((char*)fun_$i[i][n]);
-print("),");
-n++;}    
+    while(fun_$i[i][n]!=0){printf("%l(%s), ",(long)n,(char*)fun_$i[i][n]);n++;}    
         i++;
-        print("\n");
+        printf("\n");
         }
         
     }
@@ -35,39 +17,24 @@ n++;}
  void print_var() {
     int i=0;
 
-    print("regs var:\n");
+    printf("regs var:\n");
 
     while (var_$l>i) {
-print("i=");        
-print(itos(i));
-print(" \t| $ =");
-print(ltos((long)var_$[i]));
-print("\t| $t =");
-print((char*)type_$t[var_$t[i]]);
-print("\t| $f =");
-print(ltos((long)var_$f[i]));
-print(" \t | $n =");
-print((char*)var_$n[i]);
-print("\t|\n");
-	i++;
+        printf("i=%d \t| $ =%l \t\t| $t =%s\t| $f =%l \t |",i,(long)var_$[i],type_$t[var_$t[i]],(long)var_$f[i]);
+        printf("$n =%s\t| ",var_$n[i]);
+        printf("\n");
+        i++;
         }
     return;
     }
 //----------------------------------------------------------------------
 int print_reg_type(void) {
     int i=0;
-    print("regs type:\n");
+    printf("regs type:\n");
     while (type_$l>i) {
-print("i = ");
-print(itos((int)i));
-print(" | t=");
-print((char*)type_$t[i]);
-print(" | z=");
-print(ltos((long)type_$z));
-print("\n");
+        printf("i = %d | t=%s | z=%l\n",i,type_$t[i],(long)type_$z);
         i++;
         }
     return 1;
     }
 //----------------------------------------------------------------------
-

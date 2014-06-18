@@ -3,11 +3,11 @@
 uni set_type_item(char* name) {
     uni ind=0, fl=0, t_id=-1;
     if (type_$l==0) {
-        type_$t=malloc(sizeof(char*));
+        type_$t=libc_malloc(sizeof(char*));
         type_$z=sizeof(char*);
         }
     while (type_$l>ind) {
-        if (hiddenScmp(type_$t[ind],name)==2) {
+        if (libc_scmp(type_$t[ind],name)==2) {
             fl=1;
             t_id=ind;
             }
@@ -17,10 +17,10 @@ uni set_type_item(char* name) {
 
     if (fl==0) {
         if (type_$l>0) {
-            type_$t=realloc(type_$t,((hiddenCount((void**)type_$t))*($_MEM_STEP)));
-            type_$z=((hiddenCount((void**)type_$t))*($_MEM_STEP));
+            type_$t=libc_realloc(type_$t,((libc_count((void**)type_$t))*($_MEM_STEP)));
+            type_$z=((libc_count((void**)type_$t))*($_MEM_STEP));
             }
-        type_$t[type_$l]=malloc(((hiddenStrlen(name))*($_MEM_STEP)));
+        type_$t[type_$l]=libc_malloc(((libc_strlen(name))*($_MEM_STEP)));
         type_$t[type_$l]=name;
         t_id=type_$l;
         type_$l++;

@@ -79,8 +79,8 @@ typedef uni_t uni;
 #include "elib/elib.h"
 #include "elib/elib.c"
 
-#include "hidden/hidden.h"
-#include "hidden/hidden.c"
+#include "libc/libc.h"
+#include "libc/libc.c"
 
 #include "type/type.h"
 #include "type/type.c"
@@ -91,10 +91,10 @@ typedef uni_t uni;
 #include "fun/fun.h"
 #include "fun/fun.c"
 
-#include "libc/libc.h"
-#include "libuc/libuc.h"
-#include "libuni/libuni.h"
-#include "libo/libo.h"
-
 #include "debug/debug.h"
 #include "debug/debug.c"
+/*
+#include "libuni/libu.h"
+#include "libo/libo.h"
+
+*/

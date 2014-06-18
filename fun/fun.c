@@ -9,12 +9,12 @@ uni set_fun_item(func addr,char* name, char* out, uni par, uni narg) {
         }
     uni out_var=set_type_item(out);
     if(fun_$l==0) {
-        fun_$=malloc(sizeof(fun_$));
-        fun_$n=malloc(sizeof(fun_$n));
-        fun_$o=malloc(sizeof(fun_$o));
-        fun_$p=malloc(sizeof(fun_$p));
-        fun_$a=malloc(sizeof(fun_$a));
-        fun_$i=malloc(sizeof(fun_$i));
+        fun_$=libc_malloc(sizeof(fun_$));
+        fun_$n=libc_malloc(sizeof(fun_$n));
+        fun_$o=libc_malloc(sizeof(fun_$o));
+        fun_$p=libc_malloc(sizeof(fun_$p));
+        fun_$a=libc_malloc(sizeof(fun_$a));
+        fun_$i=libc_malloc(sizeof(fun_$i));
         
         }
 
@@ -28,20 +28,20 @@ uni set_fun_item(func addr,char* name, char* out, uni par, uni narg) {
 
     if(fl==0) {
         if(fun_$l>0) {
-            fun_$=realloc(fun_$,hiddenCount((void**)fun_$)*($_MEM_STEP));
-            fun_$n=realloc(fun_$n,hiddenCount((void**)fun_$n)*($_MEM_STEP));
-            fun_$o=realloc(fun_$o,hiddenCount((void**)fun_$o)*($_MEM_STEP));
-            fun_$p=realloc(fun_$p,hiddenCount((void**)fun_$p)*($_MEM_STEP));
-            fun_$a=realloc(fun_$a,hiddenCount((void**)fun_$a)*($_MEM_STEP));
-            fun_$i=realloc(fun_$i,hiddenCount((void**)fun_$i)*($_MEM_STEP));
+            fun_$=libc_realloc(fun_$,libc_count((void**)fun_$)*($_MEM_STEP));
+            fun_$n=libc_realloc(fun_$n,libc_count((void**)fun_$n)*($_MEM_STEP));
+            fun_$o=libc_realloc(fun_$o,libc_count((void**)fun_$o)*($_MEM_STEP));
+            fun_$p=libc_realloc(fun_$p,libc_count((void**)fun_$p)*($_MEM_STEP));
+            fun_$a=libc_realloc(fun_$a,libc_count((void**)fun_$a)*($_MEM_STEP));
+            fun_$i=libc_realloc(fun_$i,libc_count((void**)fun_$i)*($_MEM_STEP));
             }
         fun_$[fun_$l]=addr;
-        fun_$n[fun_$l]=malloc(hiddenStrlen(name)*($_MEM_STEP));
+        fun_$n[fun_$l]=libc_malloc(libc_strlen(name)*($_MEM_STEP));
         fun_$n[fun_$l]=name;
         fun_$o[fun_$l]=out_var;
         fun_$p[fun_$l]=par;
         fun_$a[fun_$l]=narg;
-        fun_$i[fun_$l]=malloc(hiddenStrlen(name)*($_MEM_STEP));
+        fun_$i[fun_$l]=libc_malloc(libc_strlen(name)*($_MEM_STEP));
         fun_$i[fun_$l][0]=name;
         fun_$i[fun_$l][1]=0;
         t_id=fun_$l;
@@ -55,19 +55,19 @@ uni set_fun_proto(char* name,char* addName){
 uni i=0,n=0,id=-1,coAl=0;
 
     while(fun_$n[i]) {
-        if(hiddenScmp(fun_$n[i],name)==2) {id=i;}
+        if(libc_scmp(fun_$n[i],name)==2) {id=i;}
         n=0;
         while(fun_$i[i][n]!=0){
-		if(hiddenScmp(fun_$i[i][n],name)==2){id=i;}
-		if(hiddenScmp(fun_$i[i][n],addName)==2){id=-1;}
+		if(libc_scmp(fun_$i[i][n],name)==2){id=i;}
+		if(libc_scmp(fun_$i[i][n],addName)==2){id=-1;}
 		n++;
 							  }
-		if(hiddenScmp(fun_$n[i],addName)==2){id=-1;}  
+		if(libc_scmp(fun_$n[i],addName)==2){id=-1;}  
         i++;
         }
 if(id!=-1){
-coAl=hiddenCount((void**)fun_$i[id]);
-	fun_$i[id]=realloc(fun_$i[id],coAl*($_MEM_STEP));
+coAl=libc_count((void**)fun_$i[id]);
+	fun_$i[id]=libc_realloc(fun_$i[id],coAl*($_MEM_STEP));
 	fun_$i[id][coAl++]=addName;
 	fun_$i[id][coAl++]=0;
 	return 1;
@@ -102,10 +102,10 @@ return nid;
 uni get_fun_name(char* name){//! получает адрес функции по имени
     uni i=0,id=-1,n=0;
     while(fun_$n[i]) {
-        if(hiddenScmp(fun_$n[i],name)==2) {id=i;}
+        if(libc_scmp(fun_$n[i],name)==2) {id=i;}
         n=0;
         while(fun_$i[i][n]!=0){
-		if(hiddenScmp(fun_$i[i][n],name)==2){id=i;}
+		if(libc_scmp(fun_$i[i][n],name)==2){id=i;}
 		n++;
 								}
         i++;
@@ -121,7 +121,7 @@ uni get_fun_name(char* name){//! получает адрес функции по
 uni get_id_name(char* name){//! получает ид в структуре по имени
    uni i=0,id=-1;
     while(fun_$n[i]) {
-        if(hiddenScmp(fun_$n[i],name)==2) {id=i;}
+        if(libc_scmp(fun_$n[i],name)==2) {id=i;}
         i++;
 					}
 return id;
@@ -184,10 +184,10 @@ uni* get_children_name(char* name){	 //полчает массив ид по д�
 uni get_fun(char* name) {//Получает элемент по имени
     uni i=0,id=-1,n=0;
     while(fun_$n[i]) {
-        if(hiddenScmp(fun_$n[i],name)==2) {id=i;}
+        if(libc_scmp(fun_$n[i],name)==2) {id=i;}
         n=0;
         while(fun_$i[i][n]!=0){
-		if(hiddenScmp(fun_$i[i][n],name)==2){id=i;}
+		if(libc_scmp(fun_$i[i][n],name)==2){id=i;}
 		n++;
 								}
         i++;
@@ -269,10 +269,10 @@ uni unset_fun(char* name){//Удаляет элемент и все дочерн
 
     uni i=0,id=-1,n=0;
     while(fun_$n[i]) {
-        if(hiddenScmp(fun_$n[i],name)==2) {id=i;}
+        if(libc_scmp(fun_$n[i],name)==2) {id=i;}
         n=0;
         while(fun_$i[i][n]!=0){
-		if(hiddenScmp(fun_$i[i][n],name)==2){id=i;}
+		if(libc_scmp(fun_$i[i][n],name)==2){id=i;}
 		n++;
 								}
         i++;
