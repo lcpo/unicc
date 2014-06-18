@@ -17,7 +17,7 @@
 
 //http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64
 int main(int argc, char **argv) {
-	
+set_fun(main,int,main,2);
 pub("//------------------------------------\n");
 char* buf=var(buf,char*,main);
 char* buf2=var(buf2,char*,main);
@@ -25,14 +25,14 @@ int bytes_read=var(bytes_read,int,main);
 
 int fd = open("/etc/passwd", 0, 0);
 bytes_read =read(fd, buf, 40);
-buf="test";
-buf2="test2";
 
-pub(bytes_read);
-
-printf("\nprintf:|%s|%s|%i|\n",buf,buf2,bytes_read);
 
 close(fd);
+
+print_fun();
+print_var();
+//print_reg_type();
+
 return 0;
 
 							}

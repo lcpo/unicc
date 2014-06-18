@@ -243,10 +243,11 @@ uni munmap(void *__addr, uni __len) {
 #ifdef __x86_64__
 uni munmap(void *__addr, uni __len) {
         int ret;
-        asm volatile(SYS_CALL
+        asm volatile(
         "movl $11, %%eax\n\t"
         "movq %1, %%rdi\n\t"
         "movq %2, %%rsi\n\t"
+        SYS_CALL
         :"=a"(ret)
         : "g" (__addr), "g" (__len));
         return ret;

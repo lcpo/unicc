@@ -56,7 +56,7 @@ print("\t|\n");
 //----------------------------------------------------------------------
 int print_reg_type(void) {
     int i=0;
-    print("regs type:\n");
+    printf("regs type:\n");
     while (type_$l>i) {
 print("i = ");
 print(itos((int)i));

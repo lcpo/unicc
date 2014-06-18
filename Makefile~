@@ -24,7 +24,7 @@ test:
 	$(CC) -c $(SOURCES)
 	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 #	strace	
-	./$(EXECUTABLE)
+./$(EXECUTABLE)
 
 clear:
 	clear

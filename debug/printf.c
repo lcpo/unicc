@@ -1,53 +1,52 @@
 
-
+/*
 void __stack_chk_fail(){return;}
 extern char* itos(int n);
 extern char* ltos(long n);
+extern char* dtos(double n);
+extern char* ftos(float n);
+char __print_buf[32];
 
-char out_$_dtos[32];
-extern char* __proto_dtos(double x,char* out);
+int __print(void* p,...){
+int i=0,n=0;
+uni buff[MAX_ARG];
+va_list arg;
+va_start(arg,p);
+while(p){buff[i++]=(uni)p; p=va_arg(arg,typeof(p));}
+va_end(arg);
+uni* out=(uni*)buff;
+n=i; i=1;
 
-#define dtos(x) (__proto_dtos((double)x,(char*)out_$_dtos))
 
-extern char* __proto_ftos(float x,char* out);
-char out_$_ftos[32];
+char* format=(char*)out[0];
+char buffer[1];
+char *tmp_chard=__print_buf;
+int itmp=0,ri=0,len_format=strlen((void *)format);
+double dtmp;
+float ftmp;
 
-#define ftos(x) (__proto_ftos((float)x,(char*)out_$_ftos))
-
-
-
-int __print(char **out, char *format, va_list args ){
-	
-int len_format=strlen((void *)format);
-int i=0,itmp=0;
-long ltmp=0;
-char buff[1];
-char *tmp_chard;
-while(len_format>i){
-if(format[i]=='%' && format[i+1]=='c'){buff[0]==(char)va_arg( args, char ); buff[1]=(char)'0'; write($O,buff,1); ++i; ++i;}else
-if(format[i]=='%' && format[i+1]=='s'){tmp_chard=va_arg( args, char* ); write($O,(void*)tmp_chard,strlen((void*)tmp_chard)); ++i; ++i;}else
-if(format[i]=='%' && format[i+1]=='d'){tmp_chard=dtos(va_arg( args, double )); write($O,tmp_chard,strlen(tmp_chard)); ++i; ++i;}else
-if(format[i]=='%' && format[i+1]=='i'){itmp=va_arg( args, int ); tmp_chard=itos(itmp); write($O,tmp_chard,strlen(tmp_chard)); ++i; ++i;}else
-if(format[i]=='%' && format[i+1]=='l'){ltmp=va_arg( args, long ); tmp_chard=ltos(ltmp); write($O,tmp_chard,strlen(tmp_chard)); ++i; ++i;}else
-if(format[i]=='%' && format[i+1]=='f'){tmp_chard=ftos(va_arg( args, float )); write($O,tmp_chard,strlen(tmp_chard)); ++i; ++i;}else
-{
-buff[0]=(char)format[i]; 
-buff[1]='0';
-write($O,buff,1);
-++i;	
-	}
+while(len_format>ri){
+if(format[ri]=='%' && format[ri+1]=='c'){buffer[0]==(char)out[i]; buffer[1]=(char)'0'; write($O,buffer,1); ++ri; ++ri; ++i;}else
+if(format[ri]=='%' && format[ri+1]=='s'){tmp_chard=(char*)out[i]; write($O,(void*)tmp_chard,strlen((void*)tmp_chard)); ++ri; ++ri;++i;}else
+if(format[ri]=='%' && format[ri+1]=='i'){tmp_chard=itos((int)out[i]); write($O,tmp_chard,strlen(tmp_chard)+1); ++ri; ++ri;++i;}else
+if(format[ri]=='%' && format[ri+1]=='l'){tmp_chard=ltos((long)out[i]); write($O,tmp_chard,strlen(tmp_chard)); ++ri; ++ri;++i;}else
+{buffer[0]=(char)format[ri];buffer[1]='0';write($O,buffer,1);++ri;}
 
 	}
-	va_end( args );
 	return 1;
-}
+}*/
 
+
+#define printf(x...)(__print(x,NULL))
+
+
+/*
 int printf(char *format, ...)
 {
-        va_list args;
+        //va_list args;
         
-        va_start( args, format );
-        return __print( 0, format, args );
+        //va_start( args, format );
+        return __print( format, args );
 }
 
 int sprintf(char *out, char *format, ...)
@@ -57,6 +56,8 @@ int sprintf(char *out, char *format, ...)
         va_start( args, format );
         return __print( &out, format, args );
 }
+*/
+
 
 
 

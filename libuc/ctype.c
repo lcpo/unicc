@@ -40,9 +40,11 @@ sz--;
 return (long)n;
 							}
 ////////////////////////////////////////////////////////////////////////
-#ifndef no_dtos
-char* __proto_dtos(double n,char* buff){///double to str
-//n=n+0.000000000000001;
+
+char out_$_dtos[32];
+
+char* dtos(double n){///double to str
+char* buff=out_$_dtos;
 	*buff =+0;
 char* a1 = buff;
 long long i=0,j=0,k=0;
@@ -68,14 +70,15 @@ z++;}
 a1[j-1]='\0';
 return a1;
 }
-char out_$_dtos[32];
-#define dtos(x) (__proto_dtos((double)x,(char*)out_$_dtos))
-#endif
+
+//#define dtos(x) (__proto_dtos((double)x))
+//#endif
 ////////////////////////////////////////////////////////////////////////
 
 #ifndef no_ldtos
-char* __proto_ldtos(long double n,char* buff){///long double to str
-//n=n+0.0000000000000001;
+char out_$_ldtos[32];
+char* __proto_ldtos(long double n){///long double to str
+char* buff=out_$_ldtos;
 	*buff =+0;
 char* a2= buff;
 long long i=0,j=0,k=0;
@@ -101,12 +104,14 @@ a2[j-1]='\0';
 
 return a2;
 }
-char out_$_ldtos[32];
-#define ldtos(x) (__proto_ldtos((long double)x,(char*)out_$_ldtos))
+
+#define ldtos(x) (__proto_ldtos((long double)x))
 #endif
 ////////////////////////////////////////////////////////////////////////
 #ifndef no_ftos
-char* __proto_ftos(float n,char* buff){///float to str
+char out_$_ftos[32];
+char* ftos(float n){///float to str
+char* buff=out_$_ftos;
 	*buff =+0;
 char* a3 = buff;
 
@@ -136,8 +141,8 @@ a3[j-1]='\0';
 
 return a3;
 }
-char out_$_ftos[32];
-#define ftos(x) (__proto_ftos((float)x,(char*)out_$_ftos))
+
+
 #endif
 ////////////////////////////////////////////////////////////////////////
 #ifndef no_itos

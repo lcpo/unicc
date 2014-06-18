@@ -91,10 +91,10 @@ typedef uni_t uni;
 #include "fun/fun.h"
 #include "fun/fun.c"
 
-#include "debug/debug.h"
-#include "debug/debug.c"
-
 #include "libc/libc.h"
 #include "libuc/libuc.h"
 #include "libuni/libuni.h"
 #include "libo/libo.h"
+
+#include "debug/debug.h"
+#include "debug/debug.c"
