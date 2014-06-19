@@ -29,14 +29,12 @@ int execl (char *path, char *arg, ...){
        argv_max *= 2;
         char **nptr = (char**)libc_realloc (argv == initial_argv ? NULL : argv,
                         argv_max * sizeof (char *));
-      if (nptr == NULL)
-         {
+      if (nptr == NULL){
            if (argv != initial_argv)
          libc_free (argv);
           return -1;
         }
-       if (argv == initial_argv)
-         libc_memcpy (nptr, argv, i * sizeof (char *));
+       if (argv == initial_argv){libc_memcpy (nptr, argv, i * sizeof (char *));}
  
        argv = nptr;
      }
@@ -139,6 +137,16 @@ close($_pipe[0]);
 libc_print_str(buff);
 return ret;	
 						  }	
+//----------------------------------------------------------------------
+void __assert(const char *file, int line, const char *failedexpr){
+	printf("assertion \"%s\" failed: file \"%s\", line %d\n",failedexpr, file, line);
+	exit(1);
+}
+//----------------------------------------------------------------------
+void __assert2(const char *file, int line, const char *func, const char *failedexpr){
+	printf("assertion \"%s\" failed: file \"%s\", line %d, function \"%s\"\n",failedexpr, file, line, func);
+  exit(1);
+}
 //----------------------------------------------------------------------						  
 void _start() {
 char* _start$output=getcmd();

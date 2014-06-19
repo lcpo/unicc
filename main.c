@@ -1,37 +1,16 @@
 #include "unic.c"
 
-				
-
-
-//http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64
-//----------------------------------------------------------------------
-
-
-
-
 
 int main(int argc, char **argv) {
-//set_fun(main,int,main,2);
-
-char* out;
-exec("cd /home/ss/;dir",out);
-printf("%s",out);
-
+set_fun(main,int,main,2);
+printf("\\------------------------------\n");
+system("dir");
+printf("\\------------------------------\n");
 
 return 0;
 						}
 
 
-
-//printf("\n----\n%s\n",argv[0]);
-
-
-    //snprintf(link,sizeof link,"/proc/%d/exe",getpid());
-    //if(readlink(link,exe,sizeof exe)==-1) {
-        //fprintf(stderr,"ERRORRRRR\n");
-       // exit(1);
-    //}
-    //printf("I am %s\n",exe);
 
 
 //uni* addr=(uni*)libc();
@@ -45,11 +24,6 @@ return 0;
 //extern print2(char* ptr);
 //print2("test");
 
-//
-
-//addr.print2("test");
-
-//print_fun();
 
 //pub("//------------------------------------\n");
 //char* buf=var(buf,char*,main);
