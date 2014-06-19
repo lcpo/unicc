@@ -1,14 +1,12 @@
 #ifdef __NO_DEBUG
 #define printf(x...)
-#define print_reg_type
-#define print_fun
-#define print_var
-#define __assert
-#define __assert2
+#define print_reg_type()
+#define print_fun()
+#define print_var()
+#define __assert(a,b,c)
+#define __assert2(a,b,c,d)
 #else
 #include "printf.c"
-///---------------------------------------------------------------------
-///Отладка
 ///---------------------------------------------------------------------
 void print_fun(void) {
     int i=0;

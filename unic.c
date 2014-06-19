@@ -137,7 +137,10 @@ close($_pipe[0]);
 libc_print_str(buff);
 return ret;	
 						  }
-//----------------------------------------------------------------------						  	
+//----------------------------------------------------------------------
+#ifdef __NO_START
+#define main _start
+#else						  	
 void _start() {
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;
@@ -151,5 +154,6 @@ exit(result);
 //asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
 return;
 	}
+#endif	
 //----------------------------------------------------------------------
 

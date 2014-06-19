@@ -9,7 +9,7 @@ char value=0;
 assert(value !=0);
 printf("\\------------------------------\n");
 print_fun();
-
+exit(0);
 return 0;
 						}
 

@@ -9,11 +9,11 @@ OBJECTSLIB=unic.o
 SOPTS= -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #  -ansi -w 
 
 all:
-	$(CC) -c -Dname="__NO_DEBUG" $(SOURCES)
+	$(CC) -c -D __NO_DEBUG -D __NO_START $(SOURCES)
 	$(LIBCOMPA) lib$(EXECUTABLE).a $(OBJECTSLIB)
 	$(LIBCOMP) lib$(EXECUTABLE).a
 	make break
-	$(CC) -fPIC -c $(SOURCES)
+	$(CC) -fPIC -c -D __NO_DEBUG -D __NO_START $(SOURCES)
 	$(CC) -shared -nostdlib -o $(EXECUTABLE).so $(OBJECTSLIB)	
 	make break
 	$(CC) -c $(SOURCES)
@@ -91,7 +91,7 @@ break:
 index:
 	make clearall
 	git config --global user.email "lcpo.net@yandex.com"
-	git config --global user.name  "S.Korotaev"
+	git config --global user.name  "S.S.Korotaev"
 	git add -A
 	git add *.c
 	git add *.h
