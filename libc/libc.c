@@ -159,9 +159,6 @@ void *libc_realloc(void *ptr, size __size)
         }
         return newptr;
 }
-//!---------------------------------------------------------------------
-
-
 
 //!---------------------------------------------------------------------
 uni	libc_sch(char* str, char ch) {
@@ -174,9 +171,7 @@ uni	libc_sch(char* str, char ch) {
     }
     return 0;
 }
-
 //!---------------------------------------------------------------------
-
 
 int libc_scmp(char* str1, char* str2){
 uni si1=libc_strlen(str1); uni si2=libc_strlen(str2);
@@ -351,7 +346,8 @@ if(num<0){num= -num; i++;}
 int ol=(int)num;
 while(ol>0){ol/=10; ++i;}
 j=i;
-num=num-j;
+num=num-j;///---------------------------------------------------------------------
+///Отладка
 i++;
 while(t>-1){num = num*10; t = (int)num%10; ++i;}
 

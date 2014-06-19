@@ -136,18 +136,8 @@ int ret=read($_pipe[0],buff,4096);
 close($_pipe[0]);
 libc_print_str(buff);
 return ret;	
-						  }	
-//----------------------------------------------------------------------
-void __assert(const char *file, int line, const char *failedexpr){
-	printf("assertion \"%s\" failed: file \"%s\", line %d\n",failedexpr, file, line);
-	exit(1);
-}
-//----------------------------------------------------------------------
-void __assert2(const char *file, int line, const char *func, const char *failedexpr){
-	printf("assertion \"%s\" failed: file \"%s\", line %d, function \"%s\"\n",failedexpr, file, line, func);
-  exit(1);
-}
-//----------------------------------------------------------------------						  
+						  }
+//----------------------------------------------------------------------						  	
 void _start() {
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;

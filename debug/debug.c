@@ -1,3 +1,12 @@
+#ifdef __NO_DEBUG
+#define printf(x...)
+#define print_reg_type
+#define print_fun
+#define print_var
+#define __assert
+#define __assert2
+#else
+#include "printf.c"
 ///---------------------------------------------------------------------
 ///Отладка
 ///---------------------------------------------------------------------
@@ -38,3 +47,14 @@ int print_reg_type(void) {
     return 1;
     }
 //----------------------------------------------------------------------
+void __assert(char *file, int line, char *failedexpr){
+	printf("assertion \"%s\" failed: file \"%s\", line %d\n",failedexpr, file, line);
+	//exit(1);
+}
+//----------------------------------------------------------------------
+void __assert2(char *file, int line, char *func, char *failedexpr){
+	printf("assertion \"%s\" failed: file \"%s\", line %d, function \"%s\"\n",failedexpr, file, line, func);
+  //exit(1);
+}
+//----------------------------------------------------------------------						  
+#endif

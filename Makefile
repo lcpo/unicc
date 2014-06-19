@@ -9,7 +9,7 @@ OBJECTSLIB=unic.o
 SOPTS= -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #  -ansi -w 
 
 all:
-	$(CC) -c $(SOURCES)
+	$(CC) -c -Dname="__NO_DEBUG" $(SOURCES)
 	$(LIBCOMPA) lib$(EXECUTABLE).a $(OBJECTSLIB)
 	$(LIBCOMP) lib$(EXECUTABLE).a
 	make break
