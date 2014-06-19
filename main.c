@@ -7,10 +7,17 @@
 //----------------------------------------------------------------------
 
 
+
+
+
 int main(int argc, char **argv) {
 //set_fun(main,int,main,2);
-//printf("\n----\n%i\n",argc);
-//printf("\n----\n%s\n",argv[0]);
+
+char* out;
+exec("cd /home/ss/;dir",out);
+printf("%s",out);
+
+
 return 0;
 						}
 

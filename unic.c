@@ -10,6 +10,48 @@
 #include "unic.h"
 
 //----------------------------------------------------------------------
+#define INITIAL_ARGV_MAX 1024
+char *initial_argv[INITIAL_ARGV_MAX];
+
+int execl (char *path, char *arg, ...){
+   size argv_max = 1024;
+
+    char **argv = initial_argv;
+    va_list args;
+	argv[0] = arg;
+ 
+ va_start (args, arg);
+  unsigned int i = 0;
+ while (argv[i++] != NULL)
+  {
+      if (i == argv_max)
+     {
+       argv_max *= 2;
+        char **nptr = (char**)libc_realloc (argv == initial_argv ? NULL : argv,
+                        argv_max * sizeof (char *));
+      if (nptr == NULL)
+         {
+           if (argv != initial_argv)
+         libc_free (argv);
+          return -1;
+        }
+       if (argv == initial_argv)
+         libc_memcpy (nptr, argv, i * sizeof (char *));
+ 
+       argv = nptr;
+     }
+ 
+       argv[i] = va_arg (args, char *);
+      }
+   va_end (args);
+    char *envp[] ={"HOME=/home/ss","PATH=/bin:/usr/bin","TZ=UTC0","USER=ss","LOGNAME=/home/ss/log.txt",0};
+   int ret = execve (path, (char *const *) argv, envp);
+   if (argv != initial_argv)
+     libc_free (argv);
+ 
+   return ret;
+ }
+//----------------------------------------------------------------------
 char* getcmd(){
 char* exe=libc_malloc(sizeof(char*));
 char* tmp=libc_malloc(sizeof(char*));	
@@ -60,7 +102,44 @@ sep=sep+(long)libc_strlen(output+sep)+1;
 	}
 return argv;
 										}
-//----------------------------------------------------------------------	
+//----------------------------------------------------------------------
+int exec(char* command, char* out){
+int $_pipe[2];
+pipe($_pipe);
+switch(fork()){
+case -1:printf("error fork!");exit(1);
+case 0: 
+close($_pipe[0]); 
+dup2($_pipe[1], 1); 
+execl("/bin/sh", "sh", "-c", command, NULL);
+close($_pipe[1]);
+exit(0);			
+}
+close($_pipe[1]);
+int ret=read($_pipe[0],out,4096);
+close($_pipe[0]);
+	}
+//----------------------------------------------------------------------
+int system(char* command){
+int $_pipe[2];
+pipe($_pipe);
+switch(fork()){
+case -1:printf("error fork!");exit(1);
+case 0: 
+close($_pipe[0]); 
+dup2($_pipe[1], 1); 
+execl("/bin/sh", "sh", "-c", command, NULL);
+close($_pipe[1]);
+exit(0);			
+}
+close($_pipe[1]);
+char* buff=libc_malloc(sizeof(char*));
+int ret=read($_pipe[0],buff,4096);
+close($_pipe[0]);
+libc_print_str(buff);
+return ret;	
+						  }	
+//----------------------------------------------------------------------						  
 void _start() {
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;
@@ -74,4 +153,5 @@ exit(result);
 //asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
 return;
 	}
+//----------------------------------------------------------------------
 

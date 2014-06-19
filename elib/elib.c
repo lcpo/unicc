@@ -190,6 +190,30 @@ int getpid(void){
         return ret;
 }     
 #endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__ //дописать для i386
+int fork(void){
+	int ret;
+        asm volatile(
+        "movl $57, %%eax\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        :);
+        return ret;
+}     
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__ //дописать для i386
+int vfork(void){
+	int ret;
+        asm volatile(
+        "movl $58, %%eax\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        :);
+        return ret;
+}     
+#endif
 //---------------------------------------------------------------------- 
 #ifdef __i386__
 int read(int fd, char * buf, uni count){
@@ -215,6 +239,79 @@ int read(int fd, char* buf, size count) { //для чтения файлов и 
         SYS_CALL
         : "=a"(ret)
         : "g"(fd), "g"(buf),"g"(count)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
+int kill(int pid, int sig) { 
+        int ret;
+        asm volatile(
+        "movl $62, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        "movq %2, %%rsi\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(pid), "g"(sig)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
+int dup2(int oldfd, int newfd) { 
+        int ret;
+        asm volatile(
+        "movl $33, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        "movq %2, %%rsi\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(oldfd), "g"(newfd)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
+int alarm(int seconds) { 
+        int ret;
+        asm volatile(
+        "movl $37, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(seconds)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
+int pipe(int* filedes) { //для чтения файлов и потоков
+        int ret;
+        asm volatile(
+        "movl $22, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(filedes)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
+int nanosleep(int rqtp, int rmtp) { //для чтения файлов и потоков
+        int ret;
+        asm volatile(
+        "movl $35, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        "movq %2, %%rsi\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(rmtp), "g"(rmtp)
         );
         return ret;
 }
