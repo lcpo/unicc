@@ -5,8 +5,8 @@ float _unic_tof(uni* x){
 	char* buff;
 if(id!=-1){
 char* type=get_var_type(x);
-if(sch_count(type,'*')>0 && scmp(type,"char")==1){
-	buff=(void*)*x; out=stof((void*)buff);
+if(libc_sch_count(type,'*')>0 && libc_scmp(type,"char")==1){
+	buff=(void*)*x; out=libc_stof((void*)buff);
 }else{out=*(double*)(x);}
 		   }
 return out;

@@ -106,7 +106,7 @@ int open(char * filename, int flags, int mode) {
         SYS_CALL
         : "=a"(ret)
         : "g"(filename), "g"(flags),"g"(mode)
-      // : "%rdi", "%rsi", "%rdx", "%rcx", "%r11"
+       : "%rdi", "%rsi", "%rdx", "%rcx", "%r11"
         );
         
         return ret;
@@ -138,6 +138,20 @@ void close(uni fd) {
 #endif
 //----------------------------------------------------------------------
 #ifdef __x86_64__
+void* brk(unsigned long int brkv){
+	void* ret;
+        asm volatile(
+        "movl $12, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(brkv)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
 int __exit(int error_code){
 	int ret;
         asm volatile(
@@ -164,6 +178,18 @@ return ret;
 int __exit(int error_code) __attribute__ ((destructor));
 #endif
 #define exit __exit
+//----------------------------------------------------------------------
+#ifdef __x86_64__ //дописать для i386
+int getpid(void){
+	int ret;
+        asm volatile(
+        "movl $39, %%eax\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        :);
+        return ret;
+}     
+#endif
 //---------------------------------------------------------------------- 
 #ifdef __i386__
 int read(int fd, char * buf, uni count){
@@ -178,7 +204,7 @@ int read(int fd, char * buf, uni count){
 #endif
 //----------------------------------------------------------------------
 #ifdef __x86_64__
-int read(int fd, char* buf, size count) {
+int read(int fd, char* buf, size count) { //для чтения файлов и потоков
         int ret;
         // __NR_read x64=0
         asm volatile(
@@ -193,6 +219,52 @@ int read(int fd, char* buf, size count) {
         return ret;
 }
 #endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
+int readlink(char* path, char* buf, int bufsiz) { //для получения пути ссылки на файл
+        int ret;
+        asm volatile(
+        "movl $89, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        "movq %2, %%rsi\n\t"
+        "movq %3, %%rdx\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(path), "g"(buf),"g"(bufsiz)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
+int ioctl(unsigned int fd, unsigned int cmd, unsigned int arg) { //для работы с устройствами
+        int ret;
+        asm volatile(
+        "movl $16, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        "movq %2, %%rsi\n\t"
+        "movq %3, %%rdx\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(fd), "g"(cmd),"g"(arg)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+int execve( const char *filename, char *const argv[], char *const envp[] ){
+        int ret;
+        asm volatile(
+        "movl $59, %%eax\n\t"
+        "movq %1, %%rdi\n\t"
+        "movq %2, %%rsi\n\t"
+        "movq %3, %%rdx\n\t"
+        SYS_CALL
+        : "=a"(ret)
+        : "g"(filename), "g"(argv),"g"(envp)
+        );
+        return ret;	
+	}
 //----------------------------------------------------------------------
 #ifdef __i386__
 size write(int fd, void* buf, size count) {

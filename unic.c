@@ -8,8 +8,70 @@
 */
 
 #include "unic.h"
-void _start(int argc, void** argv) {
-	int result = main (argc, argv);
-	exit(result);
+
+//----------------------------------------------------------------------
+char* getcmd(){
+char* exe=libc_malloc(sizeof(char*));
+char* tmp=libc_malloc(sizeof(char*));	
+char* start="/proc/";
+char* end="/cmdline";
+char* pid=libc_itos(getpid());
+libc_mcpy(tmp,start,libc_strlen(start));
+libc_mcat(tmp,pid);
+libc_mcat(tmp,end);
+int file=open(tmp,0,0);
+read(file,exe,128);
+close(file);
+libc_free(tmp);
+return exe;
+	}
+//----------------------------------------------------------------------
+char* getpn(){
+char* exe=libc_malloc(sizeof(char*));
+char* tmp=libc_malloc(sizeof(char*));	
+char* start="/proc/";
+char* end="/exe";
+char* pid=libc_itos(getpid());
+libc_mcpy(tmp,start,libc_strlen(start));
+libc_mcat(tmp,pid);
+libc_mcat(tmp,end);
+readlink(tmp,exe,128);
+libc_free(tmp);
+return exe;
+				}
+//----------------------------------------------------------------------
+int getargc(char* output){
+int i=0,argc=0;
+char* out=output;	
+while(-1){
+if(out[i]=='\0'){++argc;}
+if(out[i]=='\0' && out[i+1]=='\0'){break;}
+	i++;}	
+return argc;	
+						 }
+//----------------------------------------------------------------------
+char** getargv(long argc,char* output,char**argv){
+int i=0,sep=0;
+
+while(argc>i){
+argv[i]=output+sep;
+sep=sep+(long)libc_strlen(output+sep)+1;
+	i++;
+	}
+return argv;
+										}
+//----------------------------------------------------------------------	
+void _start() {
+char* _start$output=getcmd();
+long _start$i=0,argc=0,_start$sep=0;
+argc=getargc(_start$output);
+char** argv=libc_malloc(sizeof(char**)*argc);
+if(argc==1){argv[0]=(char*)_start$output;argc--;}
+if(argc>=2){argv=getargv(argc,_start$output,argv);argc--;}
+int result=main(argc,argv);
+libc_free(argv);
+exit(result);
+//asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
 return;
 	}
+

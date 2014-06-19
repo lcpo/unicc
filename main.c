@@ -1,23 +1,31 @@
 #include "unic.c"
 
-//void init_unic () __attribute__ ((constructor,const,section("unic")));
-
-
-//void init_unic() {//set_fun(init_unic,void,init_unic,0);}
-
-
-
-//----------------------------------------------------------------------
- 	
-
-//#include <unistd.h>
-//#include <stdio.h>
-
+				
 
 
 //http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64
+//----------------------------------------------------------------------
+
+
 int main(int argc, char **argv) {
 //set_fun(main,int,main,2);
+//printf("\n----\n%i\n",argc);
+//printf("\n----\n%s\n",argv[0]);
+return 0;
+						}
+
+
+
+//printf("\n----\n%s\n",argv[0]);
+
+
+    //snprintf(link,sizeof link,"/proc/%d/exe",getpid());
+    //if(readlink(link,exe,sizeof exe)==-1) {
+        //fprintf(stderr,"ERRORRRRR\n");
+       // exit(1);
+    //}
+    //printf("I am %s\n",exe);
+
 
 //uni* addr=(uni*)libc();
 
@@ -57,9 +65,7 @@ float t3=456.123;
 double t4=458.1235;
 printf("%f|%f|%s|%d\n",t3,t4,t1,t2);
 */
-return 0;
 
-							}
     
  /*
 	//print("test\n");

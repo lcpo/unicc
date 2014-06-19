@@ -93,8 +93,7 @@ typedef uni_t uni;
 
 #include "debug/debug.h"
 #include "debug/debug.c"
-/*
-#include "libuni/libu.h"
+
+#include "libu/libu.h"
 #include "libo/libo.h"
 
-*/

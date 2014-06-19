@@ -203,8 +203,8 @@ uni libc_strnpos(char* str, char* sub, int ot) {
     return pos;
 }
 //!---------------------------------------------------------------------
-uni libc_substr_count(char* str_s, char* sub_s) {
-    uni count_sub=0;
+long libc_substr_count(char* str_s, char* sub_s) {
+    long count_sub=0;
     str_s = libc_strstr(str_s,sub_s);
     while (str_s!=0) {
         str_s=str_s+libc_strlen(sub_s);
