@@ -95,7 +95,7 @@ index:
 	git add -A
 	git add *.c
 	git add *.h
-	git commit -a -m `date +%Y-%m-%d`
+	git commit -a -m `date +%Y-%m-%d_%H:%M:%S`
 	git push origin master
 
 	
