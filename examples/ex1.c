@@ -1,5 +1,5 @@
-#include "../unic.c"
-#include "../debug.c"
+#include "../unicc.c"
+
 
 obj newClass() {
 

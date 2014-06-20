@@ -1,5 +1,4 @@
-#include "../unic.c"
-#include "../debug.c"
+#include "../unicc.c"
 int main(int argc, char **argv) {
 	char* t=var(t,char*,main);
 	char* out=var(out,char*,main);

@@ -8,6 +8,7 @@ function print(new $data,...){}
 //array
 function implode(new $seps,new $string){}
 function in_array(new $string, new $array){}
+function in_global_array(new $string, new $array){}
 function array_merge(new $array,...){}
 function end(new $array){}
 function count(new $array){}

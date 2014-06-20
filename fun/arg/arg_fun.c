@@ -1,10 +1,10 @@
 /*
-#ifndef _TYPE_UNIC_C
+#ifndef _TYPE_UNICC_C
 #include "../../utype.c"
 #endif
 
 	#ifndef $
-#define $ unic_
+#define $ unicc_
 	#endif
 
 static char** arr_$n;

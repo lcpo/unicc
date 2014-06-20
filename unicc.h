@@ -1,5 +1,5 @@
 #ifndef $
-#define $ unic_
+#define $ unicc_
 #endif
 
 #ifdef _WIN32
@@ -15,12 +15,9 @@
 //#include "external/mysql/mysql.h"
 
 
-#ifndef _UNIC_C_GLOBAL_TYPE
-#define _UNIC_C_GLOBAL_TYPE
+#ifndef _UNICC_C_GLOBAL_TYPE
+#define _UNICC_C_GLOBAL_TYPE
 
-	#ifndef $
-#define $ unic_
-	#endif
 
 	#ifndef NULL
 #define NULL ((void*)0)
@@ -31,7 +28,7 @@
 	#endif
 //----------------------------------------------------------------------
 
-		#ifndef uni_t
+#ifndef uni_t
 #undef uni_t
 
 	#ifdef __i386__
@@ -95,5 +92,8 @@ typedef uni_t uni;
 #include "debug/debug.c"
 
 #include "libu/libu.h"
+#include "libu/libu.c"
+
 #include "libo/libo.h"
+#include "libo/libo.c"
 

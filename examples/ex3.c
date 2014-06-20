@@ -1,5 +1,4 @@
-#include "../unic.c"
-#include "../debug.c"
+#include "../unicc.c"
 //----------------------------------------------------------------------
 int main(int argc, char **argv) {
 	set_fun(main,int,main,2);
