@@ -2,10 +2,10 @@ CC=gcc
 LIBCOMP=ranlib
 LIBCOMPA=ar rc
 LIBS=
-EXECUTABLE=unic
-SOURCES=main.c unic.c
+EXECUTABLE=unicc
+SOURCES=main.c unicc.c
 OBJECTS=main.o
-OBJECTSLIB=unic.o
+OBJECTSLIB=unicc.o
 SOPTS= -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #  -ansi -w 
 
 all:

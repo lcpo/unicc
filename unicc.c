@@ -7,7 +7,7 @@
 #define force_GC_on(x) GC_free(x)
 */
 
-#include "unic.h"
+#include "unicc.h"
 
 //----------------------------------------------------------------------
 #define INITIAL_ARGV_MAX 1024
@@ -138,6 +138,7 @@ libc_print_str(buff);
 return ret;	
 						  }
 //----------------------------------------------------------------------
+
 #ifdef __NO_START
 #define main _start
 #else						  	

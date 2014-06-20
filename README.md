@@ -1,4 +1,4 @@
-unic
+unicc
 ====
 
-uniC framework
+uniCC framework

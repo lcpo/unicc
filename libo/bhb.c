@@ -1,4 +1,4 @@
-class php(){
+class bhb(){
 //string function
 function strlen(new $string){}
 function explode(new $seps, new $string){}

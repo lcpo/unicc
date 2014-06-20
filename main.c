@@ -1,7 +1,8 @@
-#include "unic.c"
+#include "unicc.c"
 
 
 int main(int argc, char **argv) {
+	/*
 set_fun(main,int,main,2);
 printf("\\------------------------------\n");
 system("dir");
@@ -9,7 +10,7 @@ char value=0;
 assert(value !=0);
 printf("\\------------------------------\n");
 print_fun();
-exit(0);
+exit(0);*/
 return 0;
 						}
 

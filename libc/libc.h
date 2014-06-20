@@ -42,7 +42,7 @@ extern void *libc_realloc(void *ptr, size __size);
 extern uni	libc_sch(char* str, char ch);
 extern int libc_scmp(char* str1, char* str2);
 extern uni libc_strnpos(char* str, char* sub, int ot);
-extern uni libc_substr_count(char* str_s, char* sub_s);
+extern long libc_substr_count(char* str_s, char* sub_s);
 extern char* libc_string_replace(char *string, char *delimiter, char *replacement);
 extern char* libc_utos(uni n); 
 extern int libc_is_dec_num(char* str);

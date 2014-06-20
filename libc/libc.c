@@ -211,7 +211,7 @@ long libc_substr_count(char* str_s, char* sub_s) {
 
 //!---------------------------------------------------------------------
 
-char * 		libc_string_replace(char *string, char *delimiter, char *replacement) {
+char * 	libc_string_replace(char *string, char *delimiter, char *replacement) {
     if (!libc_strstr(string,delimiter)) {
         return string;
     }

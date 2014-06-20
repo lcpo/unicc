@@ -152,6 +152,15 @@ void* brk(unsigned long int brkv){
 }
 #endif
 //----------------------------------------------------------------------
+#ifdef __i386__
+void brk(unsigned long int brkv) {
+        asm volatile(SYS_CALL
+            : 
+            : "a" (__NR_brk), "b" (brkv)
+        );
+}
+#endif
+//----------------------------------------------------------------------
 #ifdef __x86_64__
 int __exit(int error_code){
 	int ret;
@@ -192,6 +201,17 @@ int getpid(void){
 }     
 #endif
 //----------------------------------------------------------------------
+#ifdef __i386__
+int getpid(void){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_getpid)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
 #ifdef __x86_64__ //дописать для i386
 int fork(void){
 	int ret;
@@ -204,6 +224,17 @@ int fork(void){
 }     
 #endif
 //----------------------------------------------------------------------
+#ifdef __i386__
+int fork(void){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_fork)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
 #ifdef __x86_64__ //дописать для i386
 int vfork(void){
 	int ret;
@@ -214,6 +245,17 @@ int vfork(void){
         :);
         return ret;
 }     
+#endif
+//----------------------------------------------------------------------
+#ifdef __i386__
+int vfork(void){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_vfork)
+        );
+        return ret;
+}
 #endif
 //---------------------------------------------------------------------- 
 #ifdef __i386__
@@ -260,6 +302,18 @@ int kill(int pid, int sig) {
 }
 #endif
 //----------------------------------------------------------------------
+#ifdef __i386__
+int kill(int pid, int sig){
+        int ret;
+        
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_kill), "b" (pid), "c" (sig)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
 #ifdef __x86_64__
 int dup2(int oldfd, int newfd) { 
         int ret;
@@ -270,6 +324,17 @@ int dup2(int oldfd, int newfd) {
         SYS_CALL
         : "=a"(ret)
         : "g"(oldfd), "g"(newfd)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __i386__
+int dup2(int oldfd, int newfd){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_dup2), "b" (oldfd), "c" (newfd)
         );
         return ret;
 }
@@ -289,8 +354,19 @@ int alarm(int seconds) {
 }
 #endif
 //----------------------------------------------------------------------
+#ifdef __i386__
+int alarm(int seconds){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_alarm), "b" (seconds)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
 #ifdef __x86_64__
-int pipe(int* filedes) { //для чтения файлов и потоков
+int pipe(int* filedes) { 
         int ret;
         asm volatile(
         "movl $22, %%eax\n\t"
@@ -303,8 +379,19 @@ int pipe(int* filedes) { //для чтения файлов и потоков
 }
 #endif
 //----------------------------------------------------------------------
+#ifdef __i386__
+int pipe(int* filedes){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_pipe), "b" (filedes)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
 #ifdef __x86_64__
-int nanosleep(int rqtp, int rmtp) { //для чтения файлов и потоков
+int nanosleep(int rqtp, int rmtp) { 
         int ret;
         asm volatile(
         "movl $35, %%eax\n\t"
@@ -313,6 +400,17 @@ int nanosleep(int rqtp, int rmtp) { //для чтения файлов и пот
         SYS_CALL
         : "=a"(ret)
         : "g"(rmtp), "g"(rmtp)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __i386__
+int nanosleep(int rqtp, int rmtp){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_nanosleep), "b" (rqtp), "c" (rmtp)
         );
         return ret;
 }
@@ -334,6 +432,17 @@ int readlink(char* path, char* buf, int bufsiz) { //для получения п
 }
 #endif
 //----------------------------------------------------------------------
+#ifdef __i386__
+int readlink(char* path, char * buf, int bufsize){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_readlink), "b" (path), "c" (buf), "d" (bufsize)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
 #ifdef __x86_64__
 int ioctl(unsigned int fd, unsigned int cmd, unsigned int arg) { //для работы с устройствами
         int ret;
@@ -350,6 +459,18 @@ int ioctl(unsigned int fd, unsigned int cmd, unsigned int arg) { //для раб
 }
 #endif
 //----------------------------------------------------------------------
+#ifdef __i386__
+int ioctl(unsigned int fd, unsigned int cmd, unsigned int arg){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_ioctl), "b" (fd), "c" (cmd), "d" (arg)
+        );
+        return ret;
+}
+#endif
+//----------------------------------------------------------------------
+#ifdef __x86_64__
 int execve( const char *filename, char *const argv[], char *const envp[] ){
         int ret;
         asm volatile(
@@ -363,6 +484,18 @@ int execve( const char *filename, char *const argv[], char *const envp[] ){
         );
         return ret;	
 	}
+#endif	
+//----------------------------------------------------------------------
+#ifdef __i386__
+int execve(const char* filename, char * const argv[], char *const envp[]){
+        int ret;
+        asm volatile(SYS_CALL
+            : "=a" (ret)
+            : "a" (__NR_execve), "b" (filename), "c" (argv), "d" (envp)
+        );
+        return ret;
+}
+#endif
 //----------------------------------------------------------------------
 #ifdef __i386__
 size write(int fd, void* buf, size count) {
