@@ -1,3 +1,4 @@
+//lib - Best Hypertext Byte (bhb/php) - will implement the methods of the notorious php
 class bhb(){
 //string function
 function strlen(new $string){}
