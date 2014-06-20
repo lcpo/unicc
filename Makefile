@@ -6,7 +6,7 @@ EXECUTABLE=unicc
 SOURCES=main.c unicc.c
 OBJECTS=main.o
 OBJECTSLIB=unicc.o
-SOPTS= -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #-lpcre  `pcre-config --libs` -lcurl -lmysqlclient # -w -fPIC
+SOPTS= -O3 -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #-lpcre  `pcre-config --libs` -lcurl -lmysqlclient # -w -fPIC
 
 all:
 	make clear
