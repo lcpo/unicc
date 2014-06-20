@@ -4,7 +4,8 @@
 int main(int argc, char **argv) {
 set_fun(main,int,main,2);
 
-
+print_fun();
+print_var();
 return 0;
 						}
 
