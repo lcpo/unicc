@@ -6,17 +6,18 @@ EXECUTABLE=unicc
 SOURCES=main.c unicc.c
 OBJECTS=main.o
 OBJECTSLIB=unicc.o
-SOPTS= -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #-lpcre  `pcre-config --libs` -lcurl -lmysqlclient # -w 
+SOPTS= -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #-lpcre  `pcre-config --libs` -lcurl -lmysqlclient # -w -fPIC
 
 all:
-	$(CC) -c -w -D __NO_DEBUG -D __NO_START $(SOURCES)
+	make clear
+	$(CC) -c -D __NO_DEBUG -D __NO_START $(SOURCES)
 	$(LIBCOMPA) lib$(EXECUTABLE).a $(OBJECTSLIB)
 	$(LIBCOMP) lib$(EXECUTABLE).a
 	make break
-	$(CC) -fPIC -c -w -D __NO_DEBUG -D __NO_START $(SOURCES)
-	$(CC) -shared -nostdlib -o $(EXECUTABLE).so $(OBJECTSLIB)	
+	$(CC) -c -D __NO_DEBUG -D __NO_START $(SOURCES)
+	$(CC) -shared $(SOPTS) -o $(EXECUTABLE).so $(OBJECTSLIB)	
 	make break
-	$(CC) -c -w -D __NO_DEBUG -D __NO_START $(SOURCES)
+	$(CC) -c -D __NO_DEBUG -D __NO_START $(SOURCES)
 	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 	make break
 test:
