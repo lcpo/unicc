@@ -3,9 +3,9 @@
 //urlencode
 //preg_match_all
 //preg_replace
-//preg_match
 //stripos
 //strpos
+//preg_match
 //explode
 //implode
 //strlen
@@ -34,7 +34,6 @@
 //unlink
 //is_scalar
 //base64_encode
-//base64_decode
 //array_merge
 //substr
 //system

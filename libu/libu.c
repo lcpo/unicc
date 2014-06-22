@@ -1,15 +1,21 @@
-class u(){
+
 	
 
 //!con --------------------------------------------------------
+
 //!cpy --------------------------------------------------------
+
 //!err --------------------------------------------------------
+
 //!ex  --------------------------------------------------------
+
 //!get --------------------------------------------------------
+
 //!is  --------------------------------------------------------
+
 //!len --------------------------------------------------------
 //Допилить работу с многобайтовыми символами
-uni _len(uni* x){
+uni libu_len(uni* x){
 	uni id=get_var_id(x);
 	uni out=-1;
 if(id!=-1){
@@ -26,11 +32,12 @@ if(var_$t[id]==24){double ld=*(double*)(x); out=libc_lenld(ld);}
 return out;
 					}
 
-#define len(x) (_len((uni*)&x))
+
 
 //!mem --------------------------------------------------------
+
 //!pub --------------------------------------------------------
-int _pub(uni* x){
+int libu_pub(uni* x){
 	uni id=get_var_id(x);
 if(id!=-1){
 char* type=get_var_type(x);
@@ -61,14 +68,15 @@ if(var_$t[id]==24){
 				}
 return 0;
 					}
-#define pub(x) ({\
-((_pub((uni*)&x)==0)?(write($O,(char*)&x,libc_lens((char*)&x))):1);\
-})
+
 //!rex --------------------------------------------------------
+
 //!set --------------------------------------------------------
+
 //!so  --------------------------------------------------------
+
 //!toc --------------------------------------------------------
-char _toc(uni* x){
+char libu_toc(uni* x){
 	uni id=get_var_id(x);
 	char out='\0';
 	char* buff;
@@ -85,7 +93,7 @@ if(var_$t[id]==24){double ld=*(double*)(x);buff=libc_ldtos(ld);out=(char)buff[0]
 		   }
 return out;
 	}
-#define toc(x) (_unic_toc((uni*)&x))
+
 //!tod --------------------------------------------------------
 double _tod(uni* x){
 	uni id=get_var_id(x);
@@ -98,9 +106,9 @@ if(libc_sch_count(type,'*')>0 && libc_scmp(type,"char")==1){buff=(void*)*x; out=
 		   }
 return out;
 	}
-#define tod(x) (_tod((uni*)&x))
+
 //!tof --------------------------------------------------------
-float _tof(uni* x){
+float libu_tof(uni* x){
 	uni id=get_var_id(x);
 	float out=0;
 	char* buff;
@@ -112,10 +120,10 @@ if(libc_sch_count(type,'*')>0 && libc_scmp(type,"char")==1){
 		   }
 return out;
 	}
-#define tof(x) (_tof((uni*)&x))
+
 //!toi --------------------------------------------------------
 
-int _toi(uni* x){
+int libu_toi(uni* x){
 	uni id=get_var_id(x);
 	int out=-1;
 if(id!=-1){
@@ -142,28 +150,28 @@ if(var_$t[id]==18){out=(int)*x;}		   		   						//18	signed
 if(var_$t[id]==19){out=(int)*x;}		   		   						//19	signed int
 if(var_$t[id]==20){out=(int)*x;}		   		   						//20	unsigned
 if(var_$t[id]==21){out=(int)*x;}										//21	unsigned int
-//if(var_$t[id]==22){out=libc_ltoi((long)*x);}									//22	signed long
-//if(var_$t[id]==23){out=libc_ultoi((unsigned long)*x);}						//23	unsigned long   		   
-//if(var_$t[id]==24){long double ld=*(long double*)(x); out=ldtoi(ld);}   //24	long double
-//if(var_$t[id]==25){out=libc_stoi((char*)*x);}								//25	signed char*
-//if(var_$t[id]==26){out=libc_stoi((char*)*x);}								//26	unsigned char*
-//if(var_$t[id]==27){out=libc_lltoi((long long)*x);}		   		   		   	//27	long long
-//if(var_$t[id]==28){out=libc_ultoi((long)*x);}								//28	size_t
-//if(var_$t[id]==29){out=libc_lltoi((long long)*x);}		   		   		   	//29	long long int
-//if(var_$t[id]==30){out=libc_ultoi((long)*x);}		   		   		   		//30	unsigned long int
-//if(var_$t[id]==31){out=libc_ulltoi((unsigned long long)*x);}					//31	unsigned long long int
-//if(var_$t[id]==32){out=libc_lltoi((long long)*x);}		   		   		   	//32	signed long long
-//if(var_$t[id]==33){out=libc_ulltoi((unsigned long long)*x);}		   		   	//33   	unsigned long long
-//if(var_$t[id]==34){out=libc_ulltoi((unsigned long long)*x);}		   		   	//34  	signed long long int
+if(var_$t[id]==22){out=libc_ltoi((long)*x);}									//22	signed long
+if(var_$t[id]==23){out=libc_ltoi((unsigned long)*x);}						//23	unsigned long   		   
+if(var_$t[id]==24){long double ld=*(long double*)(x); out=libc_ltoi(ld);}   //24	long double
+if(var_$t[id]==25){out=libc_stoi((char*)*x);}								//25	signed char*
+if(var_$t[id]==26){out=libc_stoi((char*)*x);}								//26	unsigned char*
+if(var_$t[id]==27){out=libc_ltoi((long long)*x);}		   		   		   	//27	long long
+if(var_$t[id]==28){out=libc_ltoi((long)*x);}								//28	size_t
+if(var_$t[id]==29){out=libc_ltoi((long long)*x);}		   		   		   	//29	long long int
+if(var_$t[id]==30){out=libc_ltoi((long)*x);}		   		   		   		//30	unsigned long int
+if(var_$t[id]==31){out=libc_ltoi((unsigned long long)*x);}					//31	unsigned long long int
+if(var_$t[id]==32){out=libc_ltoi((long long)*x);}		   		   		   	//32	signed long long
+if(var_$t[id]==33){out=libc_ltoi((unsigned long long)*x);}		   		   	//33   	unsigned long long
+if(var_$t[id]==34){out=libc_ltoi((unsigned long long)*x);}		   		   	//34  	signed long long int
 if(libc_sch_count(type,'*')>1 && libc_scmp(type,"char*")!=2){libc_print_str("notice: Unable to convert type \"array\"!\n");}	   		   		   
 		   }
 
 return out;
 	}
-#define toi(x) (_toi((uni*)&x))
+
 //!tol --------------------------------------------------------
 
-int _tol(uni* x){
+int libu_tol(uni* x){
 	uni id=get_var_id(x);
 	int out=-1;
 if(id!=-1){
@@ -191,8 +199,8 @@ if(var_$t[id]==19){out=(long)*x;}		   		   						//19	signed int
 if(var_$t[id]==20){out=(long)*x;}		   		   						//20	unsigned
 if(var_$t[id]==21){out=(long)*x;}										//21	unsigned int
 if(var_$t[id]==22){out=(long)*x;}										//22	signed long
-//if(var_$t[id]==23){out=libc_ulltoi((unsigned long long)*x);}					//23	unsigned long   		   
-//if(var_$t[id]==24){long double ld=*(long double*)(x); out=libc_ldtol(ld);}   //24	long double
+if(var_$t[id]==23){out=libc_ltoi((unsigned long long)*x);}					//23	unsigned long   		   
+//if(var_$t[id]==24){long double ld=*(long double*)(x); out=libc_ldtoi(ld);}   //24	long double
 //if(var_$t[id]==25){out=libc_stol((char*)*x);}								//25	signed char*
 //if(var_$t[id]==26){out=libc_stol((char*)*x);}								//26	unsigned char*
 //if(var_$t[id]==27){out=libc_lltol((long long)*x);}		   		   		   	//27	long long
@@ -208,7 +216,7 @@ if(libc_sch_count(type,'*')>1 && libc_scmp(type,"char*")!=2){libc_print_str("not
 
 return out;
 	}
-#define tol(x) (_tol((uni*)&x))
+
 //!told -------------------------------------------------------
 long double _told(uni* x){
 	uni id=get_var_id(x);
@@ -221,7 +229,7 @@ if(libc_sch_count(type,'*')>0 && libc_scmp(type,"char")==1){buff=(void*)*x; out=
 		   }
 return out;
 	}
-#define told(x) (_told((uni*)&x))
+
 //!tos --------------------------------------------------------
 char* _tos(uni* x){
 	uni id=get_var_id(x);
@@ -239,17 +247,6 @@ if(var_$t[id]==24){long double ld=*(long double*)(x); return libc_ldtos((long do
 				}
 return (char*)x;
 					}
-#define tos(x) (_tos((uni*)&x))
+
 //!tou --------------------------------------------------------
-return obj(
-set_fun(_len,uni,u,-1),
-set_fun(_pub,uni,u,-1),
-set_fun(_toc,uni,u,-1),
-set_fun(_tod,uni,u,-1),
-set_fun(_tof,uni,u,-1),
-set_fun(_toi,uni,u,-1),
-set_fun(_tol,uni,u,-1),
-set_fun(_told,uni,u,-1),
-set_fun(_tos,uni,u,-1)
-);
- }
+

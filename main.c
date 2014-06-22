@@ -1,11 +1,26 @@
 #include "unicc.c"
 
+int test2(void){
+printf("%s\n",__FUNCTION__);
+return 0;	
+	}
 
 int main(int argc, char **argv) {
 set_fun(main,int,main,2);
+//print_fun();
+//print_var();
+double test=var(test,double,main);
+test=123.4567;
+pub(test);
+pub("\n");
+int o=len(test);
+var(o,int,main);
 
-print_fun();
+printf("%i\n",o);
+
+test2();
 print_var();
+print_fun();
 return 0;
 						}
 
