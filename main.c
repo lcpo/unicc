@@ -4,7 +4,7 @@ int test2(void){
 printf("%s\n",__FUNCTION__);
 return 0;	
 	}
-
+ 
 int main(int argc, char **argv) {
 set_fun(main,int,main,2);
 //print_fun();
