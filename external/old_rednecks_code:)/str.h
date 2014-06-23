@@ -50,18 +50,7 @@ return count_sub;
 }
 
 //--------------------------------------------------------------------//analog implode
-char* implode(char* r,char** arri){
-int i=0,n=5,n_arr=0,n_r=strlen(r);
-char buff[STRING_MAX];
-memset(buff,'\0',sizeof(char));
-while(arri[i]!=NULL){n_arr=n_arr+strlen(arri[i])+n_r;concat_t(buff,arri[i],r);i++;}
-n_arr=n_arr-n_r;
-strncat(buff,buff,n_arr);
-char* out=buff+(n_arr+n_r);
-strcpy(buff,"");
-return out;
-}
-#define join implode
+
 //--------------------------------------------------------------------//core function
 int lenAllArg(char* p,...){
 va_list ar;
@@ -179,20 +168,7 @@ char* out=buff_strn;
 return out;
 }else{return "";}
 	}
-//--------------------------------------------------------------------//	
-char* strpstr_nomo(char* str,char* ser){
-if(strstr(str,ser)){	
-int len_ser=strlen(ser),len_str=strlen(str),len_nstr;
-char* buff_strn=Str();
-strcpy(buff_strn,"\0");
-char* estr=strstr(str,ser)+len_ser;
-int iestr=strlen(estr);
-len_nstr=len_str-iestr-len_ser;
-strncat(buff_strn,str,len_nstr);
-char* out=buff_strn;
-return out;
-}else{return str;}
-	}
+
 
 //**********************************************************************/
 int strpos(char *haystack, char *needle)
@@ -210,22 +186,7 @@ print_var(pos,d\n);
    if (p){return p - str+len_needle;}else{return -1;} 
 }
 //--------------------------------------------------------------------//analog explode
-char** explode(char* se,char* str){
-int i=0,l=0;char* new_s="";
-int cou=substr_count(str,se)+2;
-char* ret[cou];
-while(l!=-1){
-l=strpos(str,se);
-new_s =strpstr_nomo(str,se);
-ret[i]=add(new_s);
-str=str+l+strlen(se);
-	i++;
-}
-ret[i]='\0';
-char** out=realloc(NULL,sizeof(ret));
-memcpy(out, ret, sizeof(ret));
-return out;        
-	}
+
 //----------------------------------------------------------------------
 char* string_replace(char *str, char *delimiter, char *replacement){
 char *ret=Str();

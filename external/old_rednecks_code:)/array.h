@@ -22,6 +22,7 @@ return out;
 	out;})
 //----------------------------------------------------------------------	
 #define  array(v...)({char* ar[]={v};array out;out.$=calloc(ARRAY_MAX,sizeof(char**)); out.$=ar;out.$t="array";out;})	
+//----------------------------------------------------------------------
 char* add(char* val){
 mc("add()|file:lcpo.c");
 char* out=malloc(strlen(val)+1);

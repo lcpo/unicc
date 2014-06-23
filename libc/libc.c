@@ -23,6 +23,7 @@ int libc_memcmp( void *s1,  void *s2, size_t n) {
      }
      return 0;
 }
+
 //!---------------------------------------------------------------------3
 void *libc_memcpy (void *dest, void *src, size n)
 {
@@ -48,7 +49,19 @@ void *libc_memset(void *s, int c, size n)
  
         return s;
 }
-//!---------------------------------------------------------------------5
+//!---------------------------------------------------------------------
+void *libc_memmove(char *dest, char *src, size n)
+{
+	char *d = dest;
+	const char *s = src;
+	if (d==s) return d;
+	if ((size_t)(d-s) < n) {
+		while (n--) d[n] = s[n];
+		return dest;
+	}
+	return libc_memcpy((char*)d, (char*)s, (size)n);
+}
+//!---------------------------------------------------------------------
 char* libc_strcat ( char* des, char* so ){
 while (*des) ++des;
 while ((*des++ = *so++) != '\0') ;
@@ -126,7 +139,7 @@ uni libc_strpos(char *haystack, char *needle)
 
 void *libc_malloc(size __size){
 void *result;
-result = mmap(NULL, __size+sizeof(void*) * sizeof(void*) , PROT_READ | PROT_WRITE,MMAP_FLAGS, 0, 0);//+ sizeof(size_t)
+result = mmap(NULL, __size , PROT_READ | PROT_WRITE,MMAP_FLAGS, 0, 0);//+ sizeof(size_t)
 if (result == MAP_FAILED){return NULL;}
 * (size *) result = __size;
 return(result + sizeof(void*));
@@ -826,7 +839,7 @@ return pb;
 //!---------------------------------------------------------------------
 int libc_odd(uni value){return (value & 1);} //определяет четное или нечетное
 //!---------------------------------------------------------------------
-uni libc_sch_count(char* str, int ch){
+uni libc_sch_count(char* str, int ch){ //считает количество вхождений символа в строку
 uni i=0; uni count=0;
 while(str[i] != '\0'){
 if(str[i] == ch){count++;}
@@ -835,7 +848,7 @@ return count;
 
 	}
 //!---------------------------------------------------------------------
-char* libc_scpy(char *destaddr, char *srcaddr, uni len) {
+char* libc_scpy(char *destaddr, char *srcaddr, uni len) { //заполняет строку другой строкой
     char *d = destaddr;
     char *s = srcaddr;
     while (len-- > 0) {
@@ -844,7 +857,7 @@ char* libc_scpy(char *destaddr, char *srcaddr, uni len) {
     return destaddr;
 }
 //!---------------------------------------------------------------------
-void *libc_set(void *ptr, int ch){
+void *libc_set(void *ptr, int ch){ //заполняет строку символом
 //if ((uintptr_t)ptr % sizeof(long) == 0) {
 //long *p = ptr;
 //mset(p,ch,count(&ptr)+1);
@@ -854,10 +867,153 @@ libc_mset(ptr,ch,libc_strlen(ptr));
 return ptr;
  }
 //!---------------------------------------------------------------------
-uni libc_print_str(char * buf){
+uni libc_print_str(char * buf){ //Печатает строку
 return write($O, (void*)buf, libc_strlen(buf));
 }
 //!---------------------------------------------------------------------
+//Требуется оптимизация
+char* libc_strpstr_nomo(char* str,char* ser){ //Получает позицию первого вхождения подстроки не модифицируя строку
+if(libc_strstr(str,ser)){	
+int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
+char* buff_strn=libc_malloc(len_str);
+libc_strcpy(buff_strn,"\0");
+char* estr=libc_strstr(str,ser)+len_ser;
+int iestr=libc_strlen(estr);
+len_nstr=len_str-iestr-len_ser;
+libc_strncat(buff_strn,str,len_nstr);
+char* out=buff_strn;
+return out;
+}else{return str;}
+	}
+//!---------------------------------------------------------------------
+//Требуется оптимизация
+char** libc_explode(char* se,char* str){ //Разбивает строку на массив по разделителю
+int i=0,l=0;char* new_s="";
+int cou=libc_substr_count(str,se)+2;
+char** ret=libc_malloc(cou);
+while(l!=-1){
+l=libc_strpos(str,se);
+new_s =libc_strpstr_nomo(str,se);
+ret[i]=new_s;
+str=str+l+libc_strlen(se);
+	i++;
+}
+ret[i]='\0';
+return ret;        
+								}
+///---------------------------------------------------------------------
+char* libc_implode(char* r,char** arri){
+int i=0,n=libc_count((void **)arri),n_arr=0,n_r=libc_strlen(r);
 
+while(i<n){n_arr=n_arr+libc_strlen(arri[i])+n_r;i++;}
+char* out=libc_malloc((n_arr+n_r));
 
+i=0;
+while(i<n){
+	libc_strcat(out,arri[i]);
+	if((n-1)!=i){libc_strcat(out,r);}
+	i++;
+}
+return out;
+										}
+///---------------------------------------------------------------------
+#define libc_join libc_implode
+///---------------------------------------------------------------------
+char* libc_strnstr(char* str, char* ser){
+if(libc_strstr(str,ser)){
+int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
+char* buff_strn=libc_malloc(len_str);
+libc_strcpy(buff_strn,"\0");
+char* estr=libc_strstr(str,ser)+len_ser;
+int iestr=libc_strlen(estr);
+len_nstr=len_str-iestr;
+libc_strncat(buff_strn,str,len_nstr);
+char* out=buff_strn;
+return out;
+}else{return "";}
+	}
+///---------------------------------------------------------------------		
+char* libc_strpstr(char* str,char* ser){
+if(libc_strstr(str,ser)){	
+int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
+char* buff_strn=libc_malloc(len_str);
+libc_strcpy(buff_strn,"\0");
+char* estr=libc_strstr(str,ser)+len_ser;
+int iestr=libc_strlen(estr);
+len_nstr=len_str-iestr-len_ser;
+libc_strncat(buff_strn,str,len_nstr);
+char* out=buff_strn;
+return out;
+}else{return "";}
+	}
+///---------------------------------------------------------------------
+long libc_compare(char* tmp_a, char* tmp_b, char* par){ //сравнение строк
+long i=0,r=0,n_a=libc_strlen(tmp_a),n_b=libc_strlen(tmp_b);
+if(par=="!="){if(n_a!=n_b){return 0;}}
+if(par=="=="){
+while(n_a>i){
+if(tmp_a[i]==tmp_b[i]){r++;}else{r--;}i++;}
+if(n_a==r){return 1;}else{return 0;}
+			 }
+	}
+///---------------------------------------------------------------------
+int libc_array_search(char* str,char** ars){//Поиск в массиве значения возврат индекса
+int i=0;
+while(ars[i]!=NULL){
+if(libc_compare(ars[i],str,"==")){return i;}
+i++;}
+return -1;
+	}
+///---------------------------------------------------------------------
+int libc_in_array(char* str,char** ars){//Поиск в массиве значения возврат индекса
+int i=0;
+while(ars[i]!=NULL){
+if(libc_compare(ars[i],str,"==")){return i;}
+i++;}
+return -1;
+	}	
+///---------------------------------------------------------------------
+char** libc_array_unique(char **ars){
+char** item=libc_malloc(sizeof(ars));
+int i=0;
+while(ars[i]!=NULL){
+int id=libc_array_search(ars[i],ars);
+if(id!=-1 && id==i){item[id]=ars[i];}else{item[i]="";}
+i++;}
+return item;	
+	}	
+///---------------------------------------------------------------------
+int libc_isspace(int ch){
+	return ch == ' ' || (unsigned)ch-'\t' < 5;
+}
+///---------------------------------------------------------------------
+char* libc_ltrim(char *str) {
+  int len = libc_strlen(str);
+  char *cur = str;
+
+  while (*cur && libc_isspace(*cur)) {
+    ++cur;
+    --len;
+  }
+  if (str != cur) libc_memmove(str, (char*)cur, len + 1);
+
+  return str;
+}
+///---------------------------------------------------------------------
+char* libc_rtrim(char *str) {
+  int len = libc_strlen(str);
+  char *cur = str + len - 1;
+
+  while (cur != str && libc_isspace(*cur)) --cur;
+  cur[libc_isspace(*cur) ? 0 : 1] = '\0';
+
+  return str;
+}
+///---------------------------------------------------------------------
+char * libc_trim(char *str) {
+  libc_rtrim(str);
+  libc_ltrim(str);
+  return str;
+}
+///---------------------------------------------------------------------
 

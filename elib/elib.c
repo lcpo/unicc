@@ -564,9 +564,12 @@ asm("syscall;" : : : "%rax", "%r11", "%rcx");
 asm volatile("movq %%rax, %0; " : "=g" (res) );
 return res;
 																		}
+																		
+
 #endif 
 #ifdef __i386__
-asm(
+
+asm (
 "__syscall6:\n"
 "pushl %ebp\n"
 "pushl %edi\n"
@@ -590,8 +593,8 @@ asm(
 extern long __syscall6(long n, long a, long b, long c, long d, long e, long f);
 #endif
 
-
 void*  mmap(void* addr, size len, int prot, int flags, int fd, unsigned long offset){return (void*)__syscall6(__NR_mmap,(long)&addr,len,prot,flags,fd,offset);}
+
 
 
 

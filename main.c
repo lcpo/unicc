@@ -6,10 +6,11 @@ return 0;
 	}
  
 int main(int argc, char **argv) {
+	/*
 set_fun(main,int,main,2);
 //print_fun();
 //print_var();
-double test=var(test,double,main);
+float test=var(test,float,main);
 test=123.4567;
 pub(test);
 pub("\n");
@@ -20,7 +21,26 @@ printf("%i\n",o);
 
 test2();
 print_var();
-print_fun();
+print_fun();*/
+
+
+char* test1="test1|test2|test3|123|123|123|456|789|qwe|rtyu|fbcd|hrmp";
+char* test2="|";
+char* test3=libc_strpstr_nomo(test1,test2);
+
+char** test4=libc_explode(test2,test1);
+test4=libc_array_unique(test4);
+int nom=libc_count((void**)test4);
+int i=0;
+while(nom>i){
+printf("%s\n",test4[i]);
+++i;}
+
+//char* test5=libc_implode("|++|",test4);
+//printf("%s\n",test5);
+
+
+
 return 0;
 						}
 
