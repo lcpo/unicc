@@ -1,4 +1,4 @@
-
+#include "ctype.c"
 //!---------------------------------------------------------------------1	
 void *libc_memchr( void *s, int c, size_t n){
     if (n) { unsigned char *p = s;
@@ -983,9 +983,7 @@ i++;}
 return item;	
 	}	
 ///---------------------------------------------------------------------
-int libc_isspace(int ch){
-	return ch == ' ' || (unsigned)ch-'\t' < 5;
-}
+int libc_isspace(int c);	
 ///---------------------------------------------------------------------
 char* libc_ltrim(char *str) {
   int len = libc_strlen(str);
