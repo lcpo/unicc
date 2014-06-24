@@ -54,5 +54,20 @@ void __assert2(char *file, int line, char *func, char *failedexpr){
 	printf("assertion \"%s\" failed: file \"%s\", line %d, function \"%s\"\n",failedexpr, file, line, func);
   //exit(1);
 }
-//----------------------------------------------------------------------						  
+//----------------------------------------------------------------------
+void print_fstat(struct stat_f *fin){
+printf("st_dev=%l\n",fin->st_dev);
+printf("st_ino=%l\n",fin->st_ino);
+printf("st_mode=%l\n",fin->st_mode);
+printf("st_nlink=%l\n",fin->st_nlink);
+printf("st_uid=%l\n",fin->st_uid);
+printf("st_gid=%l\n",fin->st_gid);
+printf("st_rdev=%l\n",fin->st_rdev);
+printf("st_size=%l\n",fin->st_size);
+printf("st_atime=%l\n",fin->st_atime);
+printf("st_mtime=%l\n",fin->st_mtime);
+printf("st_ctime=%l\n",fin->st_ctime);
+return;
+				}
+						  
 #endif

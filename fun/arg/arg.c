@@ -1,3 +1,4 @@
+/*
 //----------------------------------------------------------------------
 #ifdef __x86_64__
 #include "stdarg.h"
@@ -13,6 +14,7 @@ typedef char* va_list;
 
 extern void* malloc(size  __size);
 extern void* realloc(void* ptr,size __size);
+*/
 //----------------------------------------------------------------------
 uni* __arg(void* p,...){
 int i=0;

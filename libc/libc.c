@@ -1,4 +1,5 @@
-#include "ctype.c"
+size_t libc_strlen(char* v){size_t i=0;while(v[i]!=0){++i;}return i;}
+#define libc_lens libc_strlen 
 //!---------------------------------------------------------------------1	
 void *libc_memchr( void *s, int c, size_t n){
     if (n) { unsigned char *p = s;
@@ -73,12 +74,7 @@ char * libc_strcpy(char *to, const char *from){
 	for (; (*to = *from) != 0; ++from, ++to);
 	return(save);
 }
-//!---------------------------------------------------------------------
-size libc_strlen(char *str){
-	register const char *s;
-	for (s = str; *s; ++s);
-	return(s - str);
-}
+
 //!---------------------------------------------------------------------
 char* libc_strncat(char* dst, const char * src, size n){
 	if (n != 0) {
@@ -334,7 +330,7 @@ if(num<0){num= -num; i++;} while(num){num/=10;++i;}return i;
 
 //!---------------------------------------------------------------------
 
-uni libc_lens(char* v){uni i=0;while(v[i]!=0){++i;}return i;}
+
 
 //!---------------------------------------------------------------------
 
@@ -983,7 +979,9 @@ i++;}
 return item;	
 	}	
 ///---------------------------------------------------------------------
-int libc_isspace(int c);	
+int libc_isspace(int ch){
+	return ch == ' ' || (unsigned)ch-'\t' < 5;
+}
 ///---------------------------------------------------------------------
 char* libc_ltrim(char *str) {
   int len = libc_strlen(str);
@@ -1014,4 +1012,9 @@ char * libc_trim(char *str) {
   return str;
 }
 ///---------------------------------------------------------------------
+int libc_file_exists(char* filename){
+struct stat_f *fi=libc_malloc(sizeof(char));
+stat(filename,fi);
+if(fi->st_atime==0 && fi->st_mtime==0 && fi->st_ctime==0){return 0;}else{return 1;}
+	} 
 

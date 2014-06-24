@@ -5,39 +5,50 @@ printf("%s\n",__FUNCTION__);
 return 0;	
 	}
  
+//!---------------------------------------------------------------------
+size filesize(char* filename){
+struct stat_f *fi=libc_malloc(sizeof(char));
+stat(filename,fi);
+return fi->st_gid;
+							}
+//!---------------------------------------------------------------------							
+char* file_get_contents(char* filename){
+struct stat_f *fi=libc_malloc(sizeof(char));
+int res=open(filename,O_RDONLY,0);
+fstat(res,fi);
+char* buff=libc_malloc(fi->st_gid);
+read(res,buff,fi->st_gid);
+close(res);
+return buff;
+										}
+//!---------------------------------------------------------------------
+int file_put_contents(char* filename, char* src, int appendflag){
+int flags=0,out=0;
+if(appendflag==0){flags|= (O_CREAT|O_WRONLY|O_TRUNC);}else{flags|= (O_CREAT|O_WRONLY|O_APPEND);}
+int res=open(filename,flags,0666);
+out=write(res,(void*)src,libc_strlen(src));	
+close(res);
+return out;
+												}										
+										
+//!---------------------------------------------------------------------
+
+int rand(void)
+{
+
+	return 0;
+}										
+																
+							
+ 
 int main(int argc, char **argv) {
-	/*
-set_fun(main,int,main,2);
-//print_fun();
-//print_var();
-float test=var(test,float,main);
-test=123.4567;
-pub(test);
-pub("\n");
-int o=len(test);
-var(o,int,main);
 
-printf("%i\n",o);
+file_put_contents("test1.txt","test1|test2|test3|123|123|123|456|789|qwe|rtyu|fbcd|hrmp",0);
+int o=0;
+o=rand();
+printf("\n%i\n",o);
+exit(0);
 
-test2();
-print_var();
-print_fun();*/
-
-
-char* test1="test1|test2|test3|123|123|123|456|789|qwe|rtyu|fbcd|hrmp";
-char* test2="|";
-char* test3=libc_strpstr_nomo(test1,test2);
-
-char** test4=libc_explode(test2,test1);
-test4=libc_array_unique(test4);
-int nom=libc_count((void**)test4);
-int i=0;
-while(nom>i){
-printf("%s\n",test4[i]);
-++i;}
-
-//char* test5=libc_implode("|++|",test4);
-//printf("%s\n",test5);
 
 
 

@@ -12,15 +12,27 @@
 //----------------------------------------------------------------------
 ///MAP
 #define MAP_FAILED ((void*)-1)
-#define O_RDONLY       00
-#define O_WRONLY       01
-#define O_RDWR         02
-#define O_CREAT	       03
-#define O_EXCL	       04
+#define O_RDONLY       0x0000 //открыть только на чтение
+#define O_WRONLY       0x0001 //открыть только на запись
+#define O_RDWR         0x0002 //открыть и на чтение и на запись
+#define O_ACCMODE      0x0003
+
+#define O_CREAT		0x0040
+
+
+#define O_NOCTTY	0x0100
+#define O_EXCL		0x0080
+#define O_APPEND	0x0400 //Добавить в конец
+#define O_TRUNC		0x0200 //Перезапись
+
+#define O_NONBLOCK	0x0800
+#define O_SYNC		0x1000
+#define O_LARGEFILE	0
 
 #define S_IRUSR 	   0400
 #define S_IWUSR 	   0200
 #define S_IXUSR 	   0100
+
 #define PROT_READ       0x1 
 #define PROT_WRITE      0x2 
 #define PROT_EXEC       0x4 

@@ -14,8 +14,9 @@
 //strlen 			-ok
 //trim				-ok
 //array_unique		-ok
-//file_put_contents
-//file_get_contents
+//file_put_contents	-ok
+//file_get_contents	-ok
+//filesize			-ok
 //count 			-ok
 //in_array			-ok
 //rand
@@ -23,7 +24,7 @@
 //str_replace		-ok
 //str_ireplace
 //parse_url
-//file_exists
+//file_exists		-ok
 //dirname
 //fopen
 //fclose

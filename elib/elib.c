@@ -51,9 +51,41 @@ long __sysrun(long ns, ...){
 #define __syscall4(n,a,b,c,d) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d))
 #define __syscall5(n,a,b,c,d,e) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e))
 #define __syscall6(n,a,b,c,d,e,f) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e),(long)(f))
-///------------------------------------------------------------
+///---------------------------------------------------------------------
+/*
+struct stat {
+  dev_t st_dev;
+  ino_t st_ino;
+  mode_t st_mode;
+  nlink_t st_nlink;
+  uid_t st_uid;
+  gid_t st_gid;
+  dev_t st_rdev;
+  loff_t st_size;
+  time_t st_atime;
+  time_t st_mtime;
+  time_t st_ctime;
+};*/
+struct stat_f{
+  long st_dev;
+  long st_ino;
+  long st_mode;
+  long st_nlink;
+  long st_uid;
+  long st_gid;
+  long st_rdev;
+  long st_size;
+  long st_atime;
+  long st_mtime;
+  long st_ctime;
+};
+///---------------------------------------------------------------------
 uni open(char * filename, uni flags, uni mode) {return __syscall3(__NR_open,filename,flags,mode);}
 void close(uni fd) {__syscall1(__NR_close,fd);}
+uni stat(char * filename, struct stat_f *buf) {return __syscall2(__NR_stat,filename,buf);}
+uni fstat(int fd, struct stat_f *buf) {return __syscall2(__NR_fstat,fd,buf);}
+uni lstat(char * filename, struct stat_f *buf) {return __syscall2(__NR_lstat,filename,buf);}
+
 uni brk(void* brkv) {return __syscall1(__NR_brk,brkv);}
 uni __exit(uni error_code){return __syscall1(__NR_exit,error_code); }
 uni __exit(uni error_code) __attribute__ ((destructor));
@@ -77,7 +109,7 @@ void* mmap(void* addr, size len, int prot, int flags, int fd, unsigned long offs
 uint64_t  __udivmoddi4(uint64_t num, uint64_t den, uint64_t * rem_p){
   uint64_t quot = 0, qbit = 1;
     if ( den == 0 ) {return 1/((unsigned)den);}
-    while ( (int64_t)den >= 0 ) {den <<= 1; qbit <<= 1; }
+  while ( (int64_t)den >= 0 ) {den <<= 1; qbit <<= 1; }
  
   while ( qbit ) {
     if ( den <= num ) { num -= den; quot += qbit;}
