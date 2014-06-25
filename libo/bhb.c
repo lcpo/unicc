@@ -1,13 +1,9 @@
 //lib - Best Hypertext Byte (bhb/php) - will implement the methods of the notorious php
 //TODO function simulator:
-//array
-//urlencode
-//preg_match_all
-//preg_replace
-//preg_match
 
 
-//stripos
+
+
 //strpos			-ok
 //explode			-ok
 //implode			-ok
@@ -19,19 +15,23 @@
 //filesize			-ok
 //count 			-ok
 //in_array			-ok
-//rand
-//echo
-//str_replace		-ok
-//str_ireplace
-//parse_url
+//rand				-ok
 //file_exists		-ok
+//exec				-ok
+//system			-ok
+//exit				-ok
+//str_replace		-ok
+//str_ireplace		-ok
+//strstr			-ok
+//stristr			-ok
+//parse_url
+//echo
 //dirname
 //fopen
 //fclose
 //end
 //md5
 //addslashes
-//exec				-ok
 //json_encode
 //json_decode
 //sleep
@@ -41,7 +41,11 @@
 //base64_decode
 //array_merge
 //substr
-//system			-ok
 //var_dump
 //print_r
-//exit				-ok
+//stripos
+//array
+//urlencode
+//preg_match_all
+//preg_replace
+//preg_match

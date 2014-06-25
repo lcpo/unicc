@@ -1,12 +1,13 @@
-#ifndef _TYPE_UNIC_C
-#include "utype.c"
+/*
+#ifndef _TYPE_UNICC_C
+#include "../../utype.c"
 #endif
 
 	#ifndef $
-#define $ unic_
+#define $ unicc_
 	#endif
 
-static char** arr_$n; 
+static char** arr_$n;
 static char** arr_$i;
 static int arr_$l;
 
@@ -18,8 +19,8 @@ nom=0;
 v=0;
 mv=0;
 pl=0;
-lp=0; 
-char* nm=malloc(0); 
+lp=0;
+char* nm=malloc(0);
 char* mn=malloc(0);
 while(s[nom]!=0){
 if(s[nom]=='['){mv=1;}
@@ -35,8 +36,8 @@ arr_$i=malloc(0);
 arr_$n=realloc(arr_$n,count((void**)arr_$n)+1);
 arr_$i=realloc(arr_$i,count((void**)arr_$i)+1);
 			}
-arr_$n[arr_$l]=mn; 
-arr_$i[arr_$l]=nm; 
+arr_$n[arr_$l]=mn;
+arr_$i[arr_$l]=nm;
 arr_$l=arr_$l+1;
 if(sch(nm,'[')==1){mass_elem_args(nm);}{return -1;}
 							}
@@ -50,13 +51,13 @@ if(ind_arr!=-1){index=ind_arr;}else{
 if(is_num(arr_$i[arr_$l-1])==0){
 nom=0; pl=-1;
 while(var_$n[nom]!=NULL){if(scmp(arr_$i[arr_$l-1],var_$n[nom])==2){pl=nom;}nom++;}
-if(pl!=-1){index=(uni)*var_$[pl];}else{index=-1;} //error	
+if(pl!=-1){index=(uni)*var_$[pl];}else{index=-1;} //error
 								}else{index=atoi(arr_$i[arr_$l-1]);}
 									}
 
 nom=0; pl=-1; void** el;
 while(var_$n[nom]!=NULL){if(scmp(arr_$n[arr_$l-1],var_$n[nom])==2){pl=nom;}nom++;}
-	
+
 if(pl!=-1){el=(void*)*var_$[pl];}else{el=NULL;} //error
 arr_$n[arr_$l]=0; arr_$i[arr_$l]=0; arr_$l=arr_$l-1;
 if(arr_$l!=0){get_item_mass_elem_args((uni)el[index]);}else{return (uni)el[index];}
@@ -93,7 +94,7 @@ if(ign==i && odd(kv)==0){vect[veci++]=i;}
 				}
 i=0;
 buff[i]=str_arg;
-while(veci>i){buff[i+1]=str_arg+(vect[i]+1);i++;}				
+while(veci>i){buff[i+1]=str_arg+(vect[i]+1);i++;}
 i=0;
 ign = 0; kv=0;
 
@@ -144,7 +145,7 @@ out[i]=malloc(vect[i]+1);
 out[i]=buff[i];
 				}
 
-return out;	
+return out;
 	}
 
 #define name_arg(p...)({\
@@ -153,3 +154,4 @@ while(args[i]!=NULL){\
 print((char*)get_item(args[i]),lens((char*)get_item(args[i])));\
 print("\n",1);i++;}\
 })
+*/

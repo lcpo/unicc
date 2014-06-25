@@ -10,6 +10,7 @@
 
 
 static char out_Hstr_rep[64];
+static char out_Hstr_irep[64];
 static char _Hslong[48];
 char out_$_dtos[32];
 char out_$_ldtos[32];
@@ -22,7 +23,6 @@ char _$_sullong[ULONG_LONG_MAX_LEN];
 char _$_sulong[ULONG_MAX_LEN];
 
 
-
 	
  void *libc_memchr( void *s, int c, size_t n);
  int libc_memcmp( void *s1,  void *s2, size_t n);
@@ -32,7 +32,7 @@ char _$_sulong[ULONG_MAX_LEN];
  char * libc_strcpy(char *to, const char *from);
  size libc_strlen(char *str);
  char* libc_strncat(char* dst, const char * src, size n);
- int libc_strncmp(const char* s1, const char* s2, size num);
+ int libc_strncmp(char* s1, char* s2, size_t num);
  char * libc_strstr(char *string, char *substring);
  void libc_free(void *ptr);
  uni libc_strpos(char *haystack, char *needle);

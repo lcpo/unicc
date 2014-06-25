@@ -1,8 +1,8 @@
 /*! ~ Системные функции, обращение на уровне ядра ~ !*/
-//----------------------------------------------------------------------
+///------------------------------------------------------------
 //http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64
 //http://numactl.sourcearchive.com/documentation/0.9/syscall_8c-source.html!!!
-///----------------------------------------------------------------------
+///------------------------------------------------------------
 #ifdef __x86_64__
 #include "sys/stdarg.h"
 #endif
@@ -14,6 +14,18 @@ typedef void* va_list;
 #define va_end(ap)	(ap=(void*)0)
 #define va_arg(ap, t) (((ap) = (ap) + __va_argsiz(t)), *((t*)(void*)((ap) - __va_argsiz(t))))
 #endif
+///------------------------------------------------------------
+uni* __arg(void* p,...){
+int i=0;
+uni buff[MAX_ARG];
+va_list arg;
+va_start(arg,p);
+while(p){buff[i++]=(uni)p; p=va_arg(arg,typeof(p));}
+va_end(arg);
+uni* out=(uni*)buff;
+	return out;
+	}
+
 ///------------------------------------------------------------
 #ifdef __i386__
 asm("__syscall:\n" "pushl %ebp\n" "pushl %edi\n" "pushl %esi\n" "pushl %ebx\n"
@@ -51,7 +63,7 @@ long __sysrun(long ns, ...){
 #define __syscall4(n,a,b,c,d) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d))
 #define __syscall5(n,a,b,c,d,e) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e))
 #define __syscall6(n,a,b,c,d,e,f) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e),(long)(f))
-///---------------------------------------------------------------------
+///------------------------------------------------------------
 /*
 struct stat {
   dev_t st_dev;
@@ -79,7 +91,7 @@ struct stat_f{
   long st_mtime;
   long st_ctime;
 };
-///---------------------------------------------------------------------
+///------------------------------------------------------------
 uni open(char * filename, uni flags, uni mode) {return __syscall3(__NR_open,filename,flags,mode);}
 void close(uni fd) {__syscall1(__NR_close,fd);}
 uni stat(char * filename, struct stat_f *buf) {return __syscall2(__NR_stat,filename,buf);}
@@ -98,6 +110,7 @@ uni kill(uni pid, int sig){return __syscall2(__NR_kill,pid,sig);}
 uni dup2(uni oldfd, uni newfd){return __syscall2(__NR_dup2,oldfd,newfd);}
 uni alarm(int seconds){return __syscall1(__NR_alarm,seconds);}
 uni pipe(int* filedes){return __syscall1(__NR_pipe,filedes);}
+long time(long tloc){return __syscall1(__NR_time,tloc);}
 uni nanosleep(uni rqtp, uni rmtp){return __syscall2(__NR_nanosleep,rqtp,rmtp);}
 int readlink(char* path, char * buf, int bufsize){return __syscall3(__NR_readlink,path,buf,bufsize);}
 int ioctl(unsigned int fd, unsigned int cmd, unsigned int arg){return __syscall3(__NR_ioctl,fd,cmd,arg);}
@@ -118,11 +131,11 @@ uint64_t  __udivmoddi4(uint64_t num, uint64_t den, uint64_t * rem_p){
    if ( rem_p ){*rem_p = num;}
    return quot;
 																		}
-///----------------------------------------------------------------------																		
+///------------------------------------------------------------
 uint64_t __udivdi3(uint64_t num, uint64_t den){return __udivmoddi4(num, den, NULL);}
-///----------------------------------------------------------------------
+///------------------------------------------------------------
 uint64_t __umoddi3(uint64_t num, uint64_t den){ uint64_t v;(void) __udivmoddi4(num, den, &v);return v;} 
-//----------------------------------------------------------------------
+///------------------------------------------------------------
 int64_t __moddi3(int64_t num, int64_t den){
   int minus = 0; int64_t v; 
   if ( num < 0 ) { num = -num; minus = 1; }
@@ -131,7 +144,7 @@ int64_t __moddi3(int64_t num, int64_t den){
    if ( minus ){ v = -v;}
    return v;
  } 
-//----------------------------------------------------------------------
+///------------------------------------------------------------
 int64_t __divdi3(int64_t num, int64_t den){
   int minus = 0; int64_t v;
   if ( num < 0 ) {num = -num; minus = 1; }
@@ -140,7 +153,7 @@ int64_t __divdi3(int64_t num, int64_t den){
    if ( minus ){ v = -v;}
     return v;
 }
-//----------------------------------------------------------------------
+///------------------------------------------------------------
 
 
 

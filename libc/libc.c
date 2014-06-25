@@ -1,6 +1,9 @@
+//!---------------------------------------------------------------------
+
 size_t libc_strlen(char* v){size_t i=0;while(v[i]!=0){++i;}return i;}
 #define libc_lens libc_strlen 
-//!---------------------------------------------------------------------1	
+
+//!---------------------------------------------------------------------	
 void *libc_memchr( void *s, int c, size_t n){
     if (n) { unsigned char *p = s;
         do {
@@ -11,7 +14,7 @@ void *libc_memchr( void *s, int c, size_t n){
      }
      return 0;
  }
-//!---------------------------------------------------------------------2
+//!---------------------------------------------------------------------
 int libc_memcmp( void *s1,  void *s2, size_t n) {
      if (n) {
          unsigned char *p1 = s1, *p2 = s2;
@@ -25,11 +28,11 @@ int libc_memcmp( void *s1,  void *s2, size_t n) {
      return 0;
 }
 
-//!---------------------------------------------------------------------3
+//!---------------------------------------------------------------------
 void *libc_memcpy (void *dest, void *src, size n)
 {
-        register char *r1 = dest;
-        register const char *r2 = src;
+        char *r1 = dest;
+        const char *r2 = src;
  
         while (n) {
                 *r1++ = *r2++;
@@ -38,10 +41,10 @@ void *libc_memcpy (void *dest, void *src, size n)
  
         return dest;
 }
-//!---------------------------------------------------------------------4
+//!---------------------------------------------------------------------
 void *libc_memset(void *s, int c, size n)
 {
-        register unsigned char *p = (unsigned char *) s;
+        unsigned char *p = (unsigned char *) s;
  
         while (n) {
                 *p++ = (unsigned char) c;
@@ -93,30 +96,31 @@ char* libc_strncat(char* dst, const char * src, size n){
 	return dst;
 }
 //!---------------------------------------------------------------------
-int libc_strncmp(const char* s1, const char* s2, size num){
+int libc_strncmp(char* l, char* r, size_t num){
+int i=0;
 if (num == 0){return 0;}
 do {
-if (*s1 != *s2++){return (*(const unsigned char *)s1 - *(const unsigned char *)(s2 - 1));}
-if (*s1++ == 0){break;}
+if(l[i]!=r[i]){return (unsigned int)l[i]-(unsigned int)r[i];}
+if (l[i] == 0){break;}
+i++;
 } while (--num != 0);
-return 0;
+return 0; 
  } 
 //!---------------------------------------------------------------------
 
 char * libc_strstr(char *string, char *substring){
-    register char *a, *b;
-    b = substring;
-    if (*b == 0) {	return string;   }
-    
-    for ( ; *string != 0; string += 1) {
-	if (*string != *b) {continue;}
-	a = string;
-	while (1) {if (*b == 0) {return string; }
-	    if (*a++ != *b++) {break;}
+char c, sc;
+size_t len;
+if ((c = *substring++) != 0) {
+len = libc_strlen(substring);
+	do {
+		do {
+		if ((sc = *string++) == 0){	return NULL;}
+			} while (sc != c);
+		} while (libc_strncmp(string, substring, len) != 0);
+	string--;
 	}
-	b = substring;
-										}
-    return (char *) 0;
+return ((char *) string);
 }
 //!---------------------------------------------------------------------
 void libc_free(void *ptr){
@@ -220,39 +224,6 @@ long libc_substr_count(char* str_s, char* sub_s) {
 
 //!---------------------------------------------------------------------
 
-char * 	libc_string_replace(char *string, char *delimiter, char *replacement) {
-    if (!libc_strstr(string,delimiter)) {
-        return string;
-    }
-    int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement), i=0,j=0;
-    char* ret = out_Hstr_rep;
-    while (string[i] != '\0') {
-        if (!libc_strncmp(&string[i], delimiter, ldel)) {
-            i += ldel;
-            j += lrep;
-            bret = 1;
-        } else {
-            i++;
-            j++;
-        }
-    }
-    i = 0;
-    j = 0;
-    while (string[i] != '\0') {
-        if (!libc_strncmp(&string[i], delimiter, ldel)) {
-            libc_memcpy(&ret[j], replacement, lrep);
-            i += ldel;
-            j += lrep;
-        } else {
-            ret[j] = string[i];
-            i++;
-            j++;
-        }
-    }
-    ret[j] = '\0';
-    return ret;
-}
-//!---------------------------------------------------------------------
 char * 	libc_utos(uni n) {
     *_Hslong+=0;
     uni i, sign,j;
@@ -327,10 +298,6 @@ uni i = 0;
 if(num==0){i++;}
 if(num<0){num= -num; i++;} while(num){num/=10;++i;}return i;
 }
-
-//!---------------------------------------------------------------------
-
-
 
 //!---------------------------------------------------------------------
 
@@ -515,10 +482,7 @@ a3[j-1]='\0';
 return a3;
 }
 
-
-
 //!---------------------------------------------------------------------
-
 char* libc_itos(int n){///int to str
 	*_$_sint+=0;
      int i=0, sign=0,j=0;
@@ -540,7 +504,7 @@ return _$_sint;
  }
 
 //!---------------------------------------------------------------------
-/*
+
 char* libc_uitos(unsigned int n){///unsigned int to str
 	*_$_suint+=0;
      int i=0, sign=0,j=0;
@@ -560,7 +524,7 @@ while(j>i) {swap(_$_suint[i],_$_suint[j]);i++; j--;}
 
 return _$_suint;
  }
-*/
+
 //!---------------------------------------------------------------------
  char* libc_ltos(long int n){///long to str
 	*_$_slong+=0;
@@ -986,7 +950,6 @@ int libc_isspace(int ch){
 char* libc_ltrim(char *str) {
   int len = libc_strlen(str);
   char *cur = str;
-
   while (*cur && libc_isspace(*cur)) {
     ++cur;
     --len;
@@ -999,10 +962,8 @@ char* libc_ltrim(char *str) {
 char* libc_rtrim(char *str) {
   int len = libc_strlen(str);
   char *cur = str + len - 1;
-
   while (cur != str && libc_isspace(*cur)) --cur;
   cur[libc_isspace(*cur) ? 0 : 1] = '\0';
-
   return str;
 }
 ///---------------------------------------------------------------------
@@ -1017,4 +978,198 @@ struct stat_f *fi=libc_malloc(sizeof(char));
 stat(filename,fi);
 if(fi->st_atime==0 && fi->st_mtime==0 && fi->st_ctime==0){return 0;}else{return 1;}
 	} 
+//!------------------------------------------------------------
+size libc_filesize(char* filename){
+struct stat_f *fi=libc_malloc(sizeof(char));
+stat(filename,fi);
+return fi->st_gid;
+							}
+//!------------------------------------------------------------
+char* libc_file_get_contents(char* filename){
+struct stat_f *fi=libc_malloc(sizeof(char));
+int res=open(filename,O_RDONLY,0);
+fstat(res,fi);
+char* buff=libc_malloc(fi->st_gid);
+read(res,buff,fi->st_gid);
+close(res);
+return buff;
+										}
+//!------------------------------------------------------------
+int libc_file_put_contents(char* filename, char* src, int appendflag){
+int flags=0,out=0;
+if(appendflag==0){flags|= (O_CREAT|O_WRONLY|O_TRUNC);}else{flags|= (O_CREAT|O_WRONLY|O_APPEND);}
+int res=open(filename,flags,0666);
+out=write(res,(void*)src,libc_strlen(src));	
+close(res);
+return out;
+												}										
+										
+//!------------------------------------------------------------
 
+long libc_rand(long min, long max){
+long t,out;
+t=time(0);
+out = out*0x343fd+0x269EC3;
+out=((out >> 0x10) & 0x7FFF)+t;
+if(max==0 && max==0){
+return out;	
+}else{
+	max++;
+return out % (max-min)+min;
+}
+								}										
+//!------------------------------------------------------------
+char * 	libc_string_replace(char *string, char *delimiter, char *replacement) {
+    if (!libc_strstr(string,delimiter)) {
+        return string;
+    }
+    int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement), i=0,j=0;
+    char* ret = out_Hstr_rep;
+    while (string[i] != '\0') {
+        if (!libc_strncmp(&string[i], delimiter, ldel)) {
+            i += ldel;
+            j += lrep;
+            bret = 1;
+        } else {
+            i++;
+            j++;
+        }
+    }
+    i = 0;
+    j = 0;
+    while (string[i] != '\0') {
+        if (!libc_strncmp(&string[i], delimiter, ldel)) {
+            libc_memcpy(&ret[j], replacement, lrep);
+            i += ldel;
+            j += lrep;
+        } else {
+            ret[j] = string[i];
+            i++;
+            j++;
+        }
+    }
+    ret[j] = '\0';
+    return ret;
+}
+//!------------------------------------------------------------
+int libc_islower(int ch){
+	return (unsigned)ch-'a' < 26;
+}
+//!------------------------------------------------------------
+int libc_isupper(int ch){
+	return (unsigned)ch-'A' < 26;
+}
+//!------------------------------------------------------------
+int libc_toupper(int ch){
+	if (libc_islower(ch)){ return (ch & 95);}
+	return ch;
+}
+//!------------------------------------------------------------
+char* libc_strtoupper(char* str){
+int i=0,n=libc_strlen(str);
+while(n<i){
+str[i]=libc_toupper(str[i]);
+	i++;}
+return str;		
+	}
+//!------------------------------------------------------------
+int libc_tolower(int ch){
+	if (libc_isupper(ch)){ return (ch | 32);}
+	return ch;
+}
+//!------------------------------------------------------------
+char* libc_strtolower(char* str){
+int i=0,n=libc_strlen(str);
+while(n<i){
+str[i]=libc_tolower(str[i]);
+	i++;}
+return str;		
+	}
+//!------------------------------------------------------------
+int libc_strcmp(char *l, char *r){
+int i=0,ll=libc_strlen(l), lr=libc_strlen(r);
+if(ll!=lr){return ll - lr;}
+while(l[i]!='\0'){
+if(l[i]!=r[i]){return (unsigned int)l[i] - (unsigned int)r[i];}
+	i++;}	
+								  }
+//!------------------------------------------------------------
+int libc_strcmpi(char *l, char *r){
+int i=0,ll=libc_strlen(l), lr=libc_strlen(r);
+if(ll!=lr){return ll - lr;}
+char bfl,bfr;
+while(l[i]!='\0'){
+bfl=libc_toupper(l[i]); bfr=libc_toupper(r[i]);
+if(bfl!=bfr){return (unsigned int)bfl - (unsigned int)bfr;}
+	i++;}	
+								  }
+//!------------------------------------------------------------
+int libc_strncmpi(char* l, char* r, size_t num){
+char bfl,bfr;	
+int i=0;
+if (num == 0){return 0;}
+do {
+bfl=libc_toupper(l[i]); bfr=libc_toupper(r[i]);	
+if(bfl!=bfr){return ((unsigned int)bfl - (unsigned int)bfr);}
+if (bfl == 0){break;}
+i++;
+} while (--num != 0);
+return 0; 
+
+ } 
+//!------------------------------------------------------------
+char * libc_stristr(char *string, char *substring){
+char c, sc;
+size_t len;
+//string=strtolower(string);
+//substring=strtolower(substring);
+if ((c = *substring++) != 0) {
+len = libc_strlen(substring);
+	do {
+		do {
+		if ((sc = *string++) == 0){	return NULL;}
+			} while (sc != c);
+		} while (libc_strncmpi(string, substring, len) == 0);
+	string--;
+	}
+return ((char *) string);
+}
+//!------------------------------------------------------------
+char * 	libc_string_ireplace(char *string, char *delimiter, char *replacement) {
+    if (!libc_stristr(string,delimiter)) {
+        return string;
+    }
+    int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement), i=0,j=0;
+    char* ret = out_Hstr_irep;
+    while (string[i] != '\0') {
+        if (!libc_strncmpi(&string[i], delimiter, ldel)) {
+            i += ldel;
+            j += lrep;
+            bret = 1;
+        } else {
+            i++;
+            j++;
+        }
+    }
+    i = 0;
+    j = 0;
+    while (string[i] != '\0') {
+        if (!libc_strncmpi(&string[i], delimiter, ldel)) {
+            libc_memcpy(&ret[j], replacement, lrep);
+            i += ldel;
+            j += lrep;
+        } else {
+            ret[j] = string[i];
+            i++;
+            j++;
+        }
+    }
+    ret[j] = '\0';
+    return ret;
+}
+//!------------------------------------------------------------
+int libc_stripos(char *haystack, char *needle)
+{
+   char *p = libc_stristr(haystack, needle);
+  if (p){return p - haystack;}else{return -1;}  
+} 
