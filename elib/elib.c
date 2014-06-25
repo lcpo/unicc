@@ -111,6 +111,7 @@ uni dup2(uni oldfd, uni newfd){return __syscall2(__NR_dup2,oldfd,newfd);}
 uni alarm(int seconds){return __syscall1(__NR_alarm,seconds);}
 uni pipe(int* filedes){return __syscall1(__NR_pipe,filedes);}
 long time(long tloc){return __syscall1(__NR_time,tloc);}
+int unlink(char* filename){return __syscall1(__NR_unlink,filename);}
 uni nanosleep(uni rqtp, uni rmtp){return __syscall2(__NR_nanosleep,rqtp,rmtp);}
 int readlink(char* path, char * buf, int bufsize){return __syscall3(__NR_readlink,path,buf,bufsize);}
 int ioctl(unsigned int fd, unsigned int cmd, unsigned int arg){return __syscall3(__NR_ioctl,fd,cmd,arg);}

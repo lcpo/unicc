@@ -20,6 +20,7 @@ static uni 			var_$l; 	//!Количество записей структуры
 ///----------------------------------------------------------------------func
 #ifndef _UNIC_C_STRUCTURE_FUNCTION
 #define _UNIC_C_STRUCTURE_FUNCTION
+/*
 typedef uni * (*func)(uni *p,...);
 typedef uni * object,Object,class,Class,new,obj,Obj,function;
 
@@ -30,6 +31,7 @@ static uni  * 	fun_$p;			//! функция прородитель, в случ�
 static uni  * 	fun_$a;			//! Количество аргументов|-1 бесконечное
 static uni 		fun_$l; 		//! количество записей
 static char *** fun_$i;			//! Синонимы функции
+*/
 #endif
 
 

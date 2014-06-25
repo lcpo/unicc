@@ -5,6 +5,7 @@
 
 
 //strpos			-ok
+//stripos			-ok
 //explode			-ok
 //implode			-ok
 //strlen 			-ok
@@ -24,28 +25,33 @@
 //str_ireplace		-ok
 //strstr			-ok
 //stristr			-ok
-//parse_url
-//echo
-//dirname
-//fopen
-//fclose
-//end
-//md5
+//fopen				-ok
+//fclose			-ok
+//end				-ok
+//dirname			-ok
+//array				-ok
+//sleep				-ok
+//unlink			-ok
+//is_scalar			---
+//urlencode			-ok
+//urldecode			-ok
+
 //addslashes
+
 //json_encode
 //json_decode
-//sleep
-//unlink
-//is_scalar
 //base64_encode
 //base64_decode
 //array_merge
 //substr
-//var_dump
-//print_r
-//stripos
-//array
-//urlencode
+
+
+//parse_url : Изучить выбрать необходимое http://draft.scyphus.co.jp/lang/c/url_parser.html
+//md5
 //preg_match_all
 //preg_replace
 //preg_match
+//var_dump
+//print_r
+//print
+//echo

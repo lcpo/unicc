@@ -117,7 +117,8 @@ len = libc_strlen(substring);
 		do {
 		if ((sc = *string++) == 0){	return NULL;}
 			} while (sc != c);
-		} while (libc_strncmp(string, substring, len) != 0);
+		
+	} while (libc_strncmp(string, substring, len) != 0);
 	string--;
 	}
 return ((char *) string);
@@ -1121,16 +1122,16 @@ return 0;
 char * libc_stristr(char *string, char *substring){
 char c, sc;
 size_t len;
-//string=strtolower(string);
-//substring=strtolower(substring);
 if ((c = *substring++) != 0) {
 len = libc_strlen(substring);
 	do {
 		do {
 		if ((sc = *string++) == 0){	return NULL;}
-			} while (sc != c);
+			} while (libc_tolower(sc) != libc_tolower(c));
+	string--;			
+		
 		} while (libc_strncmpi(string, substring, len) == 0);
-	string--;
+
 	}
 return ((char *) string);
 }
@@ -1168,8 +1169,103 @@ char * 	libc_string_ireplace(char *string, char *delimiter, char *replacement) {
     return ret;
 }
 //!------------------------------------------------------------
-int libc_stripos(char *haystack, char *needle)
-{
+int libc_stripos(char *haystack, char *needle){
    char *p = libc_stristr(haystack, needle);
   if (p){return p - haystack;}else{return -1;}  
 } 
+///------------------------------------------------------------
+char *libc_strchr(const char *s, int c){
+    char ch = c;
+    for ( ; *s != ch; s++){
+        if (*s == '\0'){return 0;}
+        }
+    return (char *)s;
+}
+///------------------------------------------------------------
+char *libc_dirname(char *s){
+if (!s || !*s || !libc_strchr(s, '/')){ return ".";}
+size_t n=libc_strlen(s);
+int co=libc_sch_count(s,'/'),coti=0,i=0;
+char* out=libc_malloc(sizeof(char*));
+	do{
+	out[i]=s[i];
+	if(s[i]=='/'){coti++;}
+		i++; 
+		}while(i<n && coti!=co);
+out[i++]='\0';
+	return out;
+}
+///------------------------------------------------------------
+int libc_fopen(char* filename, char* mods){
+	int fd,flags;
+	if (!libc_strchr("rwa", *mods)) {return 0;}	
+	if (libc_strchr(mods, '+')){flags = O_RDWR;}
+	else if (*mods == 'r'){flags = O_RDONLY;}else {flags = O_WRONLY;}
+	if (*mods != 'r'){flags |= O_CREAT;}
+	if (*mods == 'w'){flags |= O_TRUNC;}
+	if (*mods == 'a'){flags |= O_APPEND;}
+	fd = open(filename, flags, 0666);
+	if (fd < 0){ return 0;}else{return fd;}
+}
+///------------------------------------------------------------
+void* libc_end(void** arr){
+long pos=libc_count(arr);
+return arr[pos];	
+					 }
+///------------------------------------------------------------					 
+#define fclose close
+///------------------------------------------------------------
+#define array($_value...)({\
+void* $_ar[]={$_value,'\0'};\
+(void**)$_ar;})
+///------------------------------------------------------------
+int sleep(unsigned int seconds){
+	struct timespec tv = { .tv_sec = seconds, .tv_nsec = 0 };
+	if (nanosleep(&tv, &tv)){return tv.tv_sec;}
+	return 0;
+}
+///------------------------------------------------------------
+char libc_from_hex(char ch) {
+  return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
+}
+///------------------------------------------------------------
+char libc_to_hex(char code) {
+  static char hex[] = "0123456789abcdef";
+  return hex[code & 15];
+}
+///------------------------------------------------------------
+
+char *libc_urlencode(char *str) {
+  char *pstr = str, *buf = libc_malloc(strlen(str) * 3 + 1), *pbuf = buf;
+  while (*pstr) {
+    if (isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
+      *pbuf++ = *pstr;
+    else if (*pstr == ' ') 
+      *pbuf++ = '+';
+    else 
+      *pbuf++ = '%', *pbuf++ = to_hex(*pstr >> 4), *pbuf++ = to_hex(*pstr & 15);
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}
+///------------------------------------------------------------
+char *libc_urldecode(char *str) {
+  char *pstr = str, *buf = libc_malloc(strlen(str) + 1), *pbuf = buf;
+  while (*pstr) {
+    if (*pstr == '%') {
+      if (pstr[1] && pstr[2]) {
+        *pbuf++ = libc_from_hex(pstr[1]) << 4 | libc_from_hex(pstr[2]);
+        pstr += 2;
+      }
+    } else if (*pstr == '+') { 
+      *pbuf++ = ' ';
+    } else {
+      *pbuf++ = *pstr;
+    }
+    pstr++;
+  }
+  *pbuf = '\0';
+  return buf;
+}
+///------------------------------------------------------------

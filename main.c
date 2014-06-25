@@ -18,43 +18,20 @@ test2(0);
 test3(0);
 */
 
+//$_tp=(typeof($_tp))libc_malloc(sizeof(typeof($_tp)));\
 
+
+
+
+
+
+
+
+	
 int main(int argc, char **argv) {
 
-/*
-int i=17;
-while(i<43){
-printf("%i=%c\n",i,'0'+i);//+32
-i++;
-}
-*/
-/*
-int i=1;
-while(i<255){
-printf("%i=%c\n",i,'0'+i);//+32
-i++;
-}
-*/
 
-
-//char* x=libc_malloc(sizeof(char*));
-//x=libc_stristr("test123","tEst");
-//printf("\nx=%s\n",x);
-
-int o;
-char* ro;
-char* str="0987654321test123";
-char* sub="Test";
-printf("\nstr=%s\n",str);
-
-o=libc_stripos("0987654321test123","test");
-printf("\nx=%i\n",o);
-
-ro=libc_stristr("0987654321test123","Test");
-printf("\nro=%s\n",ro);
-
-int bo=libc_strncmpi(str+10, "Test", libc_strlen("Test"));
-printf("\nbo=%i\n",bo);
+	
 exit(0);
 
 
