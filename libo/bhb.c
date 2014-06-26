@@ -36,10 +36,10 @@
 //urlencode			-ok
 //urldecode			-ok
 
-//addslashes
+//addslashes ??
 
-//json_encode
-//json_decode
+//json_encode ??
+//json_decode ??
 //base64_encode
 //base64_decode
 //array_merge

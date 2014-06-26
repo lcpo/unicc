@@ -30,8 +30,19 @@ test3(0);
 	
 int main(int argc, char **argv) {
 
+printf("%s\n",libc_substr("abcdef", 1,   -1));    // bcdef
+printf("%s\n",libc_substr("abcdef", 1,   3));     // bcd
+printf("%s\n",libc_substr("abcdef", 0,   4));     // abcd
+printf("%s\n",libc_substr("abcdef", 0,  -1));     // abcdef
+printf("%s\n",libc_substr("abcdef", 5,   1));     // f
+/*
+echo substr('abcdef', 1);     // bcdef
+echo substr('abcdef', 1, 3);  // bcd
+echo substr('abcdef', 0, 4);  // abcd
+echo substr('abcdef', 0, 8);  // abcdef
+echo substr('abcdef', -1, 1); // f
+*/
 
-	
 exit(0);
 
 

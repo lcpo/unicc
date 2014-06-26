@@ -1215,18 +1215,30 @@ return arr[pos];
 ///------------------------------------------------------------					 
 #define fclose close
 ///------------------------------------------------------------
+int libc_isalpha(int ch){
+	return ((unsigned)ch|32)-'a' < 26;
+}
+///------------------------------------------------------------
+int libc_isdigit(int ch){
+	return (unsigned)ch-'0' < 10;
+}
+///------------------------------------------------------------
 #define array($_value...)({\
 void* $_ar[]={$_value,'\0'};\
 (void**)$_ar;})
 ///------------------------------------------------------------
-int sleep(unsigned int seconds){
+int libc_sleep(unsigned int seconds){
+struct timespec {
+  long tv_sec;
+  long tv_nsec;
+};
 	struct timespec tv = { .tv_sec = seconds, .tv_nsec = 0 };
-	if (nanosleep(&tv, &tv)){return tv.tv_sec;}
+	if (nanosleep((long)&tv, (long)&tv)){return tv.tv_sec;}
 	return 0;
 }
 ///------------------------------------------------------------
 char libc_from_hex(char ch) {
-  return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
+  return libc_isdigit(ch) ? ch - '0' : libc_tolower(ch) - 'a' + 10;
 }
 ///------------------------------------------------------------
 char libc_to_hex(char code) {
@@ -1234,16 +1246,19 @@ char libc_to_hex(char code) {
   return hex[code & 15];
 }
 ///------------------------------------------------------------
-
+int libc_isalnum(int ch){
+	return libc_isalpha(ch) || libc_isdigit(ch);
+}
+///------------------------------------------------------------
 char *libc_urlencode(char *str) {
-  char *pstr = str, *buf = libc_malloc(strlen(str) * 3 + 1), *pbuf = buf;
+  char *pstr = str, *buf = libc_malloc(libc_strlen(str)), *pbuf = buf;
   while (*pstr) {
-    if (isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
+    if (libc_isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
       *pbuf++ = *pstr;
     else if (*pstr == ' ') 
       *pbuf++ = '+';
     else 
-      *pbuf++ = '%', *pbuf++ = to_hex(*pstr >> 4), *pbuf++ = to_hex(*pstr & 15);
+      *pbuf++ = '%', *pbuf++ = libc_to_hex(*pstr >> 4), *pbuf++ = libc_to_hex(*pstr & 15);
     pstr++;
   }
   *pbuf = '\0';
@@ -1251,7 +1266,7 @@ char *libc_urlencode(char *str) {
 }
 ///------------------------------------------------------------
 char *libc_urldecode(char *str) {
-  char *pstr = str, *buf = libc_malloc(strlen(str) + 1), *pbuf = buf;
+  char *pstr = str, *buf = libc_malloc(libc_strlen(str)), *pbuf = buf;
   while (*pstr) {
     if (*pstr == '%') {
       if (pstr[1] && pstr[2]) {
@@ -1269,3 +1284,25 @@ char *libc_urldecode(char *str) {
   return buf;
 }
 ///------------------------------------------------------------
+size_t libc_strnlen(char *str, size_t count){
+	char *ps = libc_memchr(str, 0, count);
+	return ps ? ps-str : count;
+}
+///------------------------------------------------------------
+char *libc_strndup(char *str, size_t count)
+{
+	size_t len = libc_strnlen(str, count);
+	char *dup = libc_malloc(len+1);
+	if (!dup) return NULL;
+	libc_memcpy(dup, str, len);
+	dup[len] = '\0';
+	return dup;
+}
+
+
+///------------------------------------------------------------
+char* libc_substr(char* str, size_t begin, size_t len){
+	 
+  //if (str == 0 || libc_strlen(str) == 0 || libc_strlen(str) < begin || libc_strlen(str) < (begin+len)){ return str; }
+  return libc_strndup(str + begin, len); 
+} 
