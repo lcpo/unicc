@@ -6,7 +6,10 @@ EXECUTABLE=unicc
 SOURCES=main.c unicc.c
 OBJECTS=main.o
 OBJECTSLIB=unicc.o
-SOPTS= -O3 -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #-lpcre  `pcre-config --libs` -lcurl -lmysqlclient # -w -fPIC
+#libpcre3-dev -ok
+#libpcrecpp0 -ok
+
+SOPTS= -O3 -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib -lpcre  `pcre-config --libs` #-lcurl -lmysqlclient # -w -fPIC
 
 all:
 	make clear
@@ -25,7 +28,7 @@ test:
 	$(CC) -c $(SOURCES)
 	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 	strip -s ./$(EXECUTABLE)
-	strip ./$(EXECUTABLE) -R .dtors            
+	#strip ./$(EXECUTABLE) -R .dtors #-lpcre requires .dtors          
 	strip ./$(EXECUTABLE) -R .jcr 
 	strip ./$(EXECUTABLE) -R .got 
 	strip ./$(EXECUTABLE) -R .data
