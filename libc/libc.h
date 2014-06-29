@@ -9,9 +9,8 @@
 #define clear_var($_0_v)({typeof($_0_v) $_0_o=(typeof($_0_v))NULL;$_0_o;})
 
 
-static char out_Hstr_rep[64];
-static char out_Hstr_irep[64];
-static char _Hslong[48];
+
+char _Hslong[48];
 char out_$_dtos[32];
 char out_$_ldtos[32];
 char out_$_ftos[32];
@@ -28,16 +27,16 @@ char _$_sulong[ULONG_MAX_LEN];
  int libc_memcmp( void *s1,  void *s2, size_t n);
  void *libc_memcpy (void *dest, void *src, size n);
  void *libc_memset(void *s, int c, size n);
- char* libc_strcat ( char* des, char* so );
+ char* libc_strcat ( char* des, const char* so );
  char * libc_strcpy(char *to, const char *from);
- size libc_strlen(char *str);
- char* libc_strncat(char* dst, const char * src, size n);
+ size_t libc_strlen(char *str);
+ char* libc_strncat(char* dst, const char * src, size_t n);
  int libc_strncmp(char* s1, char* s2, size_t num);
  char * libc_strstr(char *string, char *substring);
  void libc_free(void *ptr);
  uni libc_strpos(char *haystack, char *needle);
  void *libc_malloc(size __size);
- size libc_count(void** v);
+ size_t libc_count(void** v);
  void *libc_realloc(void *ptr, size __size);
  uni	libc_sch(char* str, char ch);
  int libc_scmp(char* str1, char* str2);

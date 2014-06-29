@@ -1,5 +1,5 @@
 #include "unicc.c"
-#include "external/pcre.h"
+
 
 /*
 func* te(){
@@ -20,15 +20,10 @@ test3(0);
 */
 
 
-	
 int main(int argc, char **argv) {
-
+	
 
 exit(0);
-
-
-
-
 return 0;
 						}
 

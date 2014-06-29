@@ -66,20 +66,21 @@ void *libc_memmove(char *dest, char *src, size n)
 	return libc_memcpy((char*)d, (char*)s, (size)n);
 }
 //!---------------------------------------------------------------------
-char* libc_strcat ( char* des, char* so ){
+
+char* libc_strcat ( char* des, const char* so ){
 while (*des) ++des;
 while ((*des++ = *so++) != '\0') ;
 return des;
 }
 //!---------------------------------------------------------------------
-char * libc_strcpy(char *to, const char *from){
+char * libc_strcpy( char *to,const char *from){
 	char *save = to;
-	for (; (*to = *from) != 0; ++from, ++to);
+	for (; (*to = *from) != '\0'; ++from, ++to);
 	return(save);
 }
 
 //!---------------------------------------------------------------------
-char* libc_strncat(char* dst, const char * src, size n){
+char* libc_strncat(char* dst, const char * src, size_t n){
 	if (n != 0) {
 		char *d = dst;
 		const char *s = src;
@@ -91,7 +92,7 @@ char* libc_strncat(char* dst, const char * src, size n){
 				break;
 			d++;
 		} while (--n != 0);
-		*d = 0;
+		*d = '\0';
 	}
 	return dst;
 }
@@ -131,8 +132,7 @@ ptr -= sizeof(size);
 munmap(ptr, * (size *) ptr + sizeof(size));
 }
 //!---------------------------------------------------------------------
-uni libc_strpos(char *haystack, char *needle)
-{
+uni libc_strpos(char *haystack, char *needle){
    char *p = libc_strstr(haystack, needle);
    if (p){return p - haystack;}else{return -1;}  
 } 
@@ -942,7 +942,17 @@ int id=libc_array_search(ars[i],ars);
 if(id!=-1 && id==i){item[id]=ars[i];}else{item[i]="";}
 i++;}
 return item;	
-	}	
+	}
+///---------------------------------------------------------------------
+char** libc_array_unique_sort(char **ars){
+char** item=libc_malloc(sizeof(ars));
+int i=0,n=0;
+while(ars[i]!=NULL){
+int id=libc_array_search(ars[i],ars);
+if(id!=-1 && id==i){item[n++]=ars[i];}
+i++;}
+return item;	
+	}			
 ///---------------------------------------------------------------------
 int libc_isspace(int ch){
 	return ch == ' ' || (unsigned)ch-'\t' < 5;
@@ -1025,7 +1035,7 @@ char * 	libc_string_replace(char *string, char *delimiter, char *replacement) {
         return string;
     }
     int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement), i=0,j=0;
-    char* ret = out_Hstr_rep;
+    char* ret = libc_malloc(libc_strlen(string)+libc_strlen(replacement));
     while (string[i] != '\0') {
         if (!libc_strncmp(&string[i], delimiter, ldel)) {
             i += ldel;
@@ -1141,7 +1151,7 @@ char * 	libc_string_ireplace(char *string, char *delimiter, char *replacement) {
         return string;
     }
     int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement), i=0,j=0;
-    char* ret = out_Hstr_irep;
+    char* ret = libc_malloc(sizeof(char*));
     while (string[i] != '\0') {
         if (!libc_strncmpi(&string[i], delimiter, ldel)) {
             i += ldel;
@@ -1340,109 +1350,80 @@ if(str[i]=='\\' && str[i+1]=='\\'){buff[n++]=str[i];i++;}else
 return buff;	
 	}
 ///------------------------------------------------------------
-#ifdef _PCRE_H
-
-///------------------------------------------------------------
-int libc_preg_match ( char* pattern, char* subject, char** matches , int flags , int offset){
-pcre *f;
-pcre_extra *f_ext;
-const char *errstr;
-int errchar;
-int vecsize=libc_strlen(subject);
-int vector[vecsize];
-const unsigned char *tables;
-int pairs,i,j=0;
-tables=pcre_maketables();
-f=pcre_compile(pattern,PCRE_UTF8|flags,&errstr,&errchar,tables);
-if((f)==NULL){printf("Ошибка: %s\nСимвол N%i\nШаблон:%s\n",errstr,errchar,pattern);return -1;}
-f_ext=pcre_study(f,0,&errstr);
-if((pairs=pcre_exec(f,f_ext,subject,libc_strlen(subject),offset,PCRE_NOTEMPTY,vector,vecsize))<0){return 0;}
-for(i=0;i<pairs;i++){
-char* buff1=subject;
-pcre_copy_substring(subject,vector,pairs,i,buff1,libc_strlen(subject));
-matches[i]=buff1;
-pcre_free_substring(buff1);
-	    }
-
-return 1;
-}
-///------------------------------------------------------------
-int preg_match_all ( char* pattern, char* subject, char*** matches , int flags , int offset){
-pcre *f;
-pcre_extra *f_ext;
-const char *errstr;
-int vecsize=libc_strlen(subject);
-int vector[vecsize];
-const unsigned char *tables;
-int errchar,pairs,n,i=0,j=0;
-tables=pcre_maketables();
-f=pcre_compile(pattern,PCRE_UTF8|flags,&errstr,&errchar,NULL);
-if((f)==NULL){printf("Ошибка: %s\nСимвол N%i\nШаблон:%s\n",errstr,errchar,pattern);return -1;}
-f_ext=pcre_study(f,0,&errstr);
-while((pairs=pcre_exec(f,f_ext,subject,libc_strlen(subject),j+offset,PCRE_NOTEMPTY,vector,vecsize))>0){
-matches[i]=Arr();
-n=0;
-if((pairs)<0){return -1;}
-while(pairs>n){
-char* buff2=libc_malloc(sizeof(char*));
-pcre_copy_substring(subject,vector,pairs,n,buff2,libc_strlen(subject));
-matches[i][n]=buff2;
-pcre_free_substring(buff2);
-n++;
-			  }
-j=vector[1];
-	i++;
-   }
-
-return 1;
-}
-/*
-///------------------------------------------------------------
-char *string_preg_replace(char* pattern, char* replacement, char* subject , int limit){
+char* libc_array_replace(char* str, char** delimiters, char **replacement){
 int i=0;
-char* buffr=add(subject);
-char*** pat_ar=Arr();	
-if(preg_match_all(pattern,subject,pat_ar,0,0)){
-char* nbuffr=add(replacement);
-char** sim=Arr();
-sim=simgen("$",100);
-char** newarr=Arr();
-while(pat_ar[i]!=NULL){newarr[i]=add(pat_ar[i][0]);i++;}
-char** aruq=array_unique(newarr);
-char** nsim=Arr();
-i=0;
-while(sim[i]!=NULL){
-if(strpos(nbuffr,sim[i])!=-1 && aruq[i]!=NULL){nsim[i]=add(sim[i]);}else{nsim[i]="";}
-i++;
-}
-nbuffr=array_replace(nbuffr,sim,nsim);
-i=0;
-char* tmp=Str();
-char** sep=Arr();
-while(aruq[i]!=NULL){
-if(nsim[i]!=""){
-tmp=strstr(nbuffr,nsim[i]);
-tmp=strpstr_nomo(tmp+1,"$");
-sep[i]=add("$");
-strcat(sep[i],tmp);
-sep[i]=string_replace(sep[i],nsim[i],aruq[i]);
-}else{sep[i]=add("");}
-i++;}
-buffr=array_replace(buffr,aruq,sep);
-}
-
-return buffr;	
-																					}
-
-///------------------------------------------------------------
-char* array_preg_replace(char* str, char** delimiters, char **replacement){
-int i=0;
-char* buffrsa=add(str);
+char* buffrsa=libc_malloc(sizeof(char**));
+buffrsa=str;
 while(delimiters[i]!=NULL){
-if(replacement[i]!=NULL && replacement[i]!='\0' && strpos(buffrsa,delimiters[i])!=-1){buffrsa=string_preg_replace(buffrsa,delimiters[i],replacement[i],0);}
+if(replacement[i]!=NULL && replacement[i]!='\0' && libc_strpos(buffrsa,delimiters[i])!=-1){
+	buffrsa=libc_string_replace(buffrsa,delimiters[i],replacement[i]);
+	}
 	i++;}
 return buffrsa;		
 	}
 ///------------------------------------------------------------
-*/
+#ifdef _PCRE_H
+
+///------------------------------------------------------------
+libc_preg_print_error(char* pattern,int errchar,const char* errstr){
+libc_print_str("Ошибка: ");
+libc_print_str((char*)errstr);
+libc_print_str("\nСимвол N ");
+libc_print_str(libc_itos(errchar));
+libc_print_str("\nШаблон:");
+libc_print_str(pattern);
+libc_print_str("\n");	
+	}
+///------------------------------------------------------------
+
+int libc_preg_match ( char* pattern, char* subject, char** matches , int flags , int offset){
+char *errstr;
+unsigned char *tables=pcre_maketables();
+int pairs=0,i=0,j=0,vecsize=libc_strlen(subject),vector[vecsize],errchar;
+//if(flags==0){flags=(PCRE_UTF8|PCRE_CASELESS|PCRE_MULTILINE);}else{flags|=PCRE_UTF8|PCRE_CASELESS|PCRE_MULTILINE;}
+if(matches==NULL){j=PCRE_ANCHORED;}else{j=PCRE_NOTEMPTY;}
+pcre *f=pcre_compile(pattern,flags,&errstr,&errchar,tables);
+if((f)==NULL){libc_preg_print_error(pattern,errchar,errstr);return -1;}
+pcre_extra *f_ext=pcre_study(f,0,&errstr);
+pairs=pcre_exec(f,f_ext,subject,libc_strlen(subject),offset,j,vector,vecsize);
+
+while(pairs>i){
+matches[i]=libc_malloc(sizeof(char*));	
+//pcre_get_substring(subject,vector,pairs, i, &matches[i]);
+pcre_copy_substring(subject, vector, pairs,   i, matches[i], sizeof(char*)*vecsize);
+
+i++;
+}
+return 1;
+																	}
+ 
+///------------------------------------------------------------
+int libc_preg_match_all ( char* pattern, char* subject, char*** matches , int flags){
+char *errstr;
+unsigned char *tables=pcre_maketables();
+char* buff2=libc_malloc(sizeof(char*));
+int pairs=0,n=0,i=0,j=0,p=0,vecsize=libc_strlen(subject)+1,vector[vecsize],errchar;
+//if(flags==0){flags=(PCRE_UTF8|PCRE_CASELESS|PCRE_MULTILINE);}else{flags|=PCRE_UTF8|PCRE_CASELESS|PCRE_MULTILINE;}
+if(matches==NULL){j=PCRE_ANCHORED;}else{j=PCRE_NOTEMPTY;}
+pcre *f=pcre_compile(pattern,flags,&errstr,&errchar,NULL);
+if((f)==NULL){libc_preg_print_error(pattern,errchar,errstr);return -1;}
+pcre_extra *f_ext=pcre_study(f,0,&errstr);
+
+while((pairs=pcre_exec(f,f_ext,subject,libc_strlen(subject),p,j,vector,vecsize))>0){
+matches[i]=libc_malloc(sizeof(char**));
+n=0;
+if((pairs)<0){return -1;}
+while(pairs>n){
+matches[i][n]=libc_malloc(sizeof(char*));
+pcre_copy_substring(subject,vector,pairs,n,matches[i][n],libc_strlen(subject));
+n++;
+			  }
+p=vector[1];
+	i++;
+   }
+
+return 1;
+																									}
+
 #endif
+///------------------------------------------------------------

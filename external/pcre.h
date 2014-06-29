@@ -201,10 +201,10 @@ typedef struct real_pcre pcre;
 
 /* When PCRE is compiled as a C++ library, the subject pointer type can be
 replaced with a custom type. For conventional use, the public interface is a
-const char *. */
+char *. */
 
 #ifndef PCRE_SPTR
-#define PCRE_SPTR const char *
+#define PCRE_SPTR char *
 #endif
 
 /* The structure for passing additional data to pcre_exec(). This is defined in
@@ -216,7 +216,7 @@ typedef struct pcre_extra {
   void *study_data;               /* Opaque data from pcre_study() */
   unsigned long int match_limit;  /* Maximum number of calls to match() */
   void *callout_data;             /* Data passed back in callouts */
-  const unsigned char *tables;    /* Pointer to character tables */
+  unsigned char *tables;    /* Pointer to character tables */
   unsigned long int match_limit_recursion; /* Max recursive calls to match() */
 } pcre_extra;
 
@@ -268,26 +268,26 @@ PCRE_EXP_DECL int   pcre_callout(pcre_callout_block *);
 
 /* Exported PCRE functions */
 
-PCRE_EXP_DECL pcre *pcre_compile(const char *, int, const char **, int *,const unsigned char *);
-PCRE_EXP_DECL pcre *pcre_compile2(const char *, int, int *, const char **,int *, const unsigned char *);
+PCRE_EXP_DECL pcre *pcre_compile(char *, int, char **, int *,unsigned char *);
+PCRE_EXP_DECL pcre *pcre_compile2(char *, int, int *, char **,int *, unsigned char *);
 PCRE_EXP_DECL int  pcre_config(int, void *);
-PCRE_EXP_DECL int  pcre_copy_named_substring(const pcre *, const char *, int *, int, const char *, char *, int);
-PCRE_EXP_DECL int  pcre_copy_substring(const char *, int *, int, int, char *,int);
-PCRE_EXP_DECL int  pcre_dfa_exec(const pcre *, const pcre_extra *, const char *, int, int, int, int *, int , int *, int);
-PCRE_EXP_DECL int  pcre_exec(const pcre *, const pcre_extra *, PCRE_SPTR,int, int, int, int *, int);
-PCRE_EXP_DECL void pcre_free_substring(const char *);
-PCRE_EXP_DECL void pcre_free_substring_list(const char **);
-PCRE_EXP_DECL int  pcre_fullinfo(const pcre *, const pcre_extra *, int, void *);
-PCRE_EXP_DECL int  pcre_get_named_substring(const pcre *, const char *, int *, int, const char *, const char **);
-PCRE_EXP_DECL int  pcre_get_stringnumber(const pcre *, const char *);
-PCRE_EXP_DECL int  pcre_get_stringtable_entries(const pcre *, const char *, char **, char **);
-PCRE_EXP_DECL int  pcre_get_substring(const char *, int *, int, int, const char **);
-PCRE_EXP_DECL int  pcre_get_substring_list(const char *, int *, int, const char ***);
-PCRE_EXP_DECL int  pcre_info(const pcre *, int *, int *);
-PCRE_EXP_DECL const unsigned char *pcre_maketables(void);
+PCRE_EXP_DECL int  pcre_copy_named_substring(pcre *, char *, int *, int, char *, char *, int);
+PCRE_EXP_DECL int  pcre_copy_substring(char *, int *, int, int, char *,int);
+PCRE_EXP_DECL int  pcre_dfa_exec(pcre *, pcre_extra *, char *, int, int, int, int *, int , int *, int);
+PCRE_EXP_DECL int  pcre_exec(pcre *, pcre_extra *, PCRE_SPTR,int, int, int, int *, int);
+PCRE_EXP_DECL void pcre_free_substring(char *);
+PCRE_EXP_DECL void pcre_free_substring_list(char **);
+PCRE_EXP_DECL int  pcre_fullinfo(pcre *, pcre_extra *, int, void *);
+PCRE_EXP_DECL int  pcre_get_named_substring(pcre *, char *, int *, int, char *, char **);
+PCRE_EXP_DECL int  pcre_get_stringnumber(pcre *, char *);
+PCRE_EXP_DECL int  pcre_get_stringtable_entries(pcre *, char *, char **, char **);
+PCRE_EXP_DECL int  pcre_get_substring(char *, int *, int, int, char **);
+PCRE_EXP_DECL int  pcre_get_substring_list(char *, int *, int, char ***);
+PCRE_EXP_DECL int  pcre_info(pcre *, int *, int *);
+PCRE_EXP_DECL unsigned char *pcre_maketables(void);
 PCRE_EXP_DECL int  pcre_refcount(pcre *, int);
-PCRE_EXP_DECL pcre_extra *pcre_study(const pcre *, int, const char **);
-PCRE_EXP_DECL const char *pcre_version(void);
+PCRE_EXP_DECL pcre_extra *pcre_study(pcre *, int, char **);
+PCRE_EXP_DECL char *pcre_version(void);
 
 #ifdef __cplusplus
 }  /* extern "C" */
