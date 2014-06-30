@@ -39,6 +39,7 @@
 //stripslashes		-ok
 //base64_encode 	-ok
 //base64_decode 	-ok
+//md5				-ok
 //preg_match		-ok Необходимо переписать 
 //preg_match_all 	-ok Необходимо переписать 
 //preg_replace		-no 
@@ -52,10 +53,6 @@
 
 //parse_url : Изучить выбрать необходимое http://draft.scyphus.co.jp/lang/c/url_parser.html
 
-//md5 |http://nayuki.eigenstate.org/page/fast-md5-hash-implementation-in-x86-assembly
-
-
- 
 
 //var_dump
 //print_r

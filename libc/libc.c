@@ -1473,3 +1473,182 @@ char* libc_base64_decode(char *data) {
     return decoded_data;
 }
 ///------------------------------------------------------------
+char* libc_md5(char* str){
+	
+
+#define MD5_SUM1(a,b,c,d,m,s,t) ({ a += ((b & c) | (~b & d)) + m + t; a = b + ((a << s) | (a >> (32-s))); })
+#define MD5_SUM2(a,b,c,d,m,s,t) ({ a += ((b & d) | (c & ~d)) + m + t; a = b + ((a << s) | (a >> (32-s))); })
+#define MD5_SUM3(a,b,c,d,m,s,t) ({ a += (b ^ c ^ d) + m + t; a = b + ((a << s) | (a >> (32-s))); }) 
+#define MD5_SUM4(a,b,c,d,m,s,t) ({ a += (c ^ (b | ~d)) + m + t; a = b + ((a << s) | (a >> (32-s))); }) 
+
+typedef struct { 
+   unsigned char data[64]; 
+   unsigned int datalen; 
+   unsigned int bitlen[2]; 
+   unsigned int state[4]; 
+} MD5_CTX; 
+
+
+void md5_transform(MD5_CTX *ctx, unsigned char data[]) 
+{  
+   unsigned int a,b,c,d,m[16],i,j; 
+   
+   for (i=0,j=0; i < 16; ++i, j += 4){ 
+      m[i] = (data[j]) + (data[j+1] << 8) + (data[j+2] << 16) + (data[j+3] << 24); 
+   }
+   a = ctx->state[0]; b = ctx->state[1];   c = ctx->state[2]; d = ctx->state[3]; 
+   
+   MD5_SUM1(a,b,c,d,m[0],  7,0xd76aa478); 
+   MD5_SUM1(d,a,b,c,m[1], 12,0xe8c7b756); 
+   MD5_SUM1(c,d,a,b,m[2], 17,0x242070db); 
+   MD5_SUM1(b,c,d,a,m[3], 22,0xc1bdceee); 
+   MD5_SUM1(a,b,c,d,m[4],  7,0xf57c0faf); 
+   MD5_SUM1(d,a,b,c,m[5], 12,0x4787c62a); 
+   MD5_SUM1(c,d,a,b,m[6], 17,0xa8304613); 
+   MD5_SUM1(b,c,d,a,m[7], 22,0xfd469501); 
+   MD5_SUM1(a,b,c,d,m[8],  7,0x698098d8); 
+   MD5_SUM1(d,a,b,c,m[9], 12,0x8b44f7af); 
+   MD5_SUM1(c,d,a,b,m[10],17,0xffff5bb1); 
+   MD5_SUM1(b,c,d,a,m[11],22,0x895cd7be); 
+   MD5_SUM1(a,b,c,d,m[12], 7,0x6b901122);
+   MD5_SUM1(d,a,b,c,m[13],12,0xfd987193); 
+   MD5_SUM1(c,d,a,b,m[14],17,0xa679438e); 
+   MD5_SUM1(b,c,d,a,m[15],22,0x49b40821); 
+   
+   MD5_SUM2(a,b,c,d,m[1],  5,0xf61e2562); 
+   MD5_SUM2(d,a,b,c,m[6],  9,0xc040b340); 
+   MD5_SUM2(c,d,a,b,m[11],14,0x265e5a51); 
+   MD5_SUM2(b,c,d,a,m[0], 20,0xe9b6c7aa);
+   MD5_SUM2(a,b,c,d,m[5],  5,0xd62f105d); 
+   MD5_SUM2(d,a,b,c,m[10], 9,0x02441453); 
+   MD5_SUM2(c,d,a,b,m[15],14,0xd8a1e681); 
+   MD5_SUM2(b,c,d,a,m[4], 20,0xe7d3fbc8);
+   MD5_SUM2(a,b,c,d,m[9],  5,0x21e1cde6); 
+   MD5_SUM2(d,a,b,c,m[14], 9,0xc33707d6); 
+   MD5_SUM2(c,d,a,b,m[3], 14,0xf4d50d87); 
+   MD5_SUM2(b,c,d,a,m[8], 20,0x455a14ed);
+   MD5_SUM2(a,b,c,d,m[13], 5,0xa9e3e905); 
+   MD5_SUM2(d,a,b,c,m[2],  9,0xfcefa3f8); 
+   MD5_SUM2(c,d,a,b,m[7], 14,0x676f02d9); 
+   MD5_SUM2(b,c,d,a,m[12],20,0x8d2a4c8a);
+   
+   MD5_SUM3(a,b,c,d,m[5],  4,0xfffa3942); 
+   MD5_SUM3(d,a,b,c,m[8], 11,0x8771f681); 
+   MD5_SUM3(c,d,a,b,m[11],16,0x6d9d6122); 
+   MD5_SUM3(b,c,d,a,m[14],23,0xfde5380c); 
+   MD5_SUM3(a,b,c,d,m[1],  4,0xa4beea44); 
+   MD5_SUM3(d,a,b,c,m[4], 11,0x4bdecfa9); 
+   MD5_SUM3(c,d,a,b,m[7], 16,0xf6bb4b60); 
+   MD5_SUM3(b,c,d,a,m[10],23,0xbebfbc70); 
+   MD5_SUM3(a,b,c,d,m[13], 4,0x289b7ec6); 
+   MD5_SUM3(d,a,b,c,m[0], 11,0xeaa127fa); 
+   MD5_SUM3(c,d,a,b,m[3], 16,0xd4ef3085); 
+   MD5_SUM3(b,c,d,a,m[6], 23,0x04881d05); 
+   MD5_SUM3(a,b,c,d,m[9],  4,0xd9d4d039); 
+   MD5_SUM3(d,a,b,c,m[12],11,0xe6db99e5); 
+   MD5_SUM3(c,d,a,b,m[15],16,0x1fa27cf8); 
+   MD5_SUM3(b,c,d,a,m[2], 23,0xc4ac5665); 
+      
+   MD5_SUM4(a,b,c,d,m[0],  6,0xf4292244); 
+   MD5_SUM4(d,a,b,c,m[7], 10,0x432aff97); 
+   MD5_SUM4(c,d,a,b,m[14],15,0xab9423a7); 
+   MD5_SUM4(b,c,d,a,m[5], 21,0xfc93a039); 
+   MD5_SUM4(a,b,c,d,m[12], 6,0x655b59c3); 
+   MD5_SUM4(d,a,b,c,m[3], 10,0x8f0ccc92); 
+   MD5_SUM4(c,d,a,b,m[10],15,0xffeff47d); 
+   MD5_SUM4(b,c,d,a,m[1], 21,0x85845dd1); 
+   MD5_SUM4(a,b,c,d,m[8],  6,0x6fa87e4f); 
+   MD5_SUM4(d,a,b,c,m[15],10,0xfe2ce6e0); 
+   MD5_SUM4(c,d,a,b,m[6], 15,0xa3014314); 
+   MD5_SUM4(b,c,d,a,m[13],21,0x4e0811a1); 
+   MD5_SUM4(a,b,c,d,m[4],  6,0xf7537e82); 
+   MD5_SUM4(d,a,b,c,m[11],10,0xbd3af235); 
+   MD5_SUM4(c,d,a,b,m[2], 15,0x2ad7d2bb); 
+   MD5_SUM4(b,c,d,a,m[9], 21,0xeb86d391); 
+
+   ctx->state[0] += a; ctx->state[1] += b; ctx->state[2] += c; ctx->state[3] += d; 
+}  
+
+void md5_update(MD5_CTX *ctx, unsigned char data[], unsigned char hash[]){  
+//init	
+   ctx->datalen = 	0; 
+   ctx->bitlen[0] = 0; 
+   ctx->bitlen[1] = 0; 
+   ctx->state[0] = 0x67452301; 
+   ctx->state[1] = 0xEFCDAB89; 
+   ctx->state[2] = 0x98BADCFE; 
+   ctx->state[3] = 0x10325476;	
+//end init
+//update	
+   unsigned int t,i,len=libc_strlen((char*)data);
+   
+   for (i=0; i < len; ++i) { 
+      ctx->data[ctx->datalen] = data[i]; 
+      ctx->datalen++; 
+      if (ctx->datalen == 64) { 
+         md5_transform(ctx,ctx->data); 
+if (ctx->bitlen[0] > 0xffffffff - 512){ ++ctx->bitlen[1]; ctx->bitlen[0] += 512;}         
+         
+          
+         ctx->datalen = 0; 
+      }  
+   }
+//end update
+//final   
+   i = ctx->datalen; 
+
+   if (ctx->datalen < 56) { 
+      ctx->data[i++] = 0x80; 
+      while (i < 56) 
+         ctx->data[i++] = 0x00; 
+   }  
+   else if (ctx->datalen >= 56) { 
+      ctx->data[i++] = 0x80; 
+      while (i < 64) 
+         ctx->data[i++] = 0x00; 
+      md5_transform(ctx,ctx->data); 
+      libc_memset(ctx->data,0,56); 
+   }  
+   
+
+
+if (ctx->bitlen[0] > 0xffffffff - 8 * ctx->datalen){++ctx->bitlen[1];} 
+   ctx->bitlen[0] += 8 * ctx->datalen;     
+   ctx->data[56] = ctx->bitlen[0]; 
+   ctx->data[57] = ctx->bitlen[0] >> 8; 
+   ctx->data[58] = ctx->bitlen[0] >> 16; 
+   ctx->data[59] = ctx->bitlen[0] >> 24; 
+   ctx->data[60] = ctx->bitlen[1]; 
+   ctx->data[61] = ctx->bitlen[1] >> 8; 
+   ctx->data[62] = ctx->bitlen[1] >> 16;  
+   ctx->data[63] = ctx->bitlen[1] >> 24; 
+   md5_transform(ctx,ctx->data); 
+   
+   for (i=0; i < 4; ++i) { 
+      hash[i]    = (ctx->state[0] >> (i*8)) & 0x000000ff; 
+      hash[i+4]  = (ctx->state[1] >> (i*8)) & 0x000000ff; 
+      hash[i+8]  = (ctx->state[2] >> (i*8)) & 0x000000ff; 
+      hash[i+12] = (ctx->state[3] >> (i*8)) & 0x000000ff; 
+   }
+ //end final       
+}  
+
+    char ha[16];
+    char* buf=libc_malloc(sizeof(char*)); 
+   MD5_CTX ctx; 
+   md5_update(&ctx,str,ha); 
+
+   
+    unsigned char * pin = ha;
+    const char * hex = "0123456789abcdef";
+    char * pout = buf;
+    int i = 0;
+    for(; i < 16; ++i){
+        *pout++ = hex[(*pin>>4)&0xF];
+        *pout++ = hex[(*pin++)&0xF];
+					}	
+	    *pout = 0;
+return buf;
+	}
+  
+///------------------------------------------------------------
