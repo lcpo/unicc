@@ -37,19 +37,22 @@
 //substr			-ok
 //addslashes 		-ok
 //stripslashes		-ok
+//base64_encode 	-ok
+//base64_decode 	-ok
 //preg_match		-ok Необходимо переписать 
 //preg_match_all 	-ok Необходимо переписать 
 //preg_replace		-no 
+
 //http://ru.wikipedia.org/wiki/PCRE#.D0.9F.D1.80.D0.B8.D0.BC.D0.B5.D1.80_.D0.B8.D1.81.D0.BF.D0.BE.D0.BB.D1.8C.D0.B7.D0.BE.D0.B2.D0.B0.D0.BD.D0.B8.D1.8F
 //https://gist.github.com/Solution/1359119
 //Изучить https://github.com/imatix/gsl/tree/master/pcre | http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/util/regexp/
 
 //json_encode ?? Изучить https://github.com/json-c/json-c/tree/master/tests | http://www.digip.org/jansson/ | http://zserge.bitbucket.org/jsmn.html | https://bitbucket.org/yarosla/nxjson
 //json_decode ??
-//base64_encode ??
-//base64_decode ??
+
 //parse_url : Изучить выбрать необходимое http://draft.scyphus.co.jp/lang/c/url_parser.html
-//md5
+
+//md5 |http://nayuki.eigenstate.org/page/fast-md5-hash-implementation-in-x86-assembly
 
 
  

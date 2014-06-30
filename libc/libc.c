@@ -29,7 +29,7 @@ int libc_memcmp( void *s1,  void *s2, size_t n) {
 }
 
 //!---------------------------------------------------------------------
-void *libc_memcpy (void *dest, void *src, size n)
+void *libc_memcpy (void *dest, void *src, size_t n)
 {
         char *r1 = dest;
         const char *r2 = src;
@@ -1426,4 +1426,50 @@ return 1;
 																									}
 
 #endif
+///------------------------------------------------------------
+char* libc_base64_encode(char *data) {
+int i = 0;
+int j = 0;
+int mod_table[] = {0, 2, 1};
+	size_t input_length=libc_strlen(data);
+    size_t output_length = 4 * ((input_length + 2) / 3);
+    char *encoded_data = libc_malloc(input_length+1);
+    for (;i< input_length;) {
+		unsigned int octet_a = i < input_length ? (unsigned char)data[i++] : 0;
+		unsigned int octet_b = i < input_length ? (unsigned char)data[i++] : 0;
+		unsigned int octet_c = i < input_length ? (unsigned char)data[i++] : 0;
+		unsigned int triple = (octet_a << 0x10) + (octet_b << 0x08) + octet_c;
+        encoded_data[j++] = char_table_base64[(triple >> 3 * 6) & 0x3F];
+        encoded_data[j++] = char_table_base64[(triple >> 2 * 6) & 0x3F];
+        encoded_data[j++] = char_table_base64[(triple >> 1 * 6) & 0x3F];
+        encoded_data[j++] = char_table_base64[(triple >> 0 * 6) & 0x3F];
+							  }
+	i=0;
+    for (;i<mod_table[input_length % 3]; i++){encoded_data[output_length - 1 - i] = '=';}
+    return encoded_data;
+										}
+///------------------------------------------------------------
+
+char* libc_base64_decode(char *data) {
+	int i = 0; int j = 0;
+	char* decoding_table = libc_malloc(256);
+	for (;i<64;i++){decoding_table[(unsigned char) char_table_base64[i]] = i;}
+	size_t input_length=libc_strlen(data);
+    size_t output_length = libc_strlen(data) / 4 * 4;
+    if (data[input_length - 1] == '='){ output_length--;}
+    if (data[input_length - 2] == '='){ output_length--;}
+    unsigned char *decoded_data = libc_malloc(output_length);
+	i=0;   
+    for (; i < input_length;) {
+        unsigned int sextet_a = data[i] == '=' ? 0 & i++ : decoding_table[data[i++]];
+        unsigned int sextet_b = data[i] == '=' ? 0 & i++ : decoding_table[data[i++]];
+        unsigned int sextet_c = data[i] == '=' ? 0 & i++ : decoding_table[data[i++]];
+        unsigned int sextet_d = data[i] == '=' ? 0 & i++ : decoding_table[data[i++]];
+        unsigned int triple = (sextet_a << 3 * 6) + (sextet_b << 2 * 6) + (sextet_c << 1 * 6) + (sextet_d << 0 * 6);
+        if (j < output_length) decoded_data[j++] = (triple >> 2 * 8) & 0xFF;
+        if (j < output_length) decoded_data[j++] = (triple >> 1 * 8) & 0xFF;
+        if (j < output_length) decoded_data[j++] = (triple >> 0 * 8) & 0xFF;
+    }
+    return decoded_data;
+}
 ///------------------------------------------------------------
