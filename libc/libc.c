@@ -129,7 +129,8 @@ void libc_free(void *ptr){
 
 if (ptr == NULL){return;}
 ptr -= sizeof(size);
-munmap(ptr, * (size *) ptr + sizeof(size));
+//munmap(ptr, * (size *) ptr + sizeof(size));
+munmap(ptr,  * (size *) ptr + sizeof(size)*sizeof(void*));
 }
 //!---------------------------------------------------------------------
 uni libc_strpos(char *haystack, char *needle){
@@ -1481,14 +1482,6 @@ char* libc_md5(char* str){
 #define MD5_SUM3(a,b,c,d,m,s,t) ({ a += (b ^ c ^ d) + m + t; a = b + ((a << s) | (a >> (32-s))); }) 
 #define MD5_SUM4(a,b,c,d,m,s,t) ({ a += (c ^ (b | ~d)) + m + t; a = b + ((a << s) | (a >> (32-s))); }) 
 
-typedef struct { 
-   unsigned char data[64]; 
-   unsigned int datalen; 
-   unsigned int bitlen[2]; 
-   unsigned int state[4]; 
-} MD5_CTX; 
-
-
 void md5_transform(MD5_CTX *ctx, unsigned char data[]) 
 {  
    unsigned int a,b,c,d,m[16],i,j; 
@@ -1634,7 +1627,7 @@ if (ctx->bitlen[0] > 0xffffffff - 8 * ctx->datalen){++ctx->bitlen[1];}
 }  
 
     char ha[16];
-    char* buf=libc_malloc(sizeof(char*)); 
+    char buf[33];//=libc_malloc(sizeof(char*)); 
    MD5_CTX ctx; 
    md5_update(&ctx,str,ha); 
 
@@ -1648,7 +1641,8 @@ if (ctx->bitlen[0] > 0xffffffff - 8 * ctx->datalen){++ctx->bitlen[1];}
         *pout++ = hex[(*pin++)&0xF];
 					}	
 	    *pout = 0;
-return buf;
+	char* outs=buf;    
+return outs;
 	}
   
 ///------------------------------------------------------------

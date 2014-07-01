@@ -5,8 +5,7 @@ extern char* dtos(double n);
 extern char* ftos(float n);
 
 int proto_printf(char* format,...){
-char* tmp_text=libc_malloc(sizeof(char*));
-tmp_text="";
+char* tmp_text="";
 char buffer[1];
 int i=0,n=0,len_format=libc_strlen((void *)format);
 double dtmp=0;
@@ -25,7 +24,7 @@ if(format[i]=='%' && format[i+1]=='f'){dtmp=va_arg(arg,double); libc_print_str(l
 {buffer[0]=(char)format[i];buffer[1]='\0';write($O,buffer,1);++i;}	
 				   }
 va_end(arg);
-
+//libc_free(tmp_text);
 	return 1;
 }
 

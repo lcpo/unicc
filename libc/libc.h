@@ -8,7 +8,12 @@
 #define clear_fun($_0_x)({typeof($_0_x) $_0_o=(typeof($_0_x))fun_null;$_0_o;})
 #define clear_var($_0_v)({typeof($_0_v) $_0_o=(typeof($_0_v))NULL;$_0_o;})
 
-
+typedef struct { 
+   unsigned char data[64]; 
+   unsigned int datalen; 
+   unsigned int bitlen[2]; 
+   unsigned int state[4]; 
+} MD5_CTX; 
 
 char _Hslong[48];
 char out_$_dtos[32];
