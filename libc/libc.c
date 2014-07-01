@@ -1,136 +1,11 @@
-//!---------------------------------------------------------------------
 
-size_t libc_strlen(char* v){size_t i=0;while(v[i]!=0){++i;}return i;}
-#define libc_lens libc_strlen 
 
-//!---------------------------------------------------------------------	
-void *libc_memchr( void *s, int c, size_t n){
-    if (n) { unsigned char *p = s;
-        do {
-             if (*p++ == (unsigned char) c) {
-                return (void *) (p - 1);
-             }
-         } while (--n);
-     }
-     return 0;
- }
-//!---------------------------------------------------------------------
-int libc_memcmp( void *s1,  void *s2, size_t n) {
-     if (n) {
-         unsigned char *p1 = s1, *p2 = s2;
- 
-        do {
-            if (*p1++ != *p2++) {
-                return (*--p1 - *--p2);
-            }
-        } while (--n);
-     }
-     return 0;
-}
 
-//!---------------------------------------------------------------------
-void *libc_memcpy (void *dest, void *src, size_t n)
-{
-        char *r1 = dest;
-        const char *r2 = src;
- 
-        while (n) {
-                *r1++ = *r2++;
-                --n;
-        }
- 
-        return dest;
-}
-//!---------------------------------------------------------------------
-void *libc_memset(void *s, int c, size n)
-{
-        unsigned char *p = (unsigned char *) s;
- 
-        while (n) {
-                *p++ = (unsigned char) c;
-                --n;
-        }
- 
-        return s;
-}
-//!---------------------------------------------------------------------
-void *libc_memmove(char *dest, char *src, size n)
-{
-	char *d = dest;
-	const char *s = src;
-	if (d==s) return d;
-	if ((size_t)(d-s) < n) {
-		while (n--) d[n] = s[n];
-		return dest;
-	}
-	return libc_memcpy((char*)d, (char*)s, (size)n);
-}
-//!---------------------------------------------------------------------
-
-char* libc_strcat ( char* des, const char* so ){
-while (*des) ++des;
-while ((*des++ = *so++) != '\0') ;
-return des;
-}
-//!---------------------------------------------------------------------
-char * libc_strcpy( char *to,const char *from){
-	char *save = to;
-	for (; (*to = *from) != '\0'; ++from, ++to);
-	return(save);
-}
-
-//!---------------------------------------------------------------------
-char* libc_strncat(char* dst, const char * src, size_t n){
-	if (n != 0) {
-		char *d = dst;
-		const char *s = src;
-
-		while (*d != 0)
-			d++;
-		do {
-			if ((*d = *s++) == 0)
-				break;
-			d++;
-		} while (--n != 0);
-		*d = '\0';
-	}
-	return dst;
-}
-//!---------------------------------------------------------------------
-int libc_strncmp(char* l, char* r, size_t num){
-int i=0;
-if (num == 0){return 0;}
-do {
-if(l[i]!=r[i]){return (unsigned int)l[i]-(unsigned int)r[i];}
-if (l[i] == 0){break;}
-i++;
-} while (--num != 0);
-return 0; 
- } 
-//!---------------------------------------------------------------------
-
-char * libc_strstr(char *string, char *substring){
-char c, sc;
-size_t len;
-if ((c = *substring++) != 0) {
-len = libc_strlen(substring);
-	do {
-		do {
-		if ((sc = *string++) == 0){	return NULL;}
-			} while (sc != c);
-		
-	} while (libc_strncmp(string, substring, len) != 0);
-	string--;
-	}
-return ((char *) string);
-}
 //!---------------------------------------------------------------------
 void libc_free(void *ptr){
-
 if (ptr == NULL){return;}
 ptr -= sizeof(size);
-//munmap(ptr, * (size *) ptr + sizeof(size));
-munmap(ptr,  * (size *) ptr + sizeof(size)*sizeof(void*));
+munmap(ptr,  * (size *) ptr + sizeof(size));
 }
 //!---------------------------------------------------------------------
 uni libc_strpos(char *haystack, char *needle){
@@ -280,13 +155,39 @@ case '6': pr++; break;
 case '7': pr++; break;
 case '8': pr++; break;
 case '9': pr++; break;
+case '.': pr++; break;
 default :pr=-1; break;
 			}
 				i++;}
 if(i==pr){return 1;}else{return 0;}
 	}
 //!---------------------------------------------------------------------
-void libc_fun_null(void){return;}
+int libc_is_hex_num(char* str){
+int i=0, pr=0;
+while(str[i]!=0){
+switch(str[i]){
+case '-': pr++; break;
+case '0': pr++; break;
+case '1': pr++; break;
+case '2': pr++; break;
+case '3': pr++; break;
+case '4': pr++; break;
+case '5': pr++; break;
+case '6': pr++; break;
+case '7': pr++; break;
+case '8': pr++; break;
+case '9': pr++; break;
+case 'a': pr++; break;
+case 'b': pr++; break;
+case 'c': pr++; break;
+case 'd': pr++; break;
+case 'f': pr++; break;
+default :pr=-1; break;
+			}
+				i++;}
+if(i==pr){return 1;}else{return 0;}
+	}	
+
 //!---------------------------------------------------------------------
 ///Len type
 uni libc_leni(long long num){
@@ -410,7 +311,6 @@ a1[j++] = '.';
 u=(19-j)+p;
 if(u<7){u=7;}
 z=0;
-//printf("%li\n",(long)(17-j));
 while(z<u){
 n=n*10;
 t = (long long)n%10;
@@ -757,47 +657,7 @@ n = 10 * n + (s[i] - '0');
 }
 return n;
 }
-//!--------------------------------------------------------------------- 
-void *libc_mcat(void *dst, void *src){
-//size_t i;
-//if ((uintptr_t)dst % sizeof(long) == 0 && (uintptr_t)src % sizeof(long) == 0) {
-//long *d=dst;
-//long *s = src;
-//mncat(d,s,count(&dst)+count(&src)+2);
-//}else{
-libc_mncat(dst,src,libc_strlen(dst)+libc_strlen(src));
- //    }
-return dst;
-	}
-//!---------------------------------------------------------------------
-void *libc_mcpy(void *dst, void *src, size len){
-uni i;
-char *d = dst;
-char *s = src;
-for (i=0; i<len; i++) {d[i] = s[i];}
-return dst;
-	}
-//!---------------------------------------------------------------------
-void *libc_mncat(void *dst, void *src, size len){
-char *d=dst;
-char *s = src;
-libc_mcpy(d+libc_strlen(dst),s,len);
-return dst;
-	}
-//!---------------------------------------------------------------------
-void *libc_mset(void *pt, int c, size n){
-uni i;
-char *pb = (char *) pt;
-for(i=0;i<(n+1);i++){pb[i]=c;}
-return pb;
- }
-//!---------------------------------------------------------------------
-void *libc_msetn(void *pt, int c, size n){
-uni i;
-long *pb = (long *) pt;
-for(i=0;i<(n);i++){pb[i]=c;}
-return pb;
-	}
+
 //!---------------------------------------------------------------------
 int libc_odd(uni value){return (value & 1);} //определяет четное или нечетное
 //!---------------------------------------------------------------------
@@ -809,25 +669,7 @@ if(str[i] == ch){count++;}
 return count;
 
 	}
-//!---------------------------------------------------------------------
-char* libc_scpy(char *destaddr, char *srcaddr, uni len) { //заполняет строку другой строкой
-    char *d = destaddr;
-    char *s = srcaddr;
-    while (len-- > 0) {
-        *d++ = *s++;
-    }
-    return destaddr;
-}
-//!---------------------------------------------------------------------
-void *libc_set(void *ptr, int ch){ //заполняет строку символом
-//if ((uintptr_t)ptr % sizeof(long) == 0) {
-//long *p = ptr;
-//mset(p,ch,count(&ptr)+1);
-//}else{
-libc_mset(ptr,ch,libc_strlen(ptr));
- //        }
-return ptr;
- }
+
 //!---------------------------------------------------------------------
 uni libc_print_str(char * buf){ //Печатает строку
 return write($O, (void*)buf, libc_strlen(buf));
@@ -955,10 +797,6 @@ i++;}
 return item;	
 	}			
 ///---------------------------------------------------------------------
-int libc_isspace(int ch){
-	return ch == ' ' || (unsigned)ch-'\t' < 5;
-}
-///---------------------------------------------------------------------
 char* libc_ltrim(char *str) {
   int len = libc_strlen(str);
   char *cur = str;
@@ -1063,19 +901,7 @@ char * 	libc_string_replace(char *string, char *delimiter, char *replacement) {
     ret[j] = '\0';
     return ret;
 }
-//!------------------------------------------------------------
-int libc_islower(int ch){
-	return (unsigned)ch-'a' < 26;
-}
-//!------------------------------------------------------------
-int libc_isupper(int ch){
-	return (unsigned)ch-'A' < 26;
-}
-//!------------------------------------------------------------
-int libc_toupper(int ch){
-	if (libc_islower(ch)){ return (ch & 95);}
-	return ch;
-}
+
 //!------------------------------------------------------------
 char* libc_strtoupper(char* str){
 int i=0,n=libc_strlen(str);
@@ -1084,11 +910,7 @@ str[i]=libc_toupper(str[i]);
 	i++;}
 return str;		
 	}
-//!------------------------------------------------------------
-int libc_tolower(int ch){
-	if (libc_isupper(ch)){ return (ch | 32);}
-	return ch;
-}
+
 //!------------------------------------------------------------
 char* libc_strtolower(char* str){
 int i=0,n=libc_strlen(str);
@@ -1097,14 +919,7 @@ str[i]=libc_tolower(str[i]);
 	i++;}
 return str;		
 	}
-//!------------------------------------------------------------
-int libc_strcmp(char *l, char *r){
-int i=0,ll=libc_strlen(l), lr=libc_strlen(r);
-if(ll!=lr){return ll - lr;}
-while(l[i]!='\0'){
-if(l[i]!=r[i]){return (unsigned int)l[i] - (unsigned int)r[i];}
-	i++;}	
-								  }
+
 //!------------------------------------------------------------
 int libc_strcmpi(char *l, char *r){
 int i=0,ll=libc_strlen(l), lr=libc_strlen(r);
@@ -1185,14 +1000,7 @@ int libc_stripos(char *haystack, char *needle){
   if (p){return p - haystack;}else{return -1;}  
 } 
 ///------------------------------------------------------------
-char *libc_strchr(const char *s, int c){
-    char ch = c;
-    for ( ; *s != ch; s++){
-        if (*s == '\0'){return 0;}
-        }
-    return (char *)s;
-}
-///------------------------------------------------------------
+
 char *libc_dirname(char *s){
 if (!s || !*s || !libc_strchr(s, '/')){ return ".";}
 size_t n=libc_strlen(s);
@@ -1226,24 +1034,13 @@ return arr[pos];
 ///------------------------------------------------------------					 
 #define fclose close
 ///------------------------------------------------------------
-int libc_isalpha(int ch){
-	return ((unsigned)ch|32)-'a' < 26;
-}
-///------------------------------------------------------------
-int libc_isdigit(int ch){
-	return (unsigned)ch-'0' < 10;
-}
-///------------------------------------------------------------
 #define array($_value...)({\
 void* $_ar[]={$_value,'\0'};\
 (void**)$_ar;})
 
 ///------------------------------------------------------------
 int libc_sleep(unsigned int seconds){
-struct timespec {
-  long tv_sec;
-  long tv_nsec;
-};
+
 	struct timespec tv = { .tv_sec = seconds, .tv_nsec = 0 };
 	if (nanosleep((long)&tv, (long)&tv)){return tv.tv_sec;}
 	return 0;
@@ -1257,10 +1054,7 @@ char libc_to_hex(char code) {
   const char hex[] = "0123456789abcdef";
   return hex[code & 15];
 }
-///------------------------------------------------------------
-int libc_isalnum(int ch){
-	return libc_isalpha(ch) || libc_isdigit(ch);
-}
+
 ///------------------------------------------------------------
 
 char *libc_urlencode(char *str) {
@@ -1311,8 +1105,6 @@ char *libc_strndup(char *str, size_t count)
 	dup[len] = '\0';
 	return dup;
 }
-
-
 ///------------------------------------------------------------
  /*
 printf("%s\n",libc_substr("abcdef", 1,  -1));     // bcdef
@@ -1562,7 +1354,7 @@ void md5_transform(MD5_CTX *ctx, unsigned char data[])
    ctx->state[0] += a; ctx->state[1] += b; ctx->state[2] += c; ctx->state[3] += d; 
 }  
 
-void md5_update(MD5_CTX *ctx, unsigned char data[], unsigned char hash[]){  
+void md5_proc(MD5_CTX *ctx, unsigned char data[], unsigned char hash[]){  
 //init	
    ctx->datalen = 	0; 
    ctx->bitlen[0] = 0; 
@@ -1629,7 +1421,7 @@ if (ctx->bitlen[0] > 0xffffffff - 8 * ctx->datalen){++ctx->bitlen[1];}
     char ha[16];
     char buf[33];//=libc_malloc(sizeof(char*)); 
    MD5_CTX ctx; 
-   md5_update(&ctx,str,ha); 
+   md5_proc(&ctx,str,ha); 
 
    
     unsigned char * pin = ha;

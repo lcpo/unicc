@@ -37,8 +37,8 @@ void __assert(char *file, int line, char *failedexpr){
 	//exit(1);
 }
 //----------------------------------------------------------------------
-void __assert2(char *file, int line, char *func, char *failedexpr){
-	printf("assertion \"%s\" failed: file \"%s\", line %d, function \"%s\"\n",failedexpr, file, line, func);
+void __assert2(char *file, int line, char *fun, char *failedexpr){
+	printf("assertion \"%s\" failed: file \"%s\", line %d, function \"%s\"\n",failedexpr, file, line, fun);
   //exit(1);
 }
 //----------------------------------------------------------------------

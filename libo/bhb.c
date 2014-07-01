@@ -54,9 +54,10 @@
 //parse_url : Изучить выбрать необходимое http://draft.scyphus.co.jp/lang/c/url_parser.html
 
 
-//var_dump
+
 //print_r
 //print
 //array_merge
 //echo
 //is_scalar			---
+//var_dump

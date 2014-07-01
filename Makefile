@@ -48,13 +48,13 @@ test:
 	#strip ./$(EXECUTABLE) -R .gnu.hash
 	#strip ./$(EXECUTABLE) -R .gnu.version  
 	#strip ./$(EXECUTABLE) -R .rel.dyn 
-	./$(EXECUTABLE)
+	./$(EXECUTABLE) "arg1" "arg2"
 
 testlog:
 	make clear
 	$(CC) -c $(SOURCES)
 	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
-	strace ./$(EXECUTABLE)
+	strace ./$(EXECUTABLE) "arg1" "arg2"
 testasm:
 	make clear
 	$(CC) -c $(SOURCES)

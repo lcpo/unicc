@@ -56,9 +56,9 @@ char* tmp=libc_malloc(sizeof(char*));
 char* start="/proc/";
 char* end="/cmdline";
 char* pid=libc_itos(getpid());
-libc_mcpy(tmp,start,libc_strlen(start));
-libc_mcat(tmp,pid);
-libc_mcat(tmp,end);
+libc_strcpy(tmp,start);
+libc_strcat(tmp,pid);
+libc_strcat(tmp,end);
 int file=open(tmp,0,0);
 read(file,exe,128);
 close(file);
@@ -72,9 +72,9 @@ char* tmp=libc_malloc(sizeof(char*));
 char* start="/proc/";
 char* end="/exe";
 char* pid=libc_itos(getpid());
-libc_mcpy(tmp,start,libc_strlen(start));
-libc_mcat(tmp,pid);
-libc_mcat(tmp,end);
+libc_strcpy(tmp,start);
+libc_strcat(tmp,pid);
+libc_strcat(tmp,end);
 readlink(tmp,exe,128);
 libc_free(tmp);
 return exe;
@@ -143,6 +143,7 @@ return ret;
 #define main _start
 #else						  	
 void _start() {
+	
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;
 argc=getargc(_start$output);
@@ -154,6 +155,7 @@ libc_free(argv);
 exit(result);
 //asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
 return;
+ 
 	}
 #endif	
 //----------------------------------------------------------------------
