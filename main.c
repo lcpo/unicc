@@ -1,10 +1,6 @@
 #include "unicc.c"
 
-
-
-
 int main(int argc, char **argv) {
-
 //REG_NEWLINE|REG_NOTBOL|REG_NOTEOL
 //REG_NOSUB
 //printf("%s\n",libc_md5("abc"));
