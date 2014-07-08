@@ -3,7 +3,7 @@
 
 //----------------------------------------------------------------------
 
-inline char* get_name(uni* addr) {
+char* get_name(uni* addr) {
     uni i=0;
     uni pl=-1;
     uni* pr=addr;
@@ -22,7 +22,7 @@ inline char* get_name(uni* addr) {
     }
 
 
-inline uni get_nom(char* name) {
+uni get_nom(char* name) {
     uni i=0;
     uni pl=-1;
     while (i<var_$l) {
@@ -107,7 +107,7 @@ char* attr(char* str) { //Необходима срочная оптимизац
         str=str+libc_strnpos(str,"[",0);
         while (var_$n[sn]!=0) {
             if (libc_sch(var_$n[sn],'[')) {
-                str=libc_string_replace(str,var_$n[sn],libc_utos((uni)*var_$[sn]));
+                str=libc_string_replace(str,var_$n[sn],libc_utos((uni)var_$[sn]));
                 }
             sn++;
             }
@@ -158,7 +158,58 @@ char* get_var_type(uni* addr) {
         return NULL;
         }
     }
-
+//----------------------------------------------------------------------
+char* get_var_type_by_name(char* name){
+    uni i=0;
+    uni pl=-1;
+    while (i<var_$l) {
+        if (libc_scmp(name,var_$n[i])==2) {
+            pl=i;
+            }
+        ++i;
+        }
+    if (pl!=-1) {
+        return type_$t[var_$t[pl]];
+        }
+    else {
+        return NULL;
+        }	
+	
+	}
+//----------------------------------------------------------------------
+uni get_var_id_by_name(char* name){
+    uni i=0;
+    uni pl=-1;
+    while (i<var_$l) {
+        if (libc_scmp(name,var_$n[i])==2) {
+            pl=i;
+            }
+        ++i;
+        }
+    if (pl!=-1) {
+        return pl;
+        }
+    else {
+        return -1;
+        }	
+	
+	}	
+//----------------------------------------------------------------------
+char* get_var_type_by_id(int pl){
+    if (pl!=-1) {
+        return type_$t[var_$t[pl]];
+        }else{
+        return NULL;
+        }	
+	}
+//----------------------------------------------------------------------
+uni* get_var_adr_by_id(uni pl){
+    if (pl!=-1) {
+        return var_$[pl];
+        }else{
+        return (uni*)-1;
+        }	
+	}	
 //----------------------------------------------------------------------
 uni set_var_item(uni* addr, char* type, char* name, uni _fu) {
     if(type_$l<1) {
@@ -167,17 +218,17 @@ uni set_var_item(uni* addr, char* type, char* name, uni _fu) {
     uni _var=set_type_item(type);
     void** naddr=(void*)*addr;
     if (libc_sch(type,'*')>0 && get_var_id(addr)==-1) {
-        naddr=libc_malloc(sizeof(naddr));
+        naddr=malloc(sizeof(naddr)*($_MEM_STEP));
         if (naddr == 0) {
            // exit(1);
            return 0;
             }
         }
     if (var_$l==0) {
-        var_$=libc_malloc(sizeof(var_$));
-        var_$t=libc_malloc(sizeof(var_$t));
-        var_$f=libc_malloc(sizeof(var_$f));
-        var_$n=libc_malloc(sizeof(var_$n));
+        var_$=malloc(sizeof(var_$)*($_MEM_STEP));
+        var_$t=malloc(sizeof(var_$t)*($_MEM_STEP));
+        var_$f=malloc(sizeof(var_$f)*($_MEM_STEP));
+        var_$n=malloc(sizeof(var_$n)*libc_strlen(name)*($_MEM_STEP));
         }
 
     uni ind=0,fl=0,t_id=-1;
@@ -192,16 +243,16 @@ uni set_var_item(uni* addr, char* type, char* name, uni _fu) {
 
     if (fl==0) {
         if (var_$l>0) {
-            var_$n=libc_realloc(var_$n,libc_count((void**)var_$n)*($_MEM_STEP));
-            var_$=libc_realloc(var_$,libc_count((void**)var_$)*($_MEM_STEP));
-            var_$t=libc_realloc(var_$t,libc_count((void**)var_$t)*($_MEM_STEP));
-            var_$f=libc_realloc(var_$f,libc_count((void**)var_$f)*($_MEM_STEP));
+            var_$n=realloc(var_$n,libc_count((void**)var_$n)*sizeof(var_$n)*($_MEM_STEP));
+            var_$=realloc(var_$,libc_count((void**)var_$)*sizeof(var_$)*($_MEM_STEP));
+            var_$t=realloc(var_$t,libc_count((void**)var_$t)*sizeof(var_$t)*($_MEM_STEP));
+            var_$f=realloc(var_$f,libc_count((void**)var_$f)*sizeof(var_$f)*($_MEM_STEP));
             }
         var_$[var_$l]=addr;
         var_$t[var_$l]=_var;
         var_$f[var_$l]=_fu;
         name=attr(name);
-        var_$n[var_$l]=libc_malloc(libc_strlen(name)*($_MEM_STEP));
+        var_$n[var_$l]=malloc(libc_strlen(name)*sizeof(var_$n[var_$l])*($_MEM_STEP));
         var_$n[var_$l]=name;
         var_$l++;
         }
@@ -211,7 +262,7 @@ uni set_var_item(uni* addr, char* type, char* name, uni _fu) {
 //----------------------------------------------------------------------
 void set_val(uni* addr,char* value, char* type){
 if (libc_sch(type,'*')>1){
-addr=libc_realloc(addr,libc_count((void**)addr)*($_MEM_STEP));
+addr=realloc(addr,libc_count((void**)addr)*($_MEM_STEP));
 						}
 return;	
 	}

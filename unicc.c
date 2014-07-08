@@ -51,8 +51,8 @@ int execl (char *path, char *arg, ...){
  }
 //----------------------------------------------------------------------
 char* getcmd(){
-char* exe=libc_malloc(sizeof(char*));
-char* tmp=libc_malloc(sizeof(char*));	
+char* exe=libc_malloc(sizeof(*exe));
+char* tmp=libc_malloc(sizeof(*tmp));	
 char* start="/proc/";
 char* end="/cmdline";
 char* pid=libc_itos(getpid());
@@ -67,8 +67,8 @@ return exe;
 	}
 //----------------------------------------------------------------------
 char* getpn(){
-char* exe=libc_malloc(sizeof(char*));
-char* tmp=libc_malloc(sizeof(char*));	
+char* exe=libc_malloc(sizeof(*exe));
+char* tmp=libc_malloc(sizeof(*tmp));
 char* start="/proc/";
 char* end="/exe";
 char* pid=libc_itos(getpid());
@@ -105,7 +105,8 @@ int exec(char* command, char* out){
 int $_pipe[2];
 pipe($_pipe);
 switch(fork()){
-case -1:printf("error fork!");exit(1);
+case -1:printf("error fork!");
+exit(1);
 case 0: 
 close($_pipe[0]); 
 dup2($_pipe[1], 1); 
@@ -122,7 +123,8 @@ int system(char* command){
 int $_pipe[2];
 pipe($_pipe);
 switch(fork()){
-case -1:printf("error fork!");exit(1);
+case -1:printf("error fork!");
+exit(1);
 case 0: 
 close($_pipe[0]); 
 dup2($_pipe[1], 1); 
@@ -131,7 +133,7 @@ close($_pipe[1]);
 exit(0);			
 }
 close($_pipe[1]);
-char* buff=libc_malloc(sizeof(char*));
+char* buff=libc_malloc(sizeof(*buff));
 int ret=read($_pipe[0],buff,4096);
 close($_pipe[0]);
 libc_print_str(buff);
@@ -147,7 +149,7 @@ void _start() {
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;
 argc=getargc(_start$output);
-char** argv=libc_malloc(sizeof(char**)*argc);
+char** argv=libc_malloc(sizeof(*argv));
 if(argc==1){argv[0]=(char*)_start$output;argc--;}
 if(argc>=2){argv=getargv(argc,_start$output,argv);argc--;}
 int result=main(argc,argv);

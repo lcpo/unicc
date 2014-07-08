@@ -117,6 +117,7 @@ int readlink(char* path, char * buf, int bufsize){return __syscall3(__NR_readlin
 int ioctl(unsigned int fd, unsigned int cmd, unsigned int arg){return __syscall3(__NR_ioctl,fd,cmd,arg);}
 int execve(const char* filename, char * const argv[], char *const envp[]){return __syscall3(__NR_execve,filename,argv,envp);}
 size write(int fd, void* buf, size count) {return __syscall3(__NR_write,fd,buf,count);}
+int mprotect(void* start, size_t len, long prot) {return __syscall3(__NR_mprotect,start,len,prot);}
 uni munmap(void *addr, uni len) {return __syscall2(__NR_munmap,addr,len);}
 void* mmap(void* addr, size len, int prot, int flags, int fd, unsigned long offset){return (void*)__syscall6(__NR_mmap,(long)&addr,len,prot,flags,fd,offset);}
 ///------------------------------------------------------------
@@ -155,6 +156,38 @@ int64_t __divdi3(int64_t num, int64_t den){
     return v;
 }
 ///------------------------------------------------------------
-
-
+void free(void *ptr){
+if (ptr == NULL){return;}
+ptr -= sizeof(size_t);
+if(munmap(ptr, * (size_t *) ptr + sizeof(size_t)) == -1){write($O,"munmap failed!\n",15);}
+ptr=NULL;
+}
+//!---------------------------------------------------------------------
+void *malloc(size_t __size){
+void *result=mmap(0, __size , PROT_READ|PROT_WRITE,MMAP_FLAGS, 0, 0);//+ sizeof(size_t)
+if (result == MAP_FAILED){return NULL;}
+* (size_t *) result = __size;
+return(result + sizeof(__size));
+}	
+//!---------------------------------------------------------------------
+void *libc_memcpy (void *dest, void *src, size_t n);
+//!---------------------------------------------------------------------
+void *realloc(void *ptr, size_t __size)
+{
+        void *newptr = NULL;
+ 
+        if (!ptr){return malloc(__size);}
+        if (!__size) {
+                free(ptr);
+                return malloc(0);
+        }
+ 
+        newptr = malloc(__size);
+        if (newptr) {
+                size_t old_size = *((size_t *) (ptr - sizeof(size_t)));
+				 libc_memcpy(newptr, ptr, (old_size < __size ? old_size : __size));//libc_count((void**)ptr)*sizeof(ptr));
+                free(ptr);
+        }
+        return newptr;
+}
 

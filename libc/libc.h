@@ -56,9 +56,9 @@ char char_table_base64[] = {
 
 
 ///memory
-#define malloc libc_malloc
-#define free libc_free
-#define realloc libc_realloc
+//#define malloc libc_malloc
+//#define free libc_free
+//#define realloc libc_realloc
 #include "string.c"
 ///string
 #define strcpy(s,ct) libc_strcpy(s,ct) 			//копирует строку ct в строку s, включая '\0'; возвращает s

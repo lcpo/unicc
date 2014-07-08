@@ -1,26 +1,4 @@
 
-
-
-//!---------------------------------------------------------------------
-void libc_free(void *ptr){
-if (ptr == NULL){return;}
-ptr -= sizeof(size);
-munmap(ptr,  * (size *) ptr + sizeof(size));
-}
-//!---------------------------------------------------------------------
-uni libc_strpos(char *haystack, char *needle){
-   char *p = libc_strstr(haystack, needle);
-   if (p){return p - haystack;}else{return -1;}  
-} 
-//!---------------------------------------------------------------------
-
-void *libc_malloc(size __size){
-void *result;
-result = mmap(NULL, __size , PROT_READ | PROT_WRITE,MMAP_FLAGS, 0, 0);//+ sizeof(size_t)
-if (result == MAP_FAILED){return NULL;}
-* (size *) result = __size;
-return(result + sizeof(void*));
-}
 //!---------------------------------------------------------------------
 size libc_count(void** v) {
     size i=0;
@@ -30,25 +8,46 @@ size libc_count(void** v) {
     return i;
 }
 //!---------------------------------------------------------------------
-void *libc_realloc(void *ptr, size __size)
-{
+uni libc_strpos(char *haystack, char *needle){
+   char *p = libc_strstr(haystack, needle);
+   if (p){return p - haystack;}else{return -1;}  
+} 
+//!---------------------------------------------------------------------
+int libc_ads(int i){return (i)?0:1;}
+
+///------------------------------------------------------------
+void *libc_malloc(size_t __size){
+long buff[__size];
+long len=__size,i=0;
+void* out=NULL;
+out=(void*)buff;
+* (size_t *) out = __size;	
+return out+ sizeof(size_t);
+}
+///------------------------------------------------------------
+void libc_free(void *ptr){
+if (ptr == NULL){return;}
+ptr=NULL;
+					}
+///------------------------------------------------------------
+void *libc_realloc(void *ptr, size_t __size){
         void *newptr = NULL;
  
-        if (!ptr)
-                return libc_malloc(__size);
+        if (!ptr){return libc_malloc(__size);}
         if (!__size) {
                 libc_free(ptr);
-                return libc_malloc(0);
+                return libc_malloc(sizeof(ptr));
         }
  
         newptr = libc_malloc(__size);
         if (newptr) {
-                size old_size = *((size *) (ptr - sizeof(size)));
-				 libc_memcpy(newptr, ptr, libc_count((void**)ptr)*sizeof(ptr));//(old_size < size ? old_size : size));
+                size_t old_size = *((size_t *) (ptr - sizeof(size_t)));
+				 libc_memcpy(newptr, ptr,(old_size < __size ? old_size : __size)); //libc_count((void**)ptr));
                 libc_free(ptr);
         }
         return newptr;
 }
+///------------------------------------------------------------
 
 //!---------------------------------------------------------------------
 uni	libc_sch(char* str, char ch) {
@@ -381,6 +380,8 @@ if(t>0 && z==5){a3[j++]=(t+1)+'0';}else{a3[j++] = t+'0';}
 //if(t==0){a3[j-2]='\0';a3[j-1]='\0';}else{a3[j-1]='\0';}
 a3[j-1]='\0';
 
+
+
 return a3;
 }
 
@@ -679,7 +680,7 @@ return write($O, (void*)buf, libc_strlen(buf));
 char* libc_strpstr_nomo(char* str,char* ser){ //Получает позицию первого вхождения подстроки не модифицируя строку
 if(libc_strstr(str,ser)){	
 int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
-char* buff_strn=libc_malloc(len_str);
+char* buff_strn=libc_malloc(sizeof(buff_strn)*(len_ser*len_str));
 libc_strcpy(buff_strn,"\0");
 char* estr=libc_strstr(str,ser)+len_ser;
 int iestr=libc_strlen(estr);
@@ -692,25 +693,32 @@ return out;
 //!---------------------------------------------------------------------
 //Требуется оптимизация
 char** libc_explode(char* se,char* str){ //Разбивает строку на массив по разделителю
-int i=0,l=0;char* new_s="";
-int cou=libc_substr_count(str,se)+2;
-char** ret=libc_malloc(cou);
+int i=0,l=0,n=0,len=libc_strlen(str),cou=libc_substr_count(str,se);
+
+char** ret=libc_malloc(sizeof(ret)*cou*sizeof(char**));
+//char** ret=libc_alloc(sizeof(ret));
+//libc_print_str(libc_itos(sizeof(ret)*cou*sizeof(char**)));
+//libc_print_str("\n");
+
+l=0;i=0;
+
 while(l!=-1){
 l=libc_strpos(str,se);
-new_s =libc_strpstr_nomo(str,se);
-ret[i]=new_s;
+ret[i]=libc_strpstr_nomo(str,se);
+//libc_print_str(ret[i]);
+//libc_print_str("\n");
 str=str+l+libc_strlen(se);
 	i++;
-}
+			}
 ret[i]='\0';
-return ret;        
-								}
+return ret;      
+										}
 ///---------------------------------------------------------------------
 char* libc_implode(char* r,char** arri){
 int i=0,n=libc_count((void **)arri),n_arr=0,n_r=libc_strlen(r);
 
 while(i<n){n_arr=n_arr+libc_strlen(arri[i])+n_r;i++;}
-char* out=libc_malloc((n_arr+n_r));
+char* out=libc_malloc(sizeof(out));
 
 i=0;
 while(i<n){
@@ -726,7 +734,7 @@ return out;
 char* libc_strnstr(char* str, char* ser){
 if(libc_strstr(str,ser)){
 int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
-char* buff_strn=libc_malloc(len_str);
+char* buff_strn=libc_malloc(sizeof(buff_strn));
 libc_strcpy(buff_strn,"\0");
 char* estr=libc_strstr(str,ser)+len_ser;
 int iestr=libc_strlen(estr);
@@ -740,14 +748,13 @@ return out;
 char* libc_strpstr(char* str,char* ser){
 if(libc_strstr(str,ser)){	
 int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
-char* buff_strn=libc_malloc(len_str);
+char* buff_strn=libc_malloc(sizeof(buff_strn)*(len_ser*len_str)*10);
 libc_strcpy(buff_strn,"\0");
 char* estr=libc_strstr(str,ser)+len_ser;
 int iestr=libc_strlen(estr);
 len_nstr=len_str-iestr-len_ser;
 libc_strncat(buff_strn,str,len_nstr);
-char* out=buff_strn;
-return out;
+return buff_strn;
 }else{return "";}
 	}
 ///---------------------------------------------------------------------
@@ -778,7 +785,7 @@ return -1;
 	}	
 ///---------------------------------------------------------------------
 char** libc_array_unique(char **ars){
-char** item=libc_malloc(sizeof(ars));
+char** item=libc_malloc(sizeof(item));
 int i=0;
 while(ars[i]!=NULL){
 int id=libc_array_search(ars[i],ars);
@@ -788,7 +795,7 @@ return item;
 	}
 ///---------------------------------------------------------------------
 char** libc_array_unique_sort(char **ars){
-char** item=libc_malloc(sizeof(ars));
+char** item=libc_malloc(sizeof(item));
 int i=0,n=0;
 while(ars[i]!=NULL){
 int id=libc_array_search(ars[i],ars);
@@ -824,22 +831,22 @@ char * libc_trim(char *str) {
 }
 ///---------------------------------------------------------------------
 int libc_file_exists(char* filename){
-struct stat_f *fi=libc_malloc(sizeof(char));
+struct stat_f *fi=libc_malloc(sizeof(fi));
 stat(filename,fi);
 if(fi->st_atime==0 && fi->st_mtime==0 && fi->st_ctime==0){return 0;}else{return 1;}
 	} 
 //!------------------------------------------------------------
 size libc_filesize(char* filename){
-struct stat_f *fi=libc_malloc(sizeof(char));
+struct stat_f *fi=libc_malloc(sizeof(fi));
 stat(filename,fi);
 return fi->st_gid;
 							}
 //!------------------------------------------------------------
 char* libc_file_get_contents(char* filename){
-struct stat_f *fi=libc_malloc(sizeof(char));
+struct stat_f *fi=libc_malloc(sizeof(fi));
 int res=open(filename,O_RDONLY,0);
 fstat(res,fi);
-char* buff=libc_malloc(fi->st_gid);
+char* buff=libc_malloc(sizeof(fi));//fi->st_gid
 read(res,buff,fi->st_gid);
 close(res);
 return buff;
@@ -873,17 +880,14 @@ char * 	libc_string_replace(char *string, char *delimiter, char *replacement) {
     if (!libc_strstr(string,delimiter)) {
         return string;
     }
-    int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement), i=0,j=0;
-    char* ret = libc_malloc(libc_strlen(string)+libc_strlen(replacement));
+    int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement),lstr=libc_strlen(string), i=0,j=0;
+    char* ret = libc_malloc((ldel+lrep+lstr)*sizeof(ret));
     while (string[i] != '\0') {
         if (!libc_strncmp(&string[i], delimiter, ldel)) {
             i += ldel;
             j += lrep;
             bret = 1;
-        } else {
-            i++;
-            j++;
-        }
+        } else {i++;j++;}
     }
     i = 0;
     j = 0;
@@ -967,7 +971,7 @@ char * 	libc_string_ireplace(char *string, char *delimiter, char *replacement) {
         return string;
     }
     int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement), i=0,j=0;
-    char* ret = libc_malloc(sizeof(char*));
+    char* ret = libc_malloc(sizeof(ret));
     while (string[i] != '\0') {
         if (!libc_strncmpi(&string[i], delimiter, ldel)) {
             i += ldel;
@@ -1005,7 +1009,7 @@ char *libc_dirname(char *s){
 if (!s || !*s || !libc_strchr(s, '/')){ return ".";}
 size_t n=libc_strlen(s);
 int co=libc_sch_count(s,'/'),coti=0,i=0;
-char* out=libc_malloc(sizeof(char*));
+char* out=libc_malloc(sizeof(out));
 	do{
 	out[i]=s[i];
 	if(s[i]=='/'){coti++;}
@@ -1058,7 +1062,7 @@ char libc_to_hex(char code) {
 ///------------------------------------------------------------
 
 char *libc_urlencode(char *str) {
-  char *pstr = str, *buf = libc_malloc(libc_strlen(str)), *pbuf = buf;
+  char *pstr = str, *buf = libc_malloc(sizeof(buf)), *pbuf = buf;
   while (*pstr) {
     if (libc_isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
       *pbuf++ = *pstr;
@@ -1073,7 +1077,7 @@ char *libc_urlencode(char *str) {
 }
 ///------------------------------------------------------------
 char *libc_urldecode(char *str) {
-  char *pstr = str, *buf = libc_malloc(libc_strlen(str)), *pbuf = buf;
+  char *pstr = str, *buf = libc_malloc(sizeof(buf)), *pbuf = buf;
   while (*pstr) {
     if (*pstr == '%') {
       if (pstr[1] && pstr[2]) {
@@ -1096,11 +1100,10 @@ size_t libc_strnlen(char *str, size_t count){
 	return ps ? ps-str : count;
 }
 ///------------------------------------------------------------
-char *libc_strndup(char *str, size_t count)
-{
+char *libc_strndup(char *str, size_t count){
 	size_t len = libc_strnlen(str, count);
-	char *dup = libc_malloc(len+1);
-	if (!dup) return NULL;
+	char *dup = libc_malloc(len*count*sizeof(dup));
+	if (!dup){ return NULL;}
 	libc_memcpy(dup, str, len);
 	dup[len] = '\0';
 	return dup;
@@ -1134,7 +1137,7 @@ return buff;
 ///------------------------------------------------------------
 char* libc_stripslashes (char* str ){
 int i=0,col=libc_strlen(str),n=0;
-char* buff=libc_malloc(sizeof(char*));
+char* buff=libc_malloc(sizeof(buff));
 while(i<col){
 if(str[i]!='\\'){buff[n++]=str[i];i++;}else
 if(str[i]=='\\' && str[i+1]=='\\'){buff[n++]=str[i];i++;}else
@@ -1145,7 +1148,7 @@ return buff;
 ///------------------------------------------------------------
 char* libc_array_replace(char* str, char** delimiters, char **replacement){
 int i=0;
-char* buffrsa=libc_malloc(sizeof(char**));
+char* buffrsa=libc_malloc(sizeof(buffrsa));
 buffrsa=str;
 while(delimiters[i]!=NULL){
 if(replacement[i]!=NULL && replacement[i]!='\0' && libc_strpos(buffrsa,delimiters[i])!=-1){
@@ -1155,6 +1158,7 @@ if(replacement[i]!=NULL && replacement[i]!='\0' && libc_strpos(buffrsa,delimiter
 return buffrsa;		
 	}
 ///------------------------------------------------------------
+
 #ifdef _PCRE_H
 
 ///------------------------------------------------------------
@@ -1181,7 +1185,7 @@ pcre_extra *f_ext=pcre_study(f,0,&errstr);
 pairs=pcre_exec(f,f_ext,subject,libc_strlen(subject),offset,j,vector,vecsize);
 
 while(pairs>i){
-matches[i]=libc_malloc(sizeof(char*));	
+matches[i]=libc_malloc(sizeof(matches[i]));	
 //pcre_get_substring(subject,vector,pairs, i, &matches[i]);
 pcre_copy_substring(subject, vector, pairs,   i, matches[i], sizeof(char*)*vecsize);
 
@@ -1194,7 +1198,7 @@ return 1;
 int libc_preg_match_all ( char* pattern, char* subject, char*** matches , int flags){
 char *errstr;
 unsigned char *tables=pcre_maketables();
-char* buff2=libc_malloc(sizeof(char*));
+char* buff2=libc_malloc(sizeof(buff2));
 int pairs=0,n=0,i=0,j=0,p=0,vecsize=libc_strlen(subject)+1,vector[vecsize],errchar;
 //if(flags==0){flags=(PCRE_UTF8|PCRE_CASELESS|PCRE_MULTILINE);}else{flags|=PCRE_UTF8|PCRE_CASELESS|PCRE_MULTILINE;}
 if(matches==NULL){j=PCRE_ANCHORED;}else{j=PCRE_NOTEMPTY;}
@@ -1203,11 +1207,11 @@ if((f)==NULL){libc_preg_print_error(pattern,errchar,errstr);return -1;}
 pcre_extra *f_ext=pcre_study(f,0,&errstr);
 
 while((pairs=pcre_exec(f,f_ext,subject,libc_strlen(subject),p,j,vector,vecsize))>0){
-matches[i]=libc_malloc(sizeof(char**));
+matches[i]=libc_malloc(sizeof(matches[i]));
 n=0;
 if((pairs)<0){return -1;}
 while(pairs>n){
-matches[i][n]=libc_malloc(sizeof(char*));
+matches[i][n]=libc_malloc(sizeof(matches[i][n]));
 pcre_copy_substring(subject,vector,pairs,n,matches[i][n],libc_strlen(subject));
 n++;
 			  }
@@ -1226,7 +1230,7 @@ int j = 0;
 int mod_table[] = {0, 2, 1};
 	size_t input_length=libc_strlen(data);
     size_t output_length = 4 * ((input_length + 2) / 3);
-    char *encoded_data = libc_malloc(input_length+1);
+    char *encoded_data = libc_malloc(sizeof(encoded_data));
     for (;i< input_length;) {
 		unsigned int octet_a = i < input_length ? (unsigned char)data[i++] : 0;
 		unsigned int octet_b = i < input_length ? (unsigned char)data[i++] : 0;
@@ -1245,13 +1249,13 @@ int mod_table[] = {0, 2, 1};
 
 char* libc_base64_decode(char *data) {
 	int i = 0; int j = 0;
-	char* decoding_table = libc_malloc(256);
+	char* decoding_table = libc_malloc(sizeof(decoding_table));
 	for (;i<64;i++){decoding_table[(unsigned char) char_table_base64[i]] = i;}
 	size_t input_length=libc_strlen(data);
     size_t output_length = libc_strlen(data) / 4 * 4;
     if (data[input_length - 1] == '='){ output_length--;}
     if (data[input_length - 2] == '='){ output_length--;}
-    unsigned char *decoded_data = libc_malloc(output_length);
+    unsigned char *decoded_data = libc_malloc(sizeof(decoded_data));
 	i=0;   
     for (; i < input_length;) {
         unsigned int sextet_a = data[i] == '=' ? 0 & i++ : decoding_table[data[i++]];
@@ -1266,6 +1270,7 @@ char* libc_base64_decode(char *data) {
     return decoded_data;
 }
 ///------------------------------------------------------------
+
 char* libc_md5(char* str){
 	
 
@@ -1419,7 +1424,7 @@ if (ctx->bitlen[0] > 0xffffffff - 8 * ctx->datalen){++ctx->bitlen[1];}
 }  
 
     char ha[16];
-    char buf[33];//=libc_malloc(sizeof(char*)); 
+    char buf[33];
    MD5_CTX ctx; 
    md5_proc(&ctx,str,ha); 
 
@@ -1436,5 +1441,5 @@ if (ctx->bitlen[0] > 0xffffffff - 8 * ctx->datalen){++ctx->bitlen[1];}
 	char* outs=buf;    
 return outs;
 	}
-  
+
 ///------------------------------------------------------------

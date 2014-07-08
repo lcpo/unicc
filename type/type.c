@@ -1,9 +1,10 @@
 
 //----------------------------------------------------------------------
+/*
 uni set_type_item(char* name) {
     uni ind=0, fl=0, t_id=-1;
     if (type_$l==0) {
-        type_$t=libc_malloc(sizeof(char*));
+        type_$t=libc_malloc(sizeof(type_$t)*libc_strlen(name)*($_MEM_STEP));
         type_$z=sizeof(char*);
         }
     while (type_$l>ind) {
@@ -21,6 +22,35 @@ uni set_type_item(char* name) {
             type_$z=((libc_count((void**)type_$t))*($_MEM_STEP));
             }
         type_$t[type_$l]=libc_malloc(((libc_strlen(name))*($_MEM_STEP)));
+        type_$t[type_$l]=name;
+        t_id=type_$l;
+        type_$l++;
+
+        }
+    return t_id;
+    }
+*/
+uni set_type_item(char* name) {
+    uni ind=0, fl=0, t_id=-1;
+    if (type_$l==0) {
+        type_$t=malloc(sizeof(type_$t)*libc_strlen(name)*($_MEM_STEP));
+        type_$z=sizeof(char*);
+        }
+    while (type_$l>ind) {
+        if (libc_scmp(type_$t[ind],name)==2) {
+            fl=1;
+            t_id=ind;
+            }
+            
+        ind++;
+        }
+
+    if (fl==0) {
+        if (type_$l>0) {
+            type_$t=realloc(type_$t,((libc_count((void**)type_$t))*($_MEM_STEP)));
+            type_$z=((libc_count((void**)type_$t))*($_MEM_STEP));
+            }
+        type_$t[type_$l]=malloc(((libc_strlen(name))*($_MEM_STEP)));
         type_$t[type_$l]=name;
         t_id=type_$l;
         type_$l++;
@@ -47,8 +77,8 @@ void init_type(void) {
     set_type(uni);                  //9
     set_type(size);                 //10
     set_type(wchar);                //11
-    //-------------------------------------------
-
+   //-------------------------------------------
+ 
     set_type(signed char);          //12
     set_type(unsigned char);        //13
     set_type(short int);            //14
@@ -77,7 +107,6 @@ void init_type(void) {
     set_type(unsigned long long);    //34
     set_type(signed long long int);  //35
     set_type(unsigned long long int);//36
-
 
     return;
     }
