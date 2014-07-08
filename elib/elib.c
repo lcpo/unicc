@@ -158,9 +158,11 @@ int64_t __divdi3(int64_t num, int64_t den){
 ///------------------------------------------------------------
 void free(void *ptr){
 if (ptr == NULL){return;}
-ptr -= sizeof(size_t);
-if(munmap(ptr, * (size_t *) ptr + sizeof(size_t)) == -1){write($O,"munmap failed!\n",15);}
-ptr=NULL;
+//ptr -= sizeof(ptr);
+char* v=ptr;
+int i=0;
+while(v[i]!=0){i++;}//* (size_t *) ptr + sizeof(size_t)
+if(munmap(ptr, i*sizeof(ptr)) == -1){write($O,"munmap failed!\n",15);}
 }
 //!---------------------------------------------------------------------
 void *malloc(size_t __size){
@@ -171,6 +173,7 @@ return(result + sizeof(__size));
 }	
 //!---------------------------------------------------------------------
 void *libc_memcpy (void *dest, void *src, size_t n);
+size_t libc_count(void** v);
 //!---------------------------------------------------------------------
 void *realloc(void *ptr, size_t __size)
 {
@@ -184,8 +187,13 @@ void *realloc(void *ptr, size_t __size)
  
         newptr = malloc(__size);
         if (newptr) {
+			#ifdef __x86_64__
                 size_t old_size = *((size_t *) (ptr - sizeof(size_t)));
-				 libc_memcpy(newptr, ptr, (old_size < __size ? old_size : __size));//libc_count((void**)ptr)*sizeof(ptr));
+				 libc_memcpy(newptr, ptr, (old_size < __size ? old_size : __size));
+           #endif
+           #ifdef __i386__
+           libc_memcpy(newptr, ptr, libc_count((void**)ptr)*sizeof(ptr));
+           #endif
                 free(ptr);
         }
         return newptr;

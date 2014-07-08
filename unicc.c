@@ -27,7 +27,7 @@ int execl (char *path, char *arg, ...){
       if (i == argv_max)
      {
        argv_max *= 2;
-        char **nptr = (char**)libc_realloc (argv == initial_argv ? NULL : argv,
+        char **nptr = (char**)realloc (argv == initial_argv ? NULL : argv,
                         argv_max * sizeof (char *));
       if (nptr == NULL){
            if (argv != initial_argv)
@@ -51,8 +51,8 @@ int execl (char *path, char *arg, ...){
  }
 //----------------------------------------------------------------------
 char* getcmd(){
-char* exe=libc_malloc(sizeof(*exe));
-char* tmp=libc_malloc(sizeof(*tmp));	
+char* exe=malloc(sizeof(*exe));
+char* tmp=malloc(sizeof(*tmp));	
 char* start="/proc/";
 char* end="/cmdline";
 char* pid=libc_itos(getpid());
@@ -62,13 +62,13 @@ libc_strcat(tmp,end);
 int file=open(tmp,0,0);
 read(file,exe,128);
 close(file);
-libc_free(tmp);
+free(tmp);
 return exe;
 	}
 //----------------------------------------------------------------------
 char* getpn(){
-char* exe=libc_malloc(sizeof(*exe));
-char* tmp=libc_malloc(sizeof(*tmp));
+char* exe=malloc(sizeof(*exe));
+char* tmp=malloc(sizeof(*tmp));
 char* start="/proc/";
 char* end="/exe";
 char* pid=libc_itos(getpid());
@@ -76,7 +76,7 @@ libc_strcpy(tmp,start);
 libc_strcat(tmp,pid);
 libc_strcat(tmp,end);
 readlink(tmp,exe,128);
-libc_free(tmp);
+free(tmp);
 return exe;
 				}
 //----------------------------------------------------------------------
@@ -149,7 +149,7 @@ void _start() {
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;
 argc=getargc(_start$output);
-char** argv=libc_malloc(sizeof(*argv));
+char** argv=malloc(sizeof(*argv)*argc);
 if(argc==1){argv[0]=(char*)_start$output;argc--;}
 if(argc>=2){argv=getargv(argc,_start$output,argv);argc--;}
 int result=main(argc,argv);

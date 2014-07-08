@@ -18,7 +18,8 @@ if(var_$t[id]==24){long double ld=*(long double*)(x);buff=libc_ldtos((long doubl
 
 ///------------------------------------------------------------
 void print_item_array(char* name){
-uni len=0,id=-1,i=0,arr_co=0,sid=0;
+uni len=0,id=-1,i=0,sid=0;
+int arr_co=0;
 uni* x;
 uni* sx;
 char* name_arr; char* type; char* arg_arr;
@@ -31,10 +32,11 @@ char* name_arr; char* type; char* arg_arr;
 	len=libc_strlen(arg_arr);
 	arr_co=libc_sch_count(arg_arr,'[');
 int flag=0,p=0,cur=0,z=0,n=0;
-long lvect[arr_co],rvect[arr_co];
+
+long *lvect=libc_malloc(arr_co),*rvect=libc_malloc(arr_co);
 rvect[n]=0;n++;
-//printf("%s\n",arg_arr);
-char buf[arr_co];	
+char* buf=libc_malloc(libc_strlen(name));	
+
 while(len>i){
 if(arg_arr[i]!='[' && arg_arr[i]!=']'){z++;buf[p]=arg_arr[i]; p++;lvect[n-1]=z;rvect[n]=p;}
 if(arg_arr[i-1]==']' && arg_arr[i]=='['){z=0;n++;}
@@ -42,7 +44,7 @@ i++;
 			}
 buf[p]='\0';
 
-long vect[arr_co];
+long vect[100];
 i=0;
 //printf("=%s\n",buf);
 
@@ -71,7 +73,11 @@ if(libc_scmp(type,"float**")==2 && arr_co==2){float** out7=(float**)*x;float bf7
 
 if(libc_scmp(type,"double*")==2 && arr_co==1){double* out5=(double*)*x;double bf5; bf5=out5[(int)vect[0]];write($O,libc_dtos(bf5),libc_strlen(libc_dtos(bf5)));}
 if(libc_scmp(type,"double**")==2 && arr_co==2){double** out7=(double**)*x;double bf7;bf7=out7[(int)vect[0]][(int)vect[1]];write($O,libc_dtos(bf7),libc_strlen(libc_dtos(bf7)));}
-
+libc_free(lvect);
+libc_free(rvect);
+libc_free(buf);
+libc_free(nbuff);
+libc_free(name_arr);
 
 return;
 	}
@@ -95,12 +101,18 @@ str_arg=libc_string_replace(str_arg,"\\r","\r");
 str_arg=libc_string_replace(str_arg,"\\t","\t");
 int len=libc_strlen(str_arg),i=0,p=0,n=0,z=0,nom=0;
 char* buff=libc_malloc(len*sizeof(buff)*libc_strlen(str_arg));
-long lvect[len],rvect[len];
+long *lvect=libc_malloc(len),*rvect=libc_malloc(len);
 rvect[n]=0;n++;
 while(len>i){if((str_arg[i]==',' || str_arg[i]=='.') && str_arg[i-1]!='\\'){z=0;i++;n++;}else{z++;lvect[n-1]=z;buff[p]=str_arg[i];p++;i++;rvect[n]=p;}}
 i=0;
 while(n>i){
-	__printtype(libc_substr(buff,rvect[i],lvect[i]));i++;}
+	__printtype(libc_substr(buff,rvect[i],lvect[i]));
+	i++;}
+libc_free(lvect);
+libc_free(rvect);
+libc_free(buff);
+libc_free(str_arg);
+
 	}
 ///------------------------------------------------------------	
 

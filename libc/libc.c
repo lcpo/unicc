@@ -16,21 +16,31 @@ uni libc_strpos(char *haystack, char *needle){
 int libc_ads(int i){return (i)?0:1;}
 
 ///------------------------------------------------------------
+
 void *libc_malloc(size_t __size){
-long buff[__size];
-long len=__size,i=0;
-void* out=NULL;
-out=(void*)buff;
+#ifdef __x86_64__
+long* buff[__size];
+void* out=(void*)buff;
 * (size_t *) out = __size;	
-return out+ sizeof(size_t);
+return out+ sizeof(__size);
+#endif
+#ifdef __i386__
+return malloc(__size*sizeof(char*));
+#endif  
 }
 ///------------------------------------------------------------
 void libc_free(void *ptr){
 if (ptr == NULL){return;}
+#ifdef __x86_64__
 ptr=NULL;
+#endif 
+#ifdef __i386__
+free(ptr);
+#endif 
 					}
 ///------------------------------------------------------------
 void *libc_realloc(void *ptr, size_t __size){
+#ifdef __x86_64__
         void *newptr = NULL;
  
         if (!ptr){return libc_malloc(__size);}
@@ -42,10 +52,15 @@ void *libc_realloc(void *ptr, size_t __size){
         newptr = libc_malloc(__size);
         if (newptr) {
                 size_t old_size = *((size_t *) (ptr - sizeof(size_t)));
+				 
 				 libc_memcpy(newptr, ptr,(old_size < __size ? old_size : __size)); //libc_count((void**)ptr));
                 libc_free(ptr);
         }
         return newptr;
+#endif
+#ifdef __i386__ 
+return realloc(ptr,__size*sizeof(ptr));
+#endif
 }
 ///------------------------------------------------------------
 
@@ -687,6 +702,7 @@ int iestr=libc_strlen(estr);
 len_nstr=len_str-iestr-len_ser;
 libc_strncat(buff_strn,str,len_nstr);
 char* out=buff_strn;
+libc_free(buff_strn);
 return out;
 }else{return str;}
 	}
