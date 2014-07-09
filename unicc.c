@@ -145,7 +145,7 @@ return ret;
 #define main _start
 #else						  	
 void _start() {
-	
+
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;
 argc=getargc(_start$output);
@@ -153,7 +153,7 @@ char** argv=malloc(sizeof(*argv)*argc);
 if(argc==1){argv[0]=(char*)_start$output;argc--;}
 if(argc>=2){argv=getargv(argc,_start$output,argv);argc--;}
 int result=main(argc,argv);
-libc_free(argv);
+free(argv);
 exit(result);
 //asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
 return;
