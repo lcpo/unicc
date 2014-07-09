@@ -11,48 +11,19 @@ void *sbrk(size_t incr)
 }
 */
 #ifdef __i386__
-//732
-#define PEEK_EBP(reg,t)         \
-   asm(							\
-       "addl %0, %%ebp\n"		\
-       "movl %%ebp, %0\n"       \
-       : "=r"(reg)              \
-       : "r"(t)      	        \
-   );
-
-//5
-#define PEEK_ESP(reg,t)         \
-   asm(							\
-       "add %0, %%esp\n"		\
-       "mov %%esp, %0\n"        \
-       : "=r"(reg)              \
-       : "r"(t)      	        \
-   );
-
-
-//3066
-#define PEEK_EDX(reg,t)         \
-   asm(							\
-       "add %0, %%edx\n"		\
-       "mov %%edx, %0\n"        \
-       : "=r"(reg)              \
-       : "r"(t)      	        \
-   );
-
-#define CPY(reg,t) 		        \
-   asm(							\
-       "movq %0,%%ebx \n"		\
-       "movq %%ebx, %0\n"       \
-       : "=r"(reg)              \
-       : "r"(t)      	        \
-   );
+#define cpyquad(variable,value)asm("mov %0,%%ebx \n" "mov %%ebx, %0\n" : "=r"(variable): "r"(value));
+#define cpylong cpyquad
+#define ADDR(address ,variable) asm("mov  %%eax,%0 \n"	"mov  %0, %%eax \n" : "=r"(address) : "r"(variable));
+#define IN_EDX(reg,t)asm("add %0, %%edx\n" "mov %%edx, %0\n" : "=r"(reg) : "r"(t));
 #endif
 
 
 #ifdef __x86_64__
-
 #define cpylong(variable,value) asm("mov %%eax,%0\n" "mov %0,%%eax\n"	: "=r"(variable): "r"(value));
 #define cpyquad(variable,value) asm("mov %%rax,%0\n" "mov %0,%%rax\n"	: "=r"(variable): "r"(value));
+#define ADDR(address ,variable) asm("mov  %%rax,%0 \n"	"mov  %0, %%rax \n" : "=r"(address) : "r"(variable));
+#define IN_EDX(reg,t)asm("addq %0, %%rdx\n" "movq %%rdx, %0\n" : "=r"(reg) : "r"(t));
+#endif
 
 #define cpy(variable,value)({\
 if(sizeof(variable)<4){variable=value;}\
@@ -60,26 +31,37 @@ if(sizeof(variable)==4){cpylong(variable,value);}\
 if(sizeof(variable)==8){cpyquad(variable,value);}\
 	})
 
-#define ADDR(address ,variable) asm("mov  %%rax,%0 \n"	"mov  %0, %%rax \n" : "=r"(address) : "r"(variable));
-
-#define PEEK_EDX(reg,t)         \
-   asm(							\
-       "addq %0, %%rdx\n"		\
-       "movq %%rdx, %0\n"        \
-       : "=r"(reg)              \
-       : "r"(t)      	        \
-   );
 
 
+/*
 
-#endif
+void* alloc(long long __size){
+char buff[__size];
+void* out;
+ADDR(out,buff);
+return out;
+	}
 
-//#define main _start
-//
-//int argc, char **argv
+*/
 
 int main() {
 
+
+
+
+char** test=malloc(0);
+
+
+
+int i=0;
+while(i<1000000){
+	test=realloc(test,i+1*sizeof(char**));
+test[i]=libc_itos(i);
+printf("%s\n",test[i]);	
+i++;	
+	}
+
+/*
 char ps;	
 cpy(ps,'a');
 printf("%c\n",ps);
@@ -95,21 +77,16 @@ printf("%l\n",ts);
 char* nom;
 cpy(nom,"ttts");
 printf("%s\n",nom);
-
-
-char** test;
-//PEEK_EDX(test,10);
-cpy(test[0],"abc");
-printf("%s\n",test[0]);
-
-/*
-int i=0;
-while(i<10000){
-test[i]=libc_itos(i);
-printf("%s\n",test[i]);	
-i++;	
-	}
 */
+
+//char** test;
+//PEEK_EDX(test,10);
+//cpy(test[0],"abc");
+//printf("%s\n",test[0]);
+
+
+
+
 
 /*
 char* abc=var(abc,char*,main);
@@ -142,9 +119,9 @@ i++;
 //print_var();
 */
 
-
 exit(0);
-//asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
+//asm volatile("movl $60, %rax\n\t" "movq $0, %rdi\n\t" "syscall");
+//asm volatile("movl $0, %ebx\n\t" "movl $1, %eax\n\t" "int $0x80\n");
 return 0;
 						}
 

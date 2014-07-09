@@ -28,10 +28,25 @@ uni* out=(uni*)buff;
 
 ///------------------------------------------------------------
 #ifdef __i386__
-asm("__syscall:\n" "pushl %ebp\n" "pushl %edi\n" "pushl %esi\n" "pushl %ebx\n"
-"movl 20(%esp),%eax\n" "movl 24(%esp),%ebx\n" "movl 28(%esp),%ecx\n" "movl 32(%esp),%edx\n"
-"movl 36(%esp),%esi\n" "movl 40(%esp),%edi\n" "movl 44(%esp),%ebp\n" "int $0x80\n" "popl %ebx\n"
-"popl %esi\n" "popl %edi\n" "popl %ebp\n" "ret");
+asm(
+"__syscall:\n" 
+"pushl %ebp\n" 
+"pushl %edi\n" 
+"pushl %esi\n" 
+"pushl %ebx\n"
+"movl  (0+5)*4(%esp),%eax\n"
+"movl  (1+5)*4(%esp),%ebx\n"
+"movl  (2+5)*4(%esp),%ecx\n"
+"movl  (3+5)*4(%esp),%edx\n"
+"movl  (4+5)*4(%esp),%esi\n"
+"movl  (5+5)*4(%esp),%edi\n"
+"movl  (6+5)*4(%esp),%ebp\n"
+"int $0x80\n"
+"popl %ebx\n"
+"popl %esi\n" 
+"popl %edi\n" 
+"popl %ebp\n" 
+"ret");
 #endif
 ///------------------------------------------------------------
 #ifdef __x86_64__
@@ -119,7 +134,20 @@ int execve(const char* filename, char * const argv[], char *const envp[]){return
 size write(int fd, void* buf, size count) {return __syscall3(__NR_write,fd,buf,count);}
 int mprotect(void* start, size_t len, long prot) {return __syscall3(__NR_mprotect,start,len,prot);}
 uni munmap(void *addr, uni len) {return __syscall2(__NR_munmap,addr,len);}
-void* mmap(void* addr, size len, int prot, int flags, int fd, unsigned long offset){return (void*)__syscall6(__NR_mmap,(long)&addr,len,prot,flags,fd,offset);}
+//void* mmap(void* addr, size len, int prot, int flags, int fd, unsigned long offset){return (void*)__syscall6(__NR_mmap,(long)&addr,len,prot,flags,fd,offset);}
+void *mmap(void *start, size_t len, int prot, int flags, int fd, unsigned off)
+{
+	if (sizeof(unsigned) > sizeof(long))
+		if (((long)off & 0xfff) | ((long)((unsigned long long)off>>(12 + 8*(sizeof(unsigned)-sizeof(long))))))
+			start = (void *)-1;
+#ifdef __NR_mmap2
+	return (void *)__syscall6(__NR_mmap2, start, len, prot, flags, fd, off>>12);
+#else
+	return (void *)__syscall6(__NR_mmap, start, len, prot, flags, fd, off);
+#endif
+}
+
+void *sbrk(long inc){return (void *)__syscall1(__NR_brk, __syscall1(__NR_brk, 0)+inc);}
 ///------------------------------------------------------------
 uint64_t  __udivmoddi4(uint64_t num, uint64_t den, uint64_t * rem_p){
   uint64_t quot = 0, qbit = 1;
@@ -158,11 +186,8 @@ int64_t __divdi3(int64_t num, int64_t den){
 ///------------------------------------------------------------
 void free(void *ptr){
 if (ptr == NULL){return;}
-//ptr -= sizeof(ptr);
-char* v=ptr;
-int i=0;
-while(v[i]!=0){i++;}//* (size_t *) ptr + sizeof(size_t)
-if(munmap(ptr, i*sizeof(ptr)) == -1){write($O,"munmap failed!\n",15);}
+ptr -= sizeof(ptr);
+if(munmap(ptr, sizeof(ptr)) == -1){write($O,"munmap failed!\n",15);}
 }
 //!---------------------------------------------------------------------
 void *malloc(size_t __size){
