@@ -189,7 +189,7 @@ if(munmap(ptr, sizeof(ptr)) == -1){write($O,"munmap failed!\n",15);}
 void *malloc(size_t __size){
 void *result=mmap(0, __size , PROT_READ|PROT_WRITE,MMAP_FLAGS, 0, 0);//+ sizeof(size_t)
 if (result == MAP_FAILED){return NULL;}
-* (size_t *) result = __size;
+//* (size_t *) result = __size;
 return(result + sizeof(__size));
 }	
 //!---------------------------------------------------------------------
