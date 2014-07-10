@@ -51,8 +51,8 @@ int execl (char *path, char *arg, ...){
  }
 //----------------------------------------------------------------------
 char* getcmd(){
-char* exe=malloc(sizeof(*exe));
-char* tmp=malloc(sizeof(*tmp));	
+char* exe=malloc(sizeof(exe));
+char* tmp=malloc(sizeof(tmp));	
 char* start="/proc/";
 char* end="/cmdline";
 char* pid=libc_itos(getpid());
@@ -67,8 +67,8 @@ return exe;
 	}
 //----------------------------------------------------------------------
 char* getpn(){
-char* exe=malloc(sizeof(*exe));
-char* tmp=malloc(sizeof(*tmp));
+char* exe=malloc(sizeof(exe));
+char* tmp=malloc(sizeof(tmp));
 char* start="/proc/";
 char* end="/exe";
 char* pid=libc_itos(getpid());
@@ -105,7 +105,7 @@ int exec(char* command, char* out){
 int $_pipe[2];
 pipe($_pipe);
 switch(fork()){
-case -1:printf("error fork!");
+case -1:write($O,"error fork!",12);
 exit(1);
 case 0: 
 close($_pipe[0]); 
@@ -123,7 +123,7 @@ int system(char* command){
 int $_pipe[2];
 pipe($_pipe);
 switch(fork()){
-case -1:printf("error fork!");
+case -1:write($O,"error fork!",12);
 exit(1);
 case 0: 
 close($_pipe[0]); 
@@ -149,11 +149,11 @@ void _start() {
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;
 argc=getargc(_start$output);
-char** argv=malloc(sizeof(*argv)*argc);
+char** argv=malloc(sizeof(argv)*argc);
 if(argc==1){argv[0]=(char*)_start$output;argc--;}
 if(argc>=2){argv=getargv(argc,_start$output,argv);argc--;}
 int result=main(argc,argv);
-free(argv);
+libc_free(argv);
 exit(result);
 //asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
 return;

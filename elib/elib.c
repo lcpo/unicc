@@ -135,11 +135,7 @@ size write(int fd, void* buf, size count) {return __syscall3(__NR_write,fd,buf,c
 int mprotect(void* start, size_t len, long prot) {return __syscall3(__NR_mprotect,start,len,prot);}
 uni munmap(void *addr, uni len) {return __syscall2(__NR_munmap,addr,len);}
 //void* mmap(void* addr, size len, int prot, int flags, int fd, unsigned long offset){return (void*)__syscall6(__NR_mmap,(long)&addr,len,prot,flags,fd,offset);}
-void *mmap(void *start, size_t len, int prot, int flags, int fd, unsigned off)
-{
-	if (sizeof(unsigned) > sizeof(long))
-		if (((long)off & 0xfff) | ((long)((unsigned long long)off>>(12 + 8*(sizeof(unsigned)-sizeof(long))))))
-			start = (void *)-1;
+void *mmap(void *start, size_t len, int prot, int flags, int fd, long int off){
 #ifdef __NR_mmap2
 	return (void *)__syscall6(__NR_mmap2, start, len, prot, flags, fd, off>>12);
 #else

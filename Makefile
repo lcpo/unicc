@@ -9,7 +9,7 @@ OBJECTSLIB=unicc.o
 #libpcre3-dev -ok
 #libpcrecpp0 -ok
 
-SOPTS= -O3 -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #-lcurl -lmysqlclient # -w -fPIC
+SOPTS=  -O3 -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #-lcurl -lmysqlclient # -w -fPIC
 
 all:
 	make clear

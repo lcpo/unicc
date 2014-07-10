@@ -1,6 +1,24 @@
-//extern void * malloc(size_t __size);
-//extern void * realloc(void * __ptr, size_t __size);
-//extern void free(void * __ptr);
+#ifdef __i386__
+#define cpyquad(variable,value)asm("mov %0,%%ebx \n" "mov %%ebx, %0\n" : "=r"(variable): "r"(value));
+#define cpylong cpyquad
+#define ADDR(address ,variable) asm("mov  %%eax,%0 \n"	"mov  %0, %%eax \n" : "=r"(address) : "r"(variable));
+#define IN_EDX(reg,t)asm("add %0, %%edx\n" "mov %%edx, %0\n" : "=r"(reg) : "r"(t));
+#endif
+
+
+#ifdef __x86_64__
+#define cpylong(variable,value) asm("mov %%eax,%0\n" "mov %0,%%eax\n"	: "=r"(variable): "r"(value));
+#define cpyquad(variable,value) asm("mov %%rax,%0\n" "mov %0,%%rax\n"	: "=r"(variable): "r"(value));
+#define ADDR(address ,variable) asm("mov  %%rax,%0 \n"	"mov  %0, %%rax \n" : "=r"(address) : "r"(variable));
+#define IN_EDX(reg,t)asm("addq %0, %%rdx\n" "movq %%rdx, %0\n" : "=r"(reg) : "r"(t));
+#endif
+
+#define cpy(variable,value)({\
+if(sizeof(variable)<4){variable=value;}\
+if(sizeof(variable)==4){cpylong(variable,value);}\
+if(sizeof(variable)==8){cpyquad(variable,value);}\
+	})
+
 //----------------------------------------------------------------------
 	#ifdef __i386__
 #define SYS_CALL "int $0x80" 

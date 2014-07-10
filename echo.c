@@ -105,15 +105,12 @@ long *lvect=libc_malloc(len),*rvect=libc_malloc(len);
 rvect[n]=0;n++;
 while(len>i){if((str_arg[i]==',' || str_arg[i]=='.') && str_arg[i-1]!='\\'){z=0;i++;n++;}else{z++;lvect[n-1]=z;buff[p]=str_arg[i];p++;i++;rvect[n]=p;}}
 i=0;
-while(n>i){
-	__printtype(libc_substr(buff,rvect[i],lvect[i]));
-	i++;}
+while(n>i){	__printtype(libc_substr(buff,rvect[i],lvect[i]));i++;}
 libc_free(lvect);
 libc_free(rvect);
 libc_free(buff);
 libc_free(str_arg);
-
 	}
 ///------------------------------------------------------------	
-
 #define echo(p...)({__echo(#p);})
+///------------------------------------------------------------	
