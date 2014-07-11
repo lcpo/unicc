@@ -26,7 +26,7 @@ return newptr;
 
 int main(int argc, char** argv) {
 
-char** test=malloc(1000000*sizeof(test));
+char** test=libc_malloc(1000000);
 
 /*
 printf("%i\n",libc_strlen((char*)test));
@@ -40,10 +40,11 @@ printf("%i\n",sizeof(str)/sizeof(str[0])); //4
 
 int i=0;
 while(i<1000000){
-test[i]=sbrk(sizeof(test[i]));
-//test=realloc(test,10*sizeof(test));
-libc_strcpy(test[i],libc_itos(i));
-printf("%s\n",test[i]);
+//test[i]=sbrk(sizeof(test[i]));
+test=libc_realloc(test,i+1);
+test[i]=libc_itos(i);
+//libc_strcpy(test[i],libc_itos(i));
+//printf("%s\n",test[i]);
 
 	i++;
 				}
