@@ -134,16 +134,28 @@ int execve(const char* filename, char * const argv[], char *const envp[]){return
 size write(int fd, void* buf, size count) {return __syscall3(__NR_write,fd,buf,count);}
 int mprotect(void* start, size_t len, long prot) {return __syscall3(__NR_mprotect,start,len,prot);}
 uni munmap(void *addr, uni len) {return __syscall2(__NR_munmap,addr,len);}
-//void* mmap(void* addr, size len, int prot, int flags, int fd, unsigned long offset){return (void*)__syscall6(__NR_mmap,(long)&addr,len,prot,flags,fd,offset);}
 void *mmap(void *start, size_t len, int prot, int flags, int fd, long int off){
 #ifdef __NR_mmap2
-	return (void *)__syscall6(__NR_mmap2, start, len, prot, flags, fd, off>>12);
+	return (void *)__syscall6(__NR_mmap2, start, len, prot, flags, fd, off>>16);
 #else
 	return (void *)__syscall6(__NR_mmap, start, len, prot, flags, fd, off);
 #endif
 }
-
+///------------------------------------------------------------
 void *sbrk(long inc){return (void *)__syscall1(__NR_brk, __syscall1(__NR_brk, 0)+inc);}
+///------------------------------------------------------------
+void *mremap(void *old_addr, size_t old_len, size_t new_len, int flags, ...){
+	va_list ap;
+	void *new_addr;
+	
+	va_start(ap, flags);
+	new_addr = va_arg(ap, void *);
+	va_end(ap);
+
+	return (void *)__syscall5(__NR_mremap, old_addr, old_len, new_len, flags, new_addr);
+}
+///------------------------------------------------------------
+int madvise(void *addr, size_t len, int advice){return __syscall3(__NR_madvise, addr, len, advice);}
 ///------------------------------------------------------------
 uint64_t  __udivmoddi4(uint64_t num, uint64_t den, uint64_t * rem_p){
   uint64_t quot = 0, qbit = 1;
@@ -189,15 +201,14 @@ if(munmap(ptr, sizeof(ptr)) == -1){write($O,"munmap failed!\n",15);}
 void *malloc(size_t __size){
 void *result=mmap(0, __size , PROT_READ|PROT_WRITE,MMAP_FLAGS, 0, 0);//+ sizeof(size_t)
 if (result == MAP_FAILED){return NULL;}
-//* (size_t *) result = __size;
+* (size_t *) result = __size;
 return(result + sizeof(__size));
 }	
 //!---------------------------------------------------------------------
 void *libc_memcpy (void *dest, void *src, size_t n);
 size_t libc_count(void** v);
 //!---------------------------------------------------------------------
-void *realloc(void *ptr, size_t __size)
-{
+void *realloc(void *ptr, size_t __size){
         void *newptr = NULL;
  
         if (!ptr){return malloc(__size);}
