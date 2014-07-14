@@ -7,17 +7,17 @@ size libc_count(void** v) {
     }
     return i;
 }
-//!---------------------------------------------------------------------
+//!------------------------------------------------------------
 uni libc_strpos(char *haystack, char *needle){
    char *p = libc_strstr(haystack, needle);
    if (p){return p - haystack;}else{return -1;}  
 } 
-//!---------------------------------------------------------------------
+//!------------------------------------------------------------
 int libc_ads(int i){return (i)?0:1;}
 
 ///------------------------------------------------------------
 void *libc_alloc(size_t __size){
-char buff[__size];
+char* buff[__size];
 void* out=(void*)buff;	
 out=out+ sizeof(size_t);
 return (void*)out;
@@ -25,18 +25,13 @@ return (void*)out;
 ///------------------------------------------------------------
 
 void *libc_malloc(size_t __size){
-void* out=sbrk(__size);
+void* out=sbrk(__size*sizeof(out));
 return (void*)out;
 }
 ///------------------------------------------------------------
-void libc_pfree(void *ptr){
-if (ptr == NULL){return;}
-ptr=NULL;
-							}
-///------------------------------------------------------------
 void libc_free(void *ptr){
 if (ptr == NULL){return;}
-ptr=sbrk(sizeof(ptr)*-1);
+ptr=sbrk((libc_count((void**)ptr)*sizeof(ptr))*-1);
 					}
 ///------------------------------------------------------------
 void *libc_realloc(void *ptr, size_t __size){
@@ -58,7 +53,6 @@ void *libc_realloc(void *ptr, size_t __size){
         return newptr;
 
 }
-///------------------------------------------------------------
 
 //!---------------------------------------------------------------------
 uni	libc_sch(char* str, char ch) {
@@ -706,19 +700,11 @@ return out;
 //Требуется оптимизация
 char** libc_explode(char* se,char* str){ //Разбивает строку на массив по разделителю
 int i=0,l=0,n=0,len=libc_strlen(str),cou=libc_substr_count(str,se);
-
 char** ret=libc_malloc(sizeof(ret)*cou*sizeof(char**));
-//char** ret=libc_alloc(sizeof(ret));
-//libc_print_str(libc_itos(sizeof(ret)*cou*sizeof(char**)));
-//libc_print_str("\n");
-
-l=0;i=0;
 
 while(l!=-1){
 l=libc_strpos(str,se);
 ret[i]=libc_strpstr_nomo(str,se);
-//libc_print_str(ret[i]);
-//libc_print_str("\n");
 str=str+l+libc_strlen(se);
 	i++;
 			}

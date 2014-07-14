@@ -44,17 +44,17 @@ char** exp=var(exp,char**,main);
 exp=libc_explode("a|z","testa|zquesta|zresta|zposta|zgeta|zrbpd");
 
 
-echo (i."\n".exp[1]."\n".exp[test][0]."\n".ld[0]."\n".ld[1]."\n".exp[1]."\n\n");
-/*
+echo (i."\n".exp[0]."\n".exp[test][0]."\n".ld[0]."\n".ld[1]."\n".exp[1]."\n");
+
 //printf("//---------------------------------------------------\n");
-while(i<10){
+while(i<10000000){
 //exp=libc_explode("a|z","testa|zquesta|zresta|zposta|zgeta|zrbpd");
 echo (i."\n".exp[0]."\n".exp[test][0]."\n".ld[0]."\n".ld[1]."\n".exp[1]."\n");
-libc_free(exp);
+//libc_free(exp);
 
 i++;
 				}
-*/
+
 print_var();
 
 

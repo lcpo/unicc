@@ -75,6 +75,7 @@ if(libc_scmp(type,"double*")==2 && arr_co==1){double* out5=(double*)*x;double bf
 if(libc_scmp(type,"double**")==2 && arr_co==2){double** out7=(double**)*x;double bf7;bf7=out7[(int)vect[0]][(int)vect[1]];write($O,libc_dtos(bf7),libc_strlen(libc_dtos(bf7)));}
 
 return;
+libc_free(name_arr);
 	}
 ///------------------------------------------------------------
 
@@ -87,7 +88,10 @@ if(args[0]=='\'' && args[len]=='\''){libc_print_str(libc_substr(args,1,len-1));}
 if(libc_is_dec_num(args)==1){libc_print_str(args);}else
 if(libc_sch(args,'[')==1 && libc_sch(args,']')==1){
 	print_item_array(args);
-	}else{id=get_var_id_by_name(args);print_reg_var(id);}	
+	}else{
+	id=get_var_id_by_name(args);
+	print_reg_var(id);
+		}	
 
 						}		
 ///------------------------------------------------------------
@@ -98,12 +102,14 @@ str_arg=libc_string_replace(str_arg,"\\r","\r");
 str_arg=libc_string_replace(str_arg,"\\t","\t");
 
 int len=libc_strlen(str_arg),i=0,p=0,n=0,z=0,nom=0;
-char* buff=libc_alloc(len*sizeof(buff)*libc_strlen(str_arg));
+char* buff=libc_malloc(len*sizeof(buff)*libc_strlen(str_arg));
 long lvect[len],rvect[len];
 rvect[n]=0;n++;
 while(len>i){if((str_arg[i]==',' || str_arg[i]=='.') && str_arg[i-1]!='\\'){z=0;i++;n++;}else{z++;lvect[n-1]=z;buff[p]=str_arg[i];p++;i++;rvect[n]=p;}}
 i=0;
-while(n>i){	__printtype(libc_substr(buff,rvect[i],lvect[i]));i++;}
+while(n>i){	
+	__printtype(libc_substr(buff,rvect[i],lvect[i]));
+	i++;}
 
 	}
 ///------------------------------------------------------------	
