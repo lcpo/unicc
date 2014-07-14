@@ -2,49 +2,31 @@
 #include "echo.c"
 //void __stack_chk_fail(void){return;}
    
+//http://netlib.narod.ru/library/book0003/ch08_07.htm
 
 
 int main(int argc, char** argv) {
-	/*
-char** test=malloc(10*sizeof(test));
-int i=0;
-while(i<10){
-test=realloc(test,i+1);
-test[i]=libc_itos(i);
-libc_strcpy(test[i],libc_itos(i));
-printf("%s\n",test[i]);
-
-	i++;
-				}
-				
-printf("---------------------------------------------\n");
-i=0;
-while(i<10){
-printf("%s\n",test[i]);
-i++;}				
-	*/			
-
 /*
-char** test=libc_malloc(0);
+char** test1=libc_malloc(1000);
+
+
 int i=0;
 while(i<10){
-test=libc_realloc(test,i+1);
-test[i]=libc_itos(i);
-//libc_strcpy(test[i],libc_itos(i));
-printf("%s\n",test[i]);
-
+test1[i]=libc_malloc(64);
+test1[i]=libc_itos(i);
+printf("%s\n",test1[i]);
 	i++;
-				}
-*/				
+	}
 
-/*				
-printf("---------------------------------------------\n");
+
+printf("//---------------------------------------------------\n");
 i=0;
-while(i<10){
-printf("%s\n",test[i]);
-i++;}
+while(i<1000){
+printf("%s\n",test1[i]);	
+	i++;}
 */
-/*
+
+
 char* abc=var(abc,char*,main);
 
 int i=var(i,int,main);
@@ -61,19 +43,20 @@ ld[1]=2.6;
 char** exp=var(exp,char**,main);
 exp=libc_explode("a|z","testa|zquesta|zresta|zposta|zgeta|zrbpd");
 
-echo (i,"\n",exp[0],"\n",exp[test][0],"\n",ld[0],"\n",ld[1],"\n",exp[1],"\n");
 
+echo (i."\n".exp[1]."\n".exp[test][0]."\n".ld[0]."\n".ld[1]."\n".exp[1]."\n\n");
+/*
 //printf("//---------------------------------------------------\n");
-while(i<1000000){
+while(i<10){
 //exp=libc_explode("a|z","testa|zquesta|zresta|zposta|zgeta|zrbpd");
 echo (i."\n".exp[0]."\n".exp[test][0]."\n".ld[0]."\n".ld[1]."\n".exp[1]."\n");
-//libc_free(exp);
+libc_free(exp);
 
 i++;
 				}
-
-//print_var();
 */
+print_var();
+
 
 return 0;
 						}

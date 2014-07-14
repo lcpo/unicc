@@ -24,7 +24,7 @@ char _Hslong[48];
 char out_$_dtos[32];
 char out_$_ldtos[32];
 char out_$_ftos[32];
-char _$_sint[INT_MAX_LEN];
+char _$_sint[32];
 char _$_suint[UINT_MAX_LEN];
 char _$_slong[LONG_MAX_LEN];
 char _$_sllong[LONG_LONG_MAX_LEN];

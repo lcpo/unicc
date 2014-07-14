@@ -209,7 +209,7 @@ void *libc_memcpy (void *dest, void *src, size_t n);
 size_t libc_count(void** v);
 //!---------------------------------------------------------------------
 void *realloc(void *ptr, size_t __size){
-        void *newptr = NULL;
+        void *newptr;// = NULL;
  
         if (!ptr){return malloc(__size);}
         if (!__size) {
@@ -219,13 +219,13 @@ void *realloc(void *ptr, size_t __size){
  
         newptr = malloc(__size);
         if (newptr) {
-			#ifdef __x86_64__
+			//#ifdef __x86_64__
                 size_t old_size = *((size_t *) (ptr - sizeof(size_t)));
 				 libc_memcpy(newptr, ptr, (old_size < __size ? old_size : __size));
-           #endif
-           #ifdef __i386__
-           libc_memcpy(newptr, ptr, libc_count((void**)ptr)*sizeof(ptr));
-           #endif
+           //#endif
+           //#ifdef __i386__
+           //libc_memcpy(newptr, ptr, libc_count((void**)ptr)*sizeof(ptr));
+           //#endif
                 free(ptr);
         }
         return newptr;

@@ -1,4 +1,4 @@
-
+char* libc_itos(int n);
 //!---------------------------------------------------------------------
 size libc_count(void** v) {
     size i=0;
@@ -16,18 +16,27 @@ uni libc_strpos(char *haystack, char *needle){
 int libc_ads(int i){return (i)?0:1;}
 
 ///------------------------------------------------------------
+void *libc_alloc(size_t __size){
+char buff[__size];
+void* out=(void*)buff;	
+out=out+ sizeof(size_t);
+return (void*)out;
+								}
+///------------------------------------------------------------
 
 void *libc_malloc(size_t __size){
-void* buff[__size];
-void* out=buff;
-* (size_t *) out = __size;	
-return out+ sizeof(size_t);
- 
+void* out=sbrk(__size);
+return (void*)out;
 }
+///------------------------------------------------------------
+void libc_pfree(void *ptr){
+if (ptr == NULL){return;}
+ptr=NULL;
+							}
 ///------------------------------------------------------------
 void libc_free(void *ptr){
 if (ptr == NULL){return;}
-ptr=NULL;
+ptr=sbrk(sizeof(ptr)*-1);
 					}
 ///------------------------------------------------------------
 void *libc_realloc(void *ptr, size_t __size){
@@ -389,11 +398,10 @@ return a3;
 
 //!---------------------------------------------------------------------
 char* libc_itos(int n){///int to str
-	*_$_sint+=0;
+	*_$_suint+=0;
      int i=0, sign=0,j=0;
      uni l=libc_leni(n);
-    // char c;
-
+	//char _$_sint[l+1];
      if ((sign = n) < 0){n = -n; l++;}
 i = 0;
      do {
@@ -404,12 +412,13 @@ i = 0;
 i = 0;
 j=l-1;
 while(j>i) {swap(_$_sint[i],_$_sint[j]);i++; j--;}
-
-return _$_sint;
+//char* out=(char*)_$_sint;
+return (char*)_$_sint;
  }
 
 //!---------------------------------------------------------------------
-
+#define libc_uitos libc_itos
+/*
 char* libc_uitos(unsigned int n){///unsigned int to str
 	*_$_suint+=0;
      int i=0, sign=0,j=0;
@@ -429,7 +438,7 @@ while(j>i) {swap(_$_suint[i],_$_suint[j]);i++; j--;}
 
 return _$_suint;
  }
-
+*/
 //!---------------------------------------------------------------------
  char* libc_ltos(long int n){///long to str
 	*_$_slong+=0;
