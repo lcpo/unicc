@@ -1,61 +1,56 @@
 #include "unicc.c"
-#include "echo.c"
+#include "json.c"
 //void __stack_chk_fail(void){return;}
    
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 
 
+
+
+
+
 int main(int argc, char** argv) {
+
+const json* sjson=json_parse(libc_file_get_contents("test.json"), 0);
+if (sjson) {
+  printf("some-int=%ld\n", json_get(sjson, "some-int")->int_value);
+  printf("some-dbl=%lf\n", json_get(sjson, "some-dbl")->dbl_value);
+  printf("some-bool=%s\n", json_get(sjson, "some-bool")->int_value? "true":"false");
+  printf("some-null=%s\n", json_get(sjson, "some-null")->text_value);
+  printf("hello=%s\n", json_get(sjson, "hello")->text_value);
+  printf("other=%s\n", json_get(sjson, "other")->text_value);
+  printf("KEY=%s\n", json_get(json_get(sjson, "obj"), "KEY")->text_value);
+  const json* arr=json_get(sjson, "array");
+  int i;
+  for (i=0; i<arr->length; i++) {
+    const json* item=json_item(arr, i);
+    printf("arr[%d]=(%d) %d %f %s\n", i, (int)item->type, item->int_value, item->dbl_value, item->text_value);
+  }
+  json_free(sjson);
+}
+
+
+
 /*
-char** test1=libc_malloc(1000);
+char **te1=libc_malloc(3*sizeof(char**));
+te1[0]="test1",te1[1]="test2",te1[2]="test3",te1[3]="4";
+char **te2=libc_malloc(3*sizeof(char**));
+te2[0]="abc1",te2[1]="abc2",te2[2]="abc3",te2[3]="5";
+char **te3=libc_malloc(3*sizeof(char**));
+te3[0]="123",te3[1]="345",te3[2]="678",te3[3]="910";
 
+char** buff=libc_malloc(10*sizeof(char**));
 
+array_merge(buff,te1,te2,te3);
+
+int co=libc_count((void**)buff);
+printf("co=%i\n",co);
 int i=0;
-while(i<10){
-test1[i]=libc_malloc(64);
-test1[i]=libc_itos(i);
-printf("%s\n",test1[i]);
-	i++;
-	}
-
-
-printf("//---------------------------------------------------\n");
-i=0;
-while(i<1000){
-printf("%s\n",test1[i]);	
+while(co>i){
+printf("%s\n",buff[i]);	
 	i++;}
+
 */
-
-
-char* abc=var(abc,char*,main);
-
-int i=var(i,int,main);
-
-int test=var(test,int,main);
-i=5; test=2; 
-abc="tululu\n";
-
-double* ld=var(ld,double*,main);
-
-ld[0]=1.5;
-ld[1]=2.6;
-
-char** exp=var(exp,char**,main);
-exp=libc_explode("a|z","testa|zquesta|zresta|zposta|zgeta|zrbpd");
-
-
-echo (i."\n".exp[0]."\n".exp[test][0]."\n".ld[0]."\n".ld[1]."\n".exp[1]."\n");
-
-//printf("//---------------------------------------------------\n");
-while(i<10000000){
-//exp=libc_explode("a|z","testa|zquesta|zresta|zposta|zgeta|zrbpd");
-echo (i."\n".exp[0]."\n".exp[test][0]."\n".ld[0]."\n".ld[1]."\n".exp[1]."\n");
-//libc_free(exp);
-
-i++;
-				}
-
-print_var();
 
 
 return 0;

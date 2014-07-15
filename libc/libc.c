@@ -682,34 +682,37 @@ return write($O, (void*)buf, libc_strlen(buf));
 }
 //!---------------------------------------------------------------------
 //Требуется оптимизация
+
 char* libc_strpstr_nomo(char* str,char* ser){ //Получает позицию первого вхождения подстроки не модифицируя строку
 if(libc_strstr(str,ser)){	
 int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
-char* buff_strn=libc_malloc(sizeof(buff_strn)*(len_ser*len_str));
+char* buff_strn=libc_alloc(sizeof(buff_strn)*(len_ser*len_str));
 libc_strcpy(buff_strn,"\0");
 char* estr=libc_strstr(str,ser)+len_ser;
 int iestr=libc_strlen(estr);
 len_nstr=len_str-iestr-len_ser;
 libc_strncat(buff_strn,str,len_nstr);
-char* out=buff_strn;
-libc_free(buff_strn);
-return out;
+//char* out=buff_strn;
+//libc_free(buff_strn);
+return buff_strn;
 }else{return str;}
 	}
 //!---------------------------------------------------------------------
 //Требуется оптимизация
 char** libc_explode(char* se,char* str){ //Разбивает строку на массив по разделителю
 int i=0,l=0,n=0,len=libc_strlen(str),cou=libc_substr_count(str,se);
-char** ret=libc_malloc(sizeof(ret)*cou*sizeof(char**));
-
+//char** ret=libc_malloc(sizeof(ret)*cou*sizeof(char**));
+char* ret[cou*len];
 while(l!=-1){
+ret[i]=libc_malloc(len);	
 l=libc_strpos(str,se);
 ret[i]=libc_strpstr_nomo(str,se);
 str=str+l+libc_strlen(se);
 	i++;
 			}
 ret[i]='\0';
-return ret;      
+char** out=(char**)ret;
+return out;      
 										}
 ///---------------------------------------------------------------------
 char* libc_implode(char* r,char** arri){
@@ -1277,8 +1280,7 @@ char* libc_md5(char* str){
 #define MD5_SUM3(a,b,c,d,m,s,t) ({ a += (b ^ c ^ d) + m + t; a = b + ((a << s) | (a >> (32-s))); }) 
 #define MD5_SUM4(a,b,c,d,m,s,t) ({ a += (c ^ (b | ~d)) + m + t; a = b + ((a << s) | (a >> (32-s))); }) 
 
-void md5_transform(MD5_CTX *ctx, unsigned char data[]) 
-{  
+void md5_transform(MD5_CTX *ctx, unsigned char data[]){  
    unsigned int a,b,c,d,m[16],i,j; 
    
    for (i=0,j=0; i < 16; ++i, j += 4){ 
@@ -1441,3 +1443,309 @@ return outs;
 	}
 
 ///------------------------------------------------------------
+void __echo(char* p,...){
+va_list arg;
+va_start(arg,p);
+while(p){libc_print_str(p); p=va_arg(arg,char*);}
+va_end(arg);
+return;
+					}
+#define echo(x...) (__echo(x,NULL))
+///------------------------------------------------------------
+typedef struct {
+char *scheme, *host, *port, *path, *query, *fragment, *username, *password;
+}parsed_url;
+///------------------------------------------------------------
+int _is_scheme_char(int c){
+    return (!isalpha(c) && '+' != c && '-' != c && '.' != c) ? 0 : 1;
+}
+///---------------------------------------------------------------------
+void parsed_url_free(parsed_url* purl){
+    if ( NULL != purl ) {
+        if ( NULL != purl->scheme ) {
+            free((void *)purl->scheme);
+        }
+        if ( NULL != purl->host ) {
+            free((void *)purl->host);
+        }
+        if ( NULL != purl->port ) {
+            free((void *)purl->port);
+        }
+        if ( NULL != purl->path ) {
+            free((void *)purl->path);
+        }
+        if ( NULL != purl->query ) {
+            free((void *)purl->query);
+        }
+        if ( NULL != purl->fragment ) {
+            free((void *)purl->fragment);
+        }
+        if ( NULL != purl->username ) {
+            free((void *)purl->username);
+        }
+        if ( NULL != purl->password ) {
+            free((void *)purl->password);
+        }
+        free((void *)purl);
+    }
+}
+///---------------------------------------------------------------------
+parsed_url *parse_url(char *url){
+    parsed_url *purl;
+    char *tmpstr;
+    char *curstr;
+    int len;
+    int i;
+    int userpass_flag;
+    int bracket_flag;
+
+
+    purl = malloc(sizeof(parsed_url));
+    if ( NULL == purl ) {
+        return NULL;
+    }
+    purl->scheme = NULL;
+    purl->host = NULL;
+    purl->port = NULL;
+    purl->path = NULL;
+    purl->query = NULL;
+    purl->fragment = NULL;
+    purl->username = NULL;
+    purl->password = NULL;
+
+    curstr = url;
+
+
+    tmpstr = libc_strchr(curstr, ':');
+    if ( NULL == tmpstr ) {
+        parsed_url_free(purl);
+        return NULL;
+    }
+
+    len = tmpstr - curstr;
+    for ( i = 0; i < len; i++ ) {
+        if ( !_is_scheme_char(curstr[i]) ) {
+            parsed_url_free(purl);
+            return NULL;
+        }
+    }
+
+    purl->scheme = malloc(sizeof(char) * (len + 1));
+    if ( NULL == purl->scheme ) {
+        parsed_url_free(purl);
+        return NULL;
+    }
+    libc_strncpy(purl->scheme, curstr, len);
+    purl->scheme[len] = '\0';
+
+    for ( i = 0; i < len; i++ ) {
+        purl->scheme[i] = tolower(purl->scheme[i]);
+    }
+
+    tmpstr++;
+    curstr = tmpstr;
+
+    for ( i = 0; i < 2; i++ ) {
+        if ( '/' != *curstr ) {
+            parsed_url_free(purl);
+            return NULL;
+        }
+        curstr++;
+    }
+
+
+    userpass_flag = 0;
+    tmpstr = curstr;
+    while ( '\0' != *tmpstr ) {
+        if ( '@' == *tmpstr ) {
+            userpass_flag = 1;
+            break;
+        } else if ( '/' == *tmpstr ) {
+            userpass_flag = 0;
+            break;
+        }
+        tmpstr++;
+    }
+
+
+    tmpstr = curstr;
+    if ( userpass_flag ) {
+
+        while ( '\0' != *tmpstr && ':' != *tmpstr && '@' != *tmpstr ) {
+            tmpstr++;
+        }
+        len = tmpstr - curstr;
+        purl->username = malloc(sizeof(char) * (len + 1));
+        if ( NULL == purl->username ) {
+            parsed_url_free(purl);
+            return NULL;
+        }
+        (void)libc_strncpy(purl->username, curstr, len);
+        purl->username[len] = '\0';
+
+        curstr = tmpstr;
+        if ( ':' == *curstr ) {
+            curstr++;
+
+            tmpstr = curstr;
+            while ( '\0' != *tmpstr && '@' != *tmpstr ) {
+                tmpstr++;
+            }
+            len = tmpstr - curstr;
+            purl->password = malloc(sizeof(char) * (len + 1));
+            if ( NULL == purl->password ) {
+                parsed_url_free(purl);
+                return NULL;
+            }
+            (void)strncpy(purl->password, curstr, len);
+            purl->password[len] = '\0';
+            curstr = tmpstr;
+        }
+
+        if ( '@' != *curstr ) {
+           parsed_url_free(purl);
+            return NULL;
+        }
+        curstr++;
+    }
+
+    if ( '[' == *curstr ) {
+        bracket_flag = 1;
+    } else {
+        bracket_flag = 0;
+    }
+
+    tmpstr = curstr;
+    while ( '\0' != *tmpstr ) {
+        if ( bracket_flag && ']' == *tmpstr ) {
+
+            tmpstr++;
+            break;
+        } else if ( !bracket_flag && (':' == *tmpstr || '/' == *tmpstr) ) {
+
+            break;
+        }
+        tmpstr++;
+    }
+    len = tmpstr - curstr;
+    purl->host = malloc(sizeof(char) * (len + 1));
+    if ( NULL == purl->host || len <= 0 ) {
+       parsed_url_free(purl);
+        return NULL;
+    }
+    libc_strncpy(purl->host, curstr, len);
+    purl->host[len] = '\0';
+    curstr = tmpstr;
+
+
+    if ( ':' == *curstr ) {
+        curstr++;
+
+        tmpstr = curstr;
+        while ( '\0' != *tmpstr && '/' != *tmpstr ) {
+            tmpstr++;
+        }
+        len = tmpstr - curstr;
+        purl->port = malloc(sizeof(char) * (len + 1));
+        if ( NULL == purl->port ) {
+            parsed_url_free(purl);
+            return NULL;
+        }
+        libc_strncpy(purl->port, curstr, len);
+        purl->port[len] = '\0';
+        curstr = tmpstr;
+    }
+
+
+    if ( '\0' == *curstr ) {
+        return purl;
+    }
+
+
+    if ( '/' != *curstr ) {
+        parsed_url_free(purl);
+        return NULL;
+    }
+    curstr++;
+
+
+    tmpstr = curstr;
+    while ( '\0' != *tmpstr && '#' != *tmpstr  && '?' != *tmpstr ) {
+        tmpstr++;
+    }
+    len = tmpstr - curstr;
+    purl->path = malloc(sizeof(char) * (len + 1));
+    if ( NULL == purl->path ) {
+        parsed_url_free(purl);
+        return NULL;
+    }
+    libc_strncpy(purl->path, curstr, len);
+    purl->path[len] = '\0';
+    curstr = tmpstr;
+
+
+    if ( '?' == *curstr ) {
+
+        curstr++;
+
+        tmpstr = curstr;
+        while ( '\0' != *tmpstr && '#' != *tmpstr ) {
+            tmpstr++;
+        }
+        len = tmpstr - curstr;
+        purl->query = malloc(sizeof(char) * (len + 1));
+        if ( NULL == purl->query ) {
+           parsed_url_free(purl);
+            return NULL;
+        }
+        libc_strncpy(purl->query, curstr, len);
+        purl->query[len] = '\0';
+        curstr = tmpstr;
+    }
+
+    
+    if ( '#' == *curstr ) {
+
+        curstr++;
+
+        tmpstr = curstr;
+        while ( '\0' != *tmpstr ) {
+            tmpstr++;
+        }
+        len = tmpstr - curstr;
+        purl->fragment = malloc(sizeof(char) * (len + 1));
+        if ( NULL == purl->fragment ) {
+            parsed_url_free(purl);
+            return NULL;
+        }
+        libc_strncpy(purl->fragment, curstr, len);
+        purl->fragment[len] = '\0';
+        curstr = tmpstr;
+    }
+
+    return purl;
+}
+
+///---------------------------------------------------------------------
+void** libc_memcat(void **arg1, void **arg2, size_t co){
+	int a=libc_count(arg1),b=0;
+	while(co>b){arg1[a]=arg2[b];b++;a++;}
+return arg1;	
+	}
+
+
+
+void** __array_merge(void* buff,void* p,...){
+va_list arg;
+va_start(arg,p);
+while(p!=NULL){
+libc_memcat(buff, p, libc_count((void**)p));
+p=va_arg(arg,void*);
+}
+va_end(arg);	
+return (void**)buff;	
+											}
+
+
+#define array_merge(x,y...) (__array_merge((void*)x,(void*)y,NULL))
+///---------------------------------------------------------------------

@@ -24,10 +24,10 @@ while ((*des++ = *so++) != '\0') ;
 return des;
 }
 ///---------------------------------------------------------------------
-char* libc_strncat(char* dst, const char * src, size_t n){
+char* libc_strncat(char* dst, char * src, size_t n){
 	if (n != 0) {
 		char *d = dst;
-		const char *s = src;
+		char *s = src;
 
 		while (*d != 0)
 			d++;
@@ -149,6 +149,21 @@ void *libc_memcpy (void *dest, void *src, size_t n){
  
         return dest;
 }
+///---------------------------------------------------------------------
+/*
+void *libc_memcat (void *dest, void *src, size_t n){
+        char *r1 = dest;
+        const char *r2 = src;
+ 
+        while (n) {
+                *r1++ = *r2++;
+                --n;
+        }
+ 
+        return dest;
+}*/
+
+
 ///---------------------------------------------------------------------
 void *libc_memmove(char *dest, char *src, size n)
 {
