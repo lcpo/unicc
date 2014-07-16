@@ -10,21 +10,23 @@
 
 
 int main(int argc, char** argv) {
-
-const json* sjson=json_parse(libc_file_get_contents("test.json"), 0);
+char* src=libc_file_get_contents("test.json");
+const json* sjson=json_parse(src, 0);
 if (sjson) {
-  printf("some-int=%ld\n", json_get(sjson, "some-int")->int_value);
-  printf("some-dbl=%lf\n", json_get(sjson, "some-dbl")->dbl_value);
+  printf("some-int=%l\n", json_get(sjson, "some-int")->int_value);
+  printf("some-dbl=%f\n", json_get(sjson, "some-dbl")->dbl_value);
   printf("some-bool=%s\n", json_get(sjson, "some-bool")->int_value? "true":"false");
   printf("some-null=%s\n", json_get(sjson, "some-null")->text_value);
   printf("hello=%s\n", json_get(sjson, "hello")->text_value);
   printf("other=%s\n", json_get(sjson, "other")->text_value);
   printf("KEY=%s\n", json_get(json_get(sjson, "obj"), "KEY")->text_value);
+  
+
   const json* arr=json_get(sjson, "array");
   int i;
   for (i=0; i<arr->length; i++) {
     const json* item=json_item(arr, i);
-    printf("arr[%d]=(%d) %d %f %s\n", i, (int)item->type, item->int_value, item->dbl_value, item->text_value);
+    printf("arr[%i]=(%l)|%l|%f|%s\n", i, item->type, item->int_value, item->dbl_value, item->text_value);
   }
   json_free(sjson);
 }

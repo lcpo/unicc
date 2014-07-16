@@ -1,5 +1,4 @@
 
-
 //----------------------------------------------------------------------
 typedef enum json_type {
   JSON_NULL,    // this is null value
@@ -36,8 +35,8 @@ const json* json_item(const json* sjson, int idx); // get array element by index
 
 
 #ifndef JSON_CALLOC
-#define JSON_CALLOC() malloc(sizeof(json))
-#define JSON_FREE(json) free((void*)(json))
+#define JSON_CALLOC() libc_malloc(sizeof(json)*128)
+#define JSON_FREE(sjson) libc_free((void*)(sjson))
 #endif
 
 
@@ -182,7 +181,7 @@ static char* skip_block_comment(char* p) {
     return 0;
   }
   REPEAT:
-  p=strchr(p+1, '/');
+  p=libc_strchr(p+1, '/');
   if (!p) {
     JSON_REPORT_ERROR("endless comment");
     return 0;
@@ -224,20 +223,21 @@ static char* parse_key(char** key, char* p, json_unicode_encoder encoder) {
         if (!p) return 0;
       }
       else {
-        JSON_REPORT_ERROR("unexpected chars");
+        JSON_REPORT_ERROR("unexpected chars1");
         return 0; // error
       }
     }
     else {
-      JSON_REPORT_ERROR("unexpected chars");
-      return 0; // error
+      JSON_REPORT_ERROR("unexpected chars2");
+      //return 0; // error
     }
   }
-  JSON_REPORT_ERROR("unexpected chars");
+  JSON_REPORT_ERROR("unexpected chars3");
   return 0; // error
 }
 
 static char* parse_value(json* parent, char* key, char* p, json_unicode_encoder encoder) {
+
   json* js;
   while (1) {
     switch (*p) {
@@ -278,25 +278,20 @@ static char* parse_value(json* parent, char* key, char* p, json_unicode_encoder 
         return p;
       case '-': case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
         {
-          js=create_json(JSON_INTEGER, key, parent);
-          char* pe;
-          js->int_value=libc_stol(p);
-          if (pe==p) {
-            JSON_REPORT_ERROR("invalid number");
-            return 0; // error
-          }
-          if (*pe=='.' || *pe=='e' || *pe=='E') { // double value
-            js->type=JSON_DOUBLE;
-            js->dbl_value=libc_stod(p);
-            if (pe==p) {
-              JSON_REPORT_ERROR("invalid number");
-              return 0; // error
-            }
-          }
-          else {
-            js->dbl_value=js->int_value;
-          }
-          return pe;
+char* pe;
+		pe=libc_strpstr(p,",");
+		if(libc_strchr(pe,']')){pe=libc_strpstr(pe,"]");}
+		if(libc_strchr(pe,'}')){pe=libc_strpstr(pe,"}");}
+
+	   if (libc_strchr(pe,'.') || libc_strchr(pe,'e') || libc_strchr(pe,'E')){
+		   js=create_json(JSON_DOUBLE, key, parent);
+		   js->dbl_value=libc_stof(pe);
+		   }else{
+		js=create_json(JSON_INTEGER, key, parent);
+		js->int_value=libc_stol(pe);	   
+			   }
+
+	   return p+libc_strlen(pe);
         }
       case 't':
         if (!libc_strncmp(p, "true", 4)) {
@@ -304,7 +299,7 @@ static char* parse_value(json* parent, char* key, char* p, json_unicode_encoder 
           js->int_value=1;
           return p+4;
         }
-        JSON_REPORT_ERROR("unexpected chars");
+        JSON_REPORT_ERROR("unexpected chars01");
         return 0; // error
       case 'f':
         if (!libc_strncmp(p, "false", 5)) {
@@ -312,19 +307,19 @@ static char* parse_value(json* parent, char* key, char* p, json_unicode_encoder 
           js->int_value=0;
           return p+5;
         }
-        JSON_REPORT_ERROR("unexpected chars");
+        JSON_REPORT_ERROR("unexpected chars02");
         return 0; // error
       case 'n':
         if (!libc_strncmp(p, "null", 4)) {
           create_json(JSON_NULL, key, parent);
           return p+4;
         }
-        JSON_REPORT_ERROR("unexpected chars");
+        JSON_REPORT_ERROR("unexpected chars03");
         return 0; // error
       case '/': // comment
         if (p[1]=='/') { // line comment
           char* ps=p;
-          p=strchr(p+2, '\n');
+          p=libc_strchr(p+2, '\n');
           if (!p) {
             JSON_REPORT_ERROR("endless comment");
             return 0; // error
@@ -336,13 +331,15 @@ static char* parse_value(json* parent, char* key, char* p, json_unicode_encoder 
           if (!p) return 0;
         }
         else {
-          JSON_REPORT_ERROR("unexpected chars");
+          JSON_REPORT_ERROR("unexpected chars-1");
           return 0; // error
         }
         break;
       default:
-        JSON_REPORT_ERROR("unexpected chars");
-        return 0; // error
+      p++;
+     // break;
+        JSON_REPORT_ERROR("unexpected chars-2");
+        //return 0; // error
     }
   }
 }

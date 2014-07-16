@@ -1,0 +1,10 @@
+{
+  "some-int": 195,
+  "array": [ 3, 5.1, -7, "nine", 11 ],
+  "some-bool": true,
+  "some-dbl": -1e-4,
+  "some-null": null,
+  "hello": "world!",
+  "other": "OTHER",
+  "obj": {"KEY": "VAL"}
+}
