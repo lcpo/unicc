@@ -11,24 +11,52 @@
 
 int main(int argc, char** argv) {
 char* src=libc_file_get_contents("test.json");
-const json* sjson=json_parse(src, 0);
-if (sjson) {
-  printf("some-int=%l\n", json_get(sjson, "some-int")->int_value);
-  printf("some-dbl=%f\n", json_get(sjson, "some-dbl")->dbl_value);
-  printf("some-bool=%s\n", json_get(sjson, "some-bool")->int_value? "true":"false");
-  printf("some-null=%s\n", json_get(sjson, "some-null")->text_value);
-  printf("hello=%s\n", json_get(sjson, "hello")->text_value);
-  printf("other=%s\n", json_get(sjson, "other")->text_value);
-  printf("KEY=%s\n", json_get(json_get(sjson, "obj"), "KEY")->text_value);
-  
+int i;
+/*first lvl json*/
+const json* sjson=json_parse(src);
 
-  const json* arr=json_get(sjson, "array");
-  int i;
-  for (i=0; i<arr->length; i++) {
+printf("size=%i\n", sizeof(json));
+
+if(sjson){
+printf("some-int=%s\n", json_get(sjson, "some-int")->value);
+printf("some-dbl=%s\n", json_get(sjson, "some-dbl")->value);
+printf("some-bool=%s\n", json_get(sjson, "some-bool")->value? "true":"false");
+printf("some-null=%s\n", json_get(sjson, "some-null")->value);
+printf("hello=%s\n", json_get(sjson, "hello")->value);
+printf("other=%s\n", json_get(sjson, "other")->value);
+printf("KEY=%s\n", json_get(sjson, "obj")->value);
+printf("array=%s\n", json_get(sjson, "array")->value);
+
+/*2 lvl json*/
+const json* arr=json_get(sjson, "array");
+
+  for (i=0; i<arr->length; i++){
     const json* item=json_item(arr, i);
-    printf("arr[%i]=(%l)|%l|%f|%s\n", i, item->type, item->int_value, item->dbl_value, item->text_value);
-  }
+    printf("arr[%i]=(%l)|%s\n", i, item->type, item->value);
+								}
+
+
+/*only array 2 lvl json*/
+const json* ts=json_parse(arr->value);
+printf("%s\n",json_item(ts,1)->value);
+
+
+
+printf("SKARR1=%s\n", json_get(json_get(json_get(sjson, "obj"), "obj2"),"SKARR1")->value);
+
+/*4 lvl json*/
+const json* arr2=json_get(json_get(json_get(sjson, "obj"), "obj2"),"SKARR1");
+  for (i=0; i<arr2->length; i++){
+    const json* item2=json_item(arr2, i);
+    printf("arr2[%i]=(%l)|%s\n", i, item2->type, item2->value);
+								}
+
+
   json_free(sjson);
+
+
+
+
 }
 
 
