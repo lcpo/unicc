@@ -1,24 +1,20 @@
 
 //----------------------------------------------------------------------
-typedef enum json_type {JSON_NULL, JSON_OBJECT, JSON_ARRAY,JSON_STRING, JSON_INTEGER, JSON_DOUBLE, JSON_BOOL} json_type;
+typedef enum json_type {JSON_NULL, JSON_OBJECT, JSON_ARRAY,JSON_STRING, JSON_INTEGER, JSON_DOUBLE, JSON_BOOL,JSON_AGENT} json_type;
 typedef struct json {
 	json_type type;
 	char* src; 
 	char* key;  
 	char* value;  
-	int length;  
+	char* this;
+	int flag;
+	int length;
+	int flags;	  
 	struct json* child; 
 	struct json* next; 
 	struct json* last_child;
 	} json;
-/*
-typedef struct json_out{
-int t;
-char* s;
-long l;
-double d;	
-	}json_out;
-*/
+
 const json* json_parse(char* text);
 void json_free(const json* js);
 const json* json_get(const json* sjson, char* key); // get object's property by key
