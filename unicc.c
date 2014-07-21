@@ -152,10 +152,9 @@ char** argv=malloc(argc);
 if(argc==1){argv[0]=(char*)_startout;argc--;}
 if(argc>=2){argv=getargv(argc,_startout,argv);argc--;}
 int result=main(argc,argv);
-free_ptr(_startout);
+free(_startout);
 free_ptr(argv);
 exit(result);
-//asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
 return;
  
 	}

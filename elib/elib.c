@@ -233,17 +233,21 @@ size_t libc_count(void** v);
 void free_ptr(void* ptr){
 if (ptr == NULL){return;}
 int id=getptrid(ptr);
+if(id==-1){return;}
+if(hope.z[id]>0){
 if(munmap(ptr, hope.z[id]) == -1){write($O,"munmap failed!\n",15);}	
 dropptr(ptr);
+}
 return;		 
 	}
 
 void free(void* ptr){
 if (ptr == NULL){return;}
 int id=getptrid(ptr),pco=libc_strlen((char*)ptr),sco=libc_count((void**)ptr);
+if(id==-1){return;}
 if(sco>0 && pco==0){
 	void** bf=ptr;
-	while(sco>0){sco--;if(libc_count((void**)ptr)>0){free(bf[sco]);}else{free_ptr(bf[sco]);}}
+	while(sco>0){sco--;if(libc_count((void**)bf[sco])>0){free(bf[sco]);}else{free_ptr(bf[sco]);}}
 					}
 free_ptr(ptr);
 

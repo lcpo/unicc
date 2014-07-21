@@ -230,16 +230,13 @@ if(num<0){num= -num; i++;}
 int ol=(int)num;
 while(ol>0){ol/=10; ++i;}
 j=i;
-num=num-j;///---------------------------------------------------------------------
-///Отладка
+num=num-j;
 i++;
 while(t>-1){num = num*10; t = (int)num%10; ++i;}
 
 return i;}
 
-
 //!---------------------------------------------------------------------
-
 uni libc_lenld(long double num){
 uni i = 0;
 if(num<0){num= -num; i++;}
@@ -529,8 +526,6 @@ char* sdt=s;
 sign = (s[0] == '-') ? -1.0 : 1.0;
 int len=libc_strlen(s);
 int k=len;
-
-
 while (s[i]!='.'){
 if (sdt[i] == '-'){i++;}
 is = is *10. + (sdt[i] - '0');
@@ -618,9 +613,7 @@ n = 10 * n + (s[i] - '0');
 }
 return sign * n;
 }
-
 //!--------------------------------------------------------------------- 1
-
 long long libc_stoll(char* s){/// str to long long
 long long i=0, n=0, sign=0;
 sign = (s[0] == '-') ? -1 : 1;
@@ -632,7 +625,6 @@ return sign * n;
 }
 
 //!--------------------------------------------------------------------- 1
-
 unsigned long long libc_stoull(char* s){/// str to unsigned long long
 unsigned long long i=0, n=0;
 for (n = 0, i=0; libc_strlen(s)>i; i++){
@@ -641,9 +633,8 @@ n = 10 * n + (s[i] - '0');
 }
 return n;
 }
-
 //!---------------------------------------------------------------------
-int libc_odd(uni value){return (value & 1);} //определяет четное или нечетное
+inline int libc_odd(uni value){return (value & 1);} //определяет четное или нечетное
 //!---------------------------------------------------------------------
 uni libc_sch_count(char* str, int ch){ //считает количество вхождений символа в строку
 uni i=0; uni count=0;
@@ -683,8 +674,8 @@ l=libc_strpos(str,se);
 ret[i]=libc_strpstr_nomo(str,se);
 str=str+l+libc_strlen(se);
 	i++;
-			}
-ret[i]='\0';
+			}			
+//ret[i]='\0';
 return ret;      
 										}
 ///---------------------------------------------------------------------
@@ -708,7 +699,7 @@ return out;
 char* libc_strnstr(char* str, char* ser){
 if(libc_strstr(str,ser)){
 int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
-char* buff_strn=libc_malloc(sizeof(buff_strn));
+char* buff_strn=libc_malloc(libc_strlen(str));
 libc_strcpy(buff_strn,"\0");
 char* estr=libc_strstr(str,ser)+len_ser;
 int iestr=libc_strlen(estr);
@@ -722,7 +713,7 @@ return out;
 char* libc_strpstr(char* str,char* ser){
 if(libc_strstr(str,ser)){	
 int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
-char* buff_strn=libc_malloc(sizeof(buff_strn)*(len_ser*len_str)*10);
+char* buff_strn=libc_malloc(len_str);
 libc_strcpy(buff_strn,"\0");
 char* estr=libc_strstr(str,ser)+len_ser;
 int iestr=libc_strlen(estr);
@@ -759,7 +750,7 @@ return -1;
 	}	
 ///---------------------------------------------------------------------
 char** libc_array_unique(char **ars){
-char** item=libc_malloc(sizeof(item));
+char** item=libc_malloc(libc_count((void**)ars));
 int i=0;
 while(ars[i]!=NULL){
 int id=libc_array_search(ars[i],ars);
@@ -769,7 +760,7 @@ return item;
 	}
 ///---------------------------------------------------------------------
 char** libc_array_unique_sort(char **ars){
-char** item=libc_malloc(sizeof(item));
+char** item=libc_malloc(libc_count((void**)ars));
 int i=0,n=0;
 while(ars[i]!=NULL){
 int id=libc_array_search(ars[i],ars);
@@ -805,24 +796,31 @@ char * libc_trim(char *str) {
 }
 ///---------------------------------------------------------------------
 int libc_file_exists(char* filename){
-struct stat_f *fi=libc_malloc(sizeof(fi));
+struct stat_f *fi=libc_malloc(0);
 stat(filename,fi);
-if(fi->st_atime==0 && fi->st_mtime==0 && fi->st_ctime==0){return 0;}else{return 1;}
+if(fi->st_atime==0 && fi->st_mtime==0 && fi->st_ctime==0){
+	free((void*)fi);
+	return 0;
+	}else{
+		return 1;}
 	} 
 //!------------------------------------------------------------
 size libc_filesize(char* filename){
-struct stat_f *fi=libc_malloc(sizeof(fi));
+struct stat_f *fi=libc_malloc(0);
 stat(filename,fi);
-return fi->st_gid;
+int out=fi->st_gid;
+free(fi);
+return out;
 							}
 //!------------------------------------------------------------
 char* libc_file_get_contents(char* filename){
-struct stat_f *fi=libc_malloc(sizeof(fi));
+struct stat_f *fi=libc_malloc(0);
 int res=open(filename,O_RDONLY,0);
 fstat(res,fi);
-char* buff=libc_malloc(sizeof(fi));//fi->st_gid
+char* buff=libc_malloc(fi->st_gid);
 read(res,buff,fi->st_gid);
 close(res);
+free((void*)fi);
 return buff;
 										}
 //!------------------------------------------------------------
@@ -855,7 +853,7 @@ char * 	libc_string_replace(char *string, char *delimiter, char *replacement) {
         return string;
     }
     int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement),lstr=libc_strlen(string), i=0,j=0;
-    char* ret = libc_malloc((ldel+lrep+lstr)*sizeof(ret));
+    char* ret = libc_malloc(ldel+lrep+lstr);
     while (string[i] != '\0') {
         if (!libc_strncmp(&string[i], delimiter, ldel)) {
             i += ldel;
@@ -944,8 +942,8 @@ char * 	libc_string_ireplace(char *string, char *delimiter, char *replacement) {
     if (!libc_stristr(string,delimiter)) {
         return string;
     }
-    int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement), i=0,j=0;
-    char* ret = libc_malloc(sizeof(ret));
+    int bret = 0, ldel=libc_strlen(delimiter),lstr=libc_strlen(string), lrep=libc_strlen(replacement), i=0,j=0;
+    char* ret = libc_malloc(ldel+lrep+lstr);
     while (string[i] != '\0') {
         if (!libc_strncmpi(&string[i], delimiter, ldel)) {
             i += ldel;
@@ -983,7 +981,7 @@ char *libc_dirname(char *s){
 if (!s || !*s || !libc_strchr(s, '/')){ return ".";}
 size_t n=libc_strlen(s);
 int co=libc_sch_count(s,'/'),coti=0,i=0;
-char* out=libc_malloc(sizeof(out));
+char* out=libc_malloc(n);
 	do{
 	out[i]=s[i];
 	if(s[i]=='/'){coti++;}
@@ -1036,7 +1034,7 @@ char libc_to_hex(char code) {
 ///------------------------------------------------------------
 
 char *libc_urlencode(char *str) {
-  char *pstr = str, *buf = libc_malloc(sizeof(buf)), *pbuf = buf;
+  char *pstr = str, *buf = libc_malloc(libc_strlen(str)), *pbuf = buf;
   while (*pstr) {
     if (libc_isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
       *pbuf++ = *pstr;
@@ -1051,7 +1049,7 @@ char *libc_urlencode(char *str) {
 }
 ///------------------------------------------------------------
 char *libc_urldecode(char *str) {
-  char *pstr = str, *buf = libc_malloc(sizeof(buf)), *pbuf = buf;
+  char *pstr = str, *buf = libc_malloc(libc_strlen(str)), *pbuf = buf;
   while (*pstr) {
     if (*pstr == '%') {
       if (pstr[1] && pstr[2]) {
@@ -1076,7 +1074,7 @@ size_t libc_strnlen(char *str, size_t count){
 ///------------------------------------------------------------
 char *libc_strndup(char *str, size_t count){
 	size_t len = libc_strnlen(str, count);
-	char *dup = libc_malloc(len*count*sizeof(dup));
+	char *dup = libc_malloc(len+count);
 	if (!dup){ return NULL;}
 	libc_memcpy(dup, str, len);
 	dup[len] = '\0';
@@ -1097,7 +1095,7 @@ if(begin<=-1){begin=libc_strlen(str)+begin;}
 ///------------------------------------------------------------
 char* libc_addslashes(char* str){
 int i=0,col=libc_strlen(str),n=0;
-char* buff=libc_malloc(sizeof(char*));
+char* buff=libc_malloc(col);
 while(i<col){	
 if(str[i]=='\'' && str[i-1]!='\\'){buff[n++]='\\'; buff[n++]=str[i];}else
 if(str[i]=='`' && str[i-1]!='\\'){buff[n++]='\\'; buff[n++]=str[i];}else
@@ -1111,7 +1109,7 @@ return buff;
 ///------------------------------------------------------------
 char* libc_stripslashes (char* str ){
 int i=0,col=libc_strlen(str),n=0;
-char* buff=libc_malloc(sizeof(buff));
+char* buff=libc_malloc(col);
 while(i<col){
 if(str[i]!='\\'){buff[n++]=str[i];i++;}else
 if(str[i]=='\\' && str[i+1]=='\\'){buff[n++]=str[i];i++;}else
@@ -1122,7 +1120,7 @@ return buff;
 ///------------------------------------------------------------
 char* libc_array_replace(char* str, char** delimiters, char **replacement){
 int i=0;
-char* buffrsa=libc_malloc(sizeof(buffrsa));
+char* buffrsa=libc_malloc(libc_strlen(str));
 buffrsa=str;
 while(delimiters[i]!=NULL){
 if(replacement[i]!=NULL && replacement[i]!='\0' && libc_strpos(buffrsa,delimiters[i])!=-1){
@@ -1204,7 +1202,7 @@ int j = 0;
 int mod_table[] = {0, 2, 1};
 	size_t input_length=libc_strlen(data);
     size_t output_length = 4 * ((input_length + 2) / 3);
-    char *encoded_data = libc_malloc(sizeof(encoded_data));
+    char *encoded_data = libc_malloc(output_length);
     for (;i< input_length;) {
 		unsigned int octet_a = i < input_length ? (unsigned char)data[i++] : 0;
 		unsigned int octet_b = i < input_length ? (unsigned char)data[i++] : 0;
@@ -1229,7 +1227,7 @@ char* libc_base64_decode(char *data) {
     size_t output_length = libc_strlen(data) / 4 * 4;
     if (data[input_length - 1] == '='){ output_length--;}
     if (data[input_length - 2] == '='){ output_length--;}
-    unsigned char *decoded_data = libc_malloc(sizeof(decoded_data));
+    unsigned char *decoded_data = libc_malloc(output_length);
 	i=0;   
     for (; i < input_length;) {
         unsigned int sextet_a = data[i] == '=' ? 0 & i++ : decoding_table[data[i++]];
@@ -1503,7 +1501,7 @@ parsed_url *parse_url(char *url){
         }
     }
 
-    purl->scheme = malloc(sizeof(char) * (len + 1));
+    purl->scheme = malloc(len+1);
     if ( NULL == purl->scheme ) {
         parsed_url_free(purl);
         return NULL;
@@ -1548,7 +1546,7 @@ parsed_url *parse_url(char *url){
             tmpstr++;
         }
         len = tmpstr - curstr;
-        purl->username = malloc(sizeof(char) * (len + 1));
+        purl->username = malloc(len + 1);
         if ( NULL == purl->username ) {
             parsed_url_free(purl);
             return NULL;
@@ -1565,7 +1563,7 @@ parsed_url *parse_url(char *url){
                 tmpstr++;
             }
             len = tmpstr - curstr;
-            purl->password = malloc(sizeof(char) * (len + 1));
+            purl->password = malloc(len + 1);
             if ( NULL == purl->password ) {
                 parsed_url_free(purl);
                 return NULL;
@@ -1601,7 +1599,7 @@ parsed_url *parse_url(char *url){
         tmpstr++;
     }
     len = tmpstr - curstr;
-    purl->host = malloc(sizeof(char) * (len + 1));
+    purl->host = malloc(len + 1);
     if ( NULL == purl->host || len <= 0 ) {
        parsed_url_free(purl);
         return NULL;
@@ -1619,7 +1617,7 @@ parsed_url *parse_url(char *url){
             tmpstr++;
         }
         len = tmpstr - curstr;
-        purl->port = malloc(sizeof(char) * (len + 1));
+        purl->port = malloc(len + 1);
         if ( NULL == purl->port ) {
             parsed_url_free(purl);
             return NULL;
@@ -1647,7 +1645,7 @@ parsed_url *parse_url(char *url){
         tmpstr++;
     }
     len = tmpstr - curstr;
-    purl->path = malloc(sizeof(char) * (len + 1));
+    purl->path = malloc(len + 1);
     if ( NULL == purl->path ) {
         parsed_url_free(purl);
         return NULL;
@@ -1666,7 +1664,7 @@ parsed_url *parse_url(char *url){
             tmpstr++;
         }
         len = tmpstr - curstr;
-        purl->query = malloc(sizeof(char) * (len + 1));
+        purl->query = malloc(len + 1);
         if ( NULL == purl->query ) {
            parsed_url_free(purl);
             return NULL;
@@ -1686,7 +1684,7 @@ parsed_url *parse_url(char *url){
             tmpstr++;
         }
         len = tmpstr - curstr;
-        purl->fragment = malloc(sizeof(char) * (len + 1));
+        purl->fragment = malloc(len + 1);
         if ( NULL == purl->fragment ) {
             parsed_url_free(purl);
             return NULL;
