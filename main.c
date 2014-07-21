@@ -62,7 +62,7 @@ while(i<libc_count((void*)hope.a)){
 printf("%i|%i|%s\n",i,hope.a[i],hope.a[i]);	
 	i++;}
 
-
+ 
 
 
 
