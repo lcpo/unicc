@@ -145,7 +145,6 @@ return ret;
 #define main _start
 #else						  	
 void _start() {
-
 char* _start$output=getcmd();
 long _start$i=0,argc=0,_start$sep=0;
 argc=getargc(_start$output);

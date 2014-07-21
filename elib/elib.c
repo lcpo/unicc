@@ -1,3 +1,4 @@
+
 /*! ~ Системные функции, обращение на уровне ядра ~ !*/
 ///------------------------------------------------------------
 //http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64
@@ -193,42 +194,102 @@ int64_t __divdi3(int64_t num, int64_t den){
     return v;
 }
 ///------------------------------------------------------------
+#define MAX_MEMORY_VAR 1024
+
+size_t libc_count(void** v);
+typedef struct mhope{
+int a[MAX_MEMORY_VAR];
+int z[MAX_MEMORY_VAR];
+//int min[MAX_MEMORY_VAR];
+//int max[MAX_MEMORY_VAR];
+int i;	
+	}mhope;
+
+static mhope hope;
+///------------------------------------------------------------
+void init_malloc(void){
+int i=0;	
+    //for(i = 0 ; i < MAX_MEMORY_VAR ; i++) {hope.a[i]=-1;hope.z[i]=-1;hope.max[i]=-1;hope.min[i]=-1;}
+     hope.i=0;
+    return; 	
+	}
+void init_malloc(void)	__attribute__ ((constructor));
+///------------------------------------------------------------
+void hope_sort(){
+int i=0,j=0,z=0,min=0,max=0,nom=hope.i+1;
+int a=0;	
+    for(i = 0 ; i < nom ; i++) { 
+       for(j = 0 ; j < nom - i - 1 ; j++) {  
+           if(hope.a[j] < hope.a[j+1]) {           
+              a = hope.a[j]; 
+              hope.a[j] = hope.a[j+1] ; 
+              hope.a[j+1] = a; 
+              
+              z = hope.z[j]; 
+              hope.z[j] = hope.z[j+1] ; 
+              hope.z[j+1] = z;
+           }
+        }
+    }
+if(hope.i>0){hope.i--;}    	
+	}
+///------------------------------------------------------------
+int getptrid(void *ptr){
+int i=0,z=0,n=-1;
+while(i<hope.i){
+if(((int)ptr)==hope.a[i]){z=hope.z[i];n=i;break;}	
+	i++;
+	}
+return n;		
+	}
+///------------------------------------------------------------
+void dropptr(void* ptr){
+int id=getptrid(ptr);
+hope.a[id]=-1; 
+hope.z[id]=-1;
+hope_sort();	
+	}
+///------------------------------------------------------------	
 void free(void *ptr){
 if (ptr == NULL){return;}
-ptr -= sizeof(ptr);
-if(munmap(ptr, sizeof(ptr)) == -1){write($O,"munmap failed!\n",15);}
+int i=0,id=getptrid(ptr);
+if(munmap(ptr, hope.z[id]) == -1){write($O,"munmap failed!\n",15);}
+dropptr(ptr);
 }
 //!---------------------------------------------------------------------
+	
 void *malloc(size_t __size){
-void *result=mmap(0, __size , PROT_READ|PROT_WRITE,MMAP_FLAGS, 0, 0);//+ sizeof(size_t)
-if (result == MAP_FAILED){return NULL;}
-* (size_t *) result = __size;
-return(result + sizeof(__size));
+void *result=mmap(0, __size*sizeof(result) , PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);//+ sizeof(size_t)
+if (result == MAP_FAILED){write($O,"mmap failed!\n",13);return NULL;}
+
+//hope.i=libc_count((void**)hope.a);
+int bsize=0,bco=0,min=0,max=0;
+//while( __size>bco){bsize+=1024;bco++;if(bsize>=__size){break;}}
+//min=((bsize-1024)*sizeof(result));
+//max=((bsize)*sizeof(result));
+//hope.min[hope.i]=(min<=0)?1024:min;
+//hope.max[hope.i]=max;
+hope.a[hope.i]=(int)result;
+hope.z[hope.i]=__size*sizeof(result);
+hope.i++;
+
+return result;
 }	
 //!---------------------------------------------------------------------
 void *libc_memcpy (void *dest, void *src, size_t n);
-size_t libc_count(void** v);
+
 //!---------------------------------------------------------------------
 void *realloc(void *ptr, size_t __size){
-        void *newptr;// = NULL;
- 
+int i=0,z=0,id=getptrid(ptr);
         if (!ptr){return malloc(__size);}
-        if (!__size) {
-                free(ptr);
-                return malloc(0);
-        }
+        if (!__size) {free(ptr);return malloc(1);}
+		///if(__size<=(hope.min[id])){return ptr;}
  
-        newptr = malloc(__size);
+         void *newptr = malloc(__size);
         if (newptr) {
-			//#ifdef __x86_64__
-                size_t old_size = *((size_t *) (ptr - sizeof(size_t)));
-				 libc_memcpy(newptr, ptr, (old_size < __size ? old_size : __size));
-           //#endif
-           //#ifdef __i386__
-           //libc_memcpy(newptr, ptr, libc_count((void**)ptr)*sizeof(ptr));
-           //#endif
+				 libc_memcpy(newptr, ptr, hope.z[id]);
                 free(ptr);
-        }
+        }else{write($O,"mmap failed!\n",13);return NULL;}
         return newptr;
 }
 

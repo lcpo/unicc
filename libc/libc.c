@@ -106,7 +106,8 @@ long libc_substr_count(char* str_s, char* sub_s) {
 //!---------------------------------------------------------------------
 
 char * 	libc_utos(uni n) {
-    *_Hslong+=0;
+    char* slong=malloc(32);
+    slong+=0;
     uni i, sign,j;
     uni num=n;
     uni l = 0;
@@ -127,21 +128,21 @@ char * 	libc_utos(uni n) {
     }
     i = 0;
     do {
-        _Hslong[i++] = n % 10 + '0';
+        slong[i++] = n % 10 + '0';
     } while ((n /= 10) > 0);
     if (sign < 0) {
-        _Hslong[i++] = '-';
+        slong[i++] = '-';
         l--;
     }
-    _Hslong[i] = '\0';
+    slong[i] = '\0';
     i = 0;
     j=l-1;
     while (j>i) {
-        swap(_Hslong[i],_Hslong[j]);
+        swap(slong[i],slong[j]);
         i++;
         j--;
     }
-    return _Hslong;
+    return slong;
 }
 //!---------------------------------------------------------------------
 int libc_is_dec_num(char* str){
@@ -298,7 +299,7 @@ return (long)n;
 //!---------------------------------------------------------------------
 
 char* libc_dtos(double n){///double to str
-char* buff=out_$_dtos;
+char* buff=malloc(32);
 	*buff =+0;
 char* a1 = buff;
 long long i=0,j=0,k=0;
@@ -328,7 +329,7 @@ return a1;
 //!---------------------------------------------------------------------
 
 char* libc_ldtos(long double n){///long double to str
-char* buff=out_$_ldtos;
+char* buff=malloc(32);
 	*buff =+0;
 char* a2= buff;
 long long i=0,j=0,k=0;
@@ -357,14 +358,13 @@ return a2;
 
 //!---------------------------------------------------------------------
 char* libc_ftos(float n){///float to str
-char* buff=out_$_ftos;
+char* buff=malloc(32);
 	*buff =+0;
 char* a3 = buff;
 
 long long i=0,j=0,k=0;
 long long x=0,y=0,t=0,z=0;
 if(n<0) {a3[j++] = '-'; n = -n;}
-//n=n+0.000001;
 y = x = n;
 if(x == 0){ a3[j++] = '0';}k = j;
 while(x>0) {t = x%10; x/=10; a3[k++]=t+'0';}
@@ -378,11 +378,7 @@ while(z<7){
 n = n*10;
 t = (long long)n%10;
 if(t>0 && z==5){a3[j++]=(t+1)+'0';}else{a3[j++] = t+'0';}
-	//a3[j++] = t+'0';
-
 			z++;}
-
-//if(t==0){a3[j-2]='\0';a3[j-1]='\0';}else{a3[j-1]='\0';}
 a3[j-1]='\0';
 
 
@@ -392,128 +388,110 @@ return a3;
 
 //!---------------------------------------------------------------------
 char* libc_itos(int n){///int to str
-	*_$_suint+=0;
      int i=0, sign=0,j=0;
      uni l=libc_leni(n);
-	//char _$_sint[l+1];
+     char* sint=malloc(l+1);
+	 sint+=0;
      if ((sign = n) < 0){n = -n; l++;}
-i = 0;
+	 i = 0;
      do {
-         _$_sint[i++] = n % 10 + '0';
+     sint[i++] = n % 10 + '0';
      } while ((n /= 10) > 0);
-     if (sign < 0){_$_sint[i++] = '-'; l--;}
-     _$_sint[i] = '\0';
+     if (sign < 0){sint[i++] = '-'; l--;}
+     sint[i] = '\0';
 i = 0;
 j=l-1;
-while(j>i) {swap(_$_sint[i],_$_sint[j]);i++; j--;}
-//char* out=(char*)_$_sint;
-return (char*)_$_sint;
- }
-
+while(j>i) {swap(sint[i],sint[j]);i++; j--;}
+return sint;
+					}
 //!---------------------------------------------------------------------
 #define libc_uitos libc_itos
-/*
-char* libc_uitos(unsigned int n){///unsigned int to str
-	*_$_suint+=0;
-     int i=0, sign=0,j=0;
-     uni l=libc_leni(n);
-    // char c;
 
-     if ((sign = n) < 0){n = -n; l++;}
-i = 0;
-     do {
-         _$_sint[i++] = n % 10 + '0';
-     } while ((n /= 10) > 0);
-     if (sign < 0){_$_sint[i++] = '-'; l--;}
-     _$_sint[i] = '\0';
-i = 0;
-j=l-1;
-while(j>i) {swap(_$_suint[i],_$_suint[j]);i++; j--;}
-
-return _$_suint;
- }
-*/
 //!---------------------------------------------------------------------
  char* libc_ltos(long int n){///long to str
-	*_$_slong+=0;
+
      int i=0, sign=0,j=0;
      uni l=libc_leni(n);
-	 //char c;
+	 char* slong=malloc(l+1);
+	 slong+=0;
 
       if ((sign = n) < 0){n = -n; l++;}
 i = 0;
      do {
-         _$_slong[i++] = n % 10 + '0';
+         slong[i++] = n % 10 + '0';
      } while ((n /= 10) > 0);
-     if (sign < 0){_$_slong[i++] = '-'; l--;}
-     _$_slong[i] = '\0';
+     if (sign < 0){slong[i++] = '-'; l--;}
+     slong[i] = '\0';
 i = 0;
 j=l-1;
-while(j>i) {swap(_$_slong[i],_$_slong[j]);i++; j--;}
-return _$_slong;
+while(j>i) {swap(slong[i],slong[j]);i++; j--;}
+return slong;
  }
 
 //!---------------------------------------------------------------------
 
  char* libc_lltos(long long int n){///long long to str
-	*_$_sllong+=0;
+	
      int i=0, sign=0,j=0;
      uni l=libc_leni(n);
-	 //char c;
+	 char* sllong=malloc(l+1);
+	 sllong+=0;
 
       if ((sign = n) < 0){n = -n; l++;}
 i = 0;
      do {
-         _$_sllong[i++] = n % 10 + '0';
+         sllong[i++] = n % 10 + '0';
      } while ((n /= 10) > 0);
-     if (sign < 0){_$_sllong[i++] = '-'; l--;}
-     _$_sllong[i] = '\0';
+     if (sign < 0){sllong[i++] = '-'; l--;}
+     sllong[i] = '\0';
 i = 0;
 j=l-1;
-while(j>i) {swap(_$_sllong[i],_$_sllong[j]);i++; j--;}
-return _$_sllong;
+while(j>i) {swap(sllong[i],sllong[j]);i++; j--;}
+return sllong;
  }
 
 //!---------------------------------------------------------------------
 
  char* libc_ulltos(unsigned long long int n){///unsigned long long to str
-	*_$_sullong+=0;
+
      int i=0, sign=0,j=0;
      uni l=libc_leni(n);
-
+	char *sullong=malloc(l+1);
+	sullong+=0;
       if ((sign = n) < 0){n = -n; l++;}
 i = 0;
      do {
-         _$_sullong[i++] = n % 10 + '0';
+         sullong[i++] = n % 10 + '0';
      } while ((n /= 10) > 0);
-     if (sign < 0){_$_sullong[i++] = '-'; l--;}
-     _$_sullong[i] = '\0';
+     if (sign < 0){sullong[i++] = '-'; l--;}
+     sullong[i] = '\0';
 i = 0;
 j=l-1;
-while(j>i) {swap(_$_sullong[i],_$_sullong[j]);i++; j--;}
-return _$_sllong;
+while(j>i) {swap(sullong[i],sullong[j]);i++; j--;}
+return sullong;
  }
 
 //!---------------------------------------------------------------------
 
 
  char* libc_ultos(unsigned long int n){///unsigned long to str
-	*_$_sulong+=0;
+
      int i=0, sign=0,j=0;
      uni l=libc_leni(n);
-	 //char c;
+     char *sulong=malloc(l+1);
+     sulong+=0;
 
       if ((sign = n) < 0){n = -n; l++;}
 i = 0;
      do {
-         _$_sulong[i++] = n % 10 + '0';
+         sulong[i++] = n % 10 + '0';
      } while ((n /= 10) > 0);
-     if (sign < 0){_$_sulong[i++] = '-'; l--;}
-     _$_sulong[i] = '\0';
+     if (sign < 0){sulong[i++] = '-'; l--;}
+     sulong[i] = '\0';
 i = 0;
 j=l-1;
-while(j>i) {swap(_$_sulong[i],_$_sulong[j]);i++; j--;}
-return _$_sulong;
+while(j>i) {swap(sulong[i],sulong[j]);i++; j--;}
+return sulong;
  }
 
 //!---------------------------------------------------------------------
