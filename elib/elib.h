@@ -71,9 +71,9 @@ if(sizeof(variable)==8){cpyquad(variable,value);}\
    #define MAP_POPULATE 	0x8000
    #define MAP_NONBLOCK		0x10000
    #define MAP_STACK		0x20000
+   #define MAX_MEMORY_VAR 1024
    
-   
-#define MMAP_FLAGS MAP_PRIVATE | MAP_ANONYMOUS
+
 ///END MAP
 
 #ifdef __i386__

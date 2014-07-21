@@ -81,20 +81,6 @@ long __sysrun(long ns, ...){
 #define __syscall5(n,a,b,c,d,e) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e))
 #define __syscall6(n,a,b,c,d,e,f) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e),(long)(f))
 ///------------------------------------------------------------
-/*
-struct stat {
-  dev_t st_dev;
-  ino_t st_ino;
-  mode_t st_mode;
-  nlink_t st_nlink;
-  uid_t st_uid;
-  gid_t st_gid;
-  dev_t st_rdev;
-  loff_t st_size;
-  time_t st_atime;
-  time_t st_mtime;
-  time_t st_ctime;
-};*/
 struct stat_f{
   long st_dev;
   long st_ino;
@@ -194,25 +180,15 @@ int64_t __divdi3(int64_t num, int64_t den){
     return v;
 }
 ///------------------------------------------------------------
-#define MAX_MEMORY_VAR 1024
-
-size_t libc_count(void** v);
 typedef struct mhope{
 int a[MAX_MEMORY_VAR];
 int z[MAX_MEMORY_VAR];
-//int min[MAX_MEMORY_VAR];
-//int max[MAX_MEMORY_VAR];
-int i;	
+int i;
 	}mhope;
 
 static mhope hope;
 ///------------------------------------------------------------
-void init_malloc(void){
-int i=0;	
-    //for(i = 0 ; i < MAX_MEMORY_VAR ; i++) {hope.a[i]=-1;hope.z[i]=-1;hope.max[i]=-1;hope.min[i]=-1;}
-     hope.i=0;
-    return; 	
-	}
+inline void init_malloc(void){hope.i=0;return;}
 void init_malloc(void)	__attribute__ ((constructor));
 ///------------------------------------------------------------
 void hope_sort(){
@@ -247,28 +223,51 @@ void dropptr(void* ptr){
 int id=getptrid(ptr);
 hope.a[id]=-1; 
 hope.z[id]=-1;
-hope_sort();	
+hope_sort();
 	}
 ///------------------------------------------------------------	
-void free(void *ptr){
+size_t libc_strlen(char* str);
+size_t libc_count(void** v);
+
+
+void free_ptr(void* ptr){
 if (ptr == NULL){return;}
-int i=0,id=getptrid(ptr);
-if(munmap(ptr, hope.z[id]) == -1){write($O,"munmap failed!\n",15);}
+int id=getptrid(ptr);
+if(munmap(ptr, hope.z[id]) == -1){write($O,"munmap failed!\n",15);}	
 dropptr(ptr);
-}
+return;		 
+	}
+
+void free(void* ptr){
+if (ptr == NULL){return;}
+int id=getptrid(ptr),pco=libc_strlen((char*)ptr),sco=libc_count((void**)ptr);
+if(sco>0 && pco==0){
+	void** bf=ptr;
+	while(sco>0){sco--;if(libc_count((void**)ptr)>0){free(bf[sco]);}else{free_ptr(bf[sco]);}}
+					}
+free_ptr(ptr);
+
+return;	
+	}
+
+
+
+
+	
+	
+	
+
+
+
+
+
+
 //!---------------------------------------------------------------------
 	
 void *malloc(size_t __size){
+if(__size<=0){__size=1;}
 void *result=mmap(0, __size*sizeof(result) , PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);//+ sizeof(size_t)
 if (result == MAP_FAILED){write($O,"mmap failed!\n",13);return NULL;}
-
-//hope.i=libc_count((void**)hope.a);
-int bsize=0,bco=0,min=0,max=0;
-//while( __size>bco){bsize+=1024;bco++;if(bsize>=__size){break;}}
-//min=((bsize-1024)*sizeof(result));
-//max=((bsize)*sizeof(result));
-//hope.min[hope.i]=(min<=0)?1024:min;
-//hope.max[hope.i]=max;
 hope.a[hope.i]=(int)result;
 hope.z[hope.i]=__size*sizeof(result);
 hope.i++;
@@ -283,9 +282,7 @@ void *realloc(void *ptr, size_t __size){
 int i=0,z=0,id=getptrid(ptr);
         if (!ptr){return malloc(__size);}
         if (!__size) {free(ptr);return malloc(1);}
-		///if(__size<=(hope.min[id])){return ptr;}
- 
-         void *newptr = malloc(__size);
+          void *newptr = malloc(__size);
         if (newptr) {
 				 libc_memcpy(newptr, ptr, hope.z[id]);
                 free(ptr);

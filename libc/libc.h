@@ -1,10 +1,4 @@
 
-#define INT_MAX_LEN 12*2
-#define UINT_MAX_LEN 12*2
-#define LONG_MAX_LEN 22*2
-#define LONG_LONG_MAX_LEN 22*2
-#define ULONG_LONG_MAX_LEN 22*2
-#define ULONG_MAX_LEN 22*2
 
 #define clear_var($_0_v)({typeof($_0_v) $_0_o=(typeof($_0_v))NULL;$_0_o;})
 
@@ -20,16 +14,6 @@ struct timespec {
   long tv_nsec;
 };
 
-char _Hslong[48];
-char out_$_dtos[32];
-char out_$_ldtos[32];
-char out_$_ftos[32];
-char _$_sint[32];
-char _$_suint[UINT_MAX_LEN];
-char _$_slong[LONG_MAX_LEN];
-char _$_sllong[LONG_LONG_MAX_LEN];
-char _$_sullong[ULONG_LONG_MAX_LEN];
-char _$_sulong[ULONG_MAX_LEN];
 char char_table_base64[] = {
 	'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R',
 	'S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j',

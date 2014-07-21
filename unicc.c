@@ -27,8 +27,7 @@ int execl (char *path, char *arg, ...){
       if (i == argv_max)
      {
        argv_max *= 2;
-        char **nptr = (char**)realloc (argv == initial_argv ? NULL : argv,
-                        argv_max * sizeof (char *));
+        char **nptr = realloc (argv == initial_argv ? NULL : argv,argv_max);
       if (nptr == NULL){
            if (argv != initial_argv)
          libc_free (argv);
@@ -49,34 +48,34 @@ int execl (char *path, char *arg, ...){
  
    return ret;
  }
+ static char* proc_start="/proc/";
+ static char* proc_end="/cmdline";
 //----------------------------------------------------------------------
 char* getcmd(){
 char* exe=malloc(sizeof(exe));
 char* tmp=malloc(sizeof(tmp));	
-char* start="/proc/";
-char* end="/cmdline";
 char* pid=libc_itos(getpid());
-libc_strcpy(tmp,start);
+libc_strcpy(tmp,proc_start);
 libc_strcat(tmp,pid);
-libc_strcat(tmp,end);
+libc_strcat(tmp,proc_end);
 int file=open(tmp,0,0);
 read(file,exe,128);
 close(file);
 free(tmp);
+free(pid);
 return exe;
 	}
 //----------------------------------------------------------------------
 char* getpn(){
 char* exe=malloc(sizeof(exe));
 char* tmp=malloc(sizeof(tmp));
-char* start="/proc/";
-char* end="/exe";
 char* pid=libc_itos(getpid());
-libc_strcpy(tmp,start);
+libc_strcpy(tmp,proc_start);
 libc_strcat(tmp,pid);
-libc_strcat(tmp,end);
+libc_strcat(tmp,proc_end);
 readlink(tmp,exe,128);
 free(tmp);
+free(pid);
 return exe;
 				}
 //----------------------------------------------------------------------
@@ -102,41 +101,42 @@ return argv;
 										}
 //----------------------------------------------------------------------
 int exec(char* command, char* out){
-int $_pipe[2];
-pipe($_pipe);
+int tpipe[2];
+pipe(tpipe);
 switch(fork()){
 case -1:write($O,"error fork!",12);
 exit(1);
 case 0: 
-close($_pipe[0]); 
-dup2($_pipe[1], 1); 
+close(tpipe[0]); 
+dup2(tpipe[1], 1); 
 execl("/bin/sh", "sh", "-c", command, NULL);
-close($_pipe[1]);
+close(tpipe[1]);
 exit(0);			
 }
-close($_pipe[1]);
-int ret=read($_pipe[0],out,4096);
-close($_pipe[0]);
+close(tpipe[1]);
+int ret=read(tpipe[0],out,4096);
+close(tpipe[0]);
 	}
 //----------------------------------------------------------------------
 int system(char* command){
-int $_pipe[2];
-pipe($_pipe);
+int tpipe[2];
+pipe(tpipe);
 switch(fork()){
 case -1:write($O,"error fork!",12);
 exit(1);
 case 0: 
-close($_pipe[0]); 
-dup2($_pipe[1], 1); 
+close(tpipe[0]); 
+dup2(tpipe[1], 1); 
 execl("/bin/sh", "sh", "-c", command, NULL);
-close($_pipe[1]);
+close(tpipe[1]);
 exit(0);			
 }
-close($_pipe[1]);
-char* buff=libc_malloc(sizeof(*buff));
-int ret=read($_pipe[0],buff,4096);
-close($_pipe[0]);
+close(tpipe[1]);
+char* buff=libc_malloc(4096);
+int ret=read(tpipe[0],buff,4096);
+close(tpipe[0]);
 libc_print_str(buff);
+free(buff);
 return ret;	
 						  }
 //----------------------------------------------------------------------
@@ -145,14 +145,15 @@ return ret;
 #define main _start
 #else						  	
 void _start() {
-char* _start$output=getcmd();
-long _start$i=0,argc=0,_start$sep=0;
-argc=getargc(_start$output);
-char** argv=malloc(sizeof(argv)*argc);
-if(argc==1){argv[0]=(char*)_start$output;argc--;}
-if(argc>=2){argv=getargv(argc,_start$output,argv);argc--;}
+char* _startout=getcmd();
+long argc=0;
+argc=getargc(_startout);
+char** argv=malloc(argc);
+if(argc==1){argv[0]=(char*)_startout;argc--;}
+if(argc>=2){argv=getargv(argc,_startout,argv);argc--;}
 int result=main(argc,argv);
-libc_free(argv);
+free_ptr(_startout);
+free_ptr(argv);
 exit(result);
 //asm volatile("movl $60, %eax\n\t" "movq $0, %rdi\n\t" "syscall");
 return;

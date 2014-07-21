@@ -664,14 +664,12 @@ return write($O, (void*)buf, libc_strlen(buf));
 char* libc_strpstr_nomo(char* str,char* ser){ //Получает позицию первого вхождения подстроки не модифицируя строку
 if(libc_strstr(str,ser)){	
 int len_ser=libc_strlen(ser),len_str=libc_strlen(str),len_nstr;
-char* buff_strn=libc_alloc(sizeof(buff_strn)*(len_ser*len_str));
+char* buff_strn=malloc(strlen(str));
 libc_strcpy(buff_strn,"\0");
 char* estr=libc_strstr(str,ser)+len_ser;
 int iestr=libc_strlen(estr);
 len_nstr=len_str-iestr-len_ser;
 libc_strncat(buff_strn,str,len_nstr);
-//char* out=buff_strn;
-//libc_free(buff_strn);
 return buff_strn;
 }else{return str;}
 	}
@@ -679,25 +677,22 @@ return buff_strn;
 //Требуется оптимизация
 char** libc_explode(char* se,char* str){ //Разбивает строку на массив по разделителю
 int i=0,l=0,n=0,len=libc_strlen(str),cou=libc_substr_count(str,se);
-//char** ret=libc_malloc(sizeof(ret)*cou*sizeof(char**));
-char* ret[cou*len];
+char** ret=malloc(cou+1);
 while(l!=-1){
-ret[i]=libc_malloc(len);	
 l=libc_strpos(str,se);
 ret[i]=libc_strpstr_nomo(str,se);
 str=str+l+libc_strlen(se);
 	i++;
 			}
 ret[i]='\0';
-char** out=(char**)ret;
-return out;      
+return ret;      
 										}
 ///---------------------------------------------------------------------
 char* libc_implode(char* r,char** arri){
 int i=0,n=libc_count((void **)arri),n_arr=0,n_r=libc_strlen(r);
 
 while(i<n){n_arr=n_arr+libc_strlen(arri[i])+n_r;i++;}
-char* out=libc_malloc(sizeof(out));
+char* out=malloc(i);
 
 i=0;
 while(i<n){

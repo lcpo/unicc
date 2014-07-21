@@ -4,10 +4,10 @@
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 
 
-//1 =1024 =>4096 : 1024
-//2 =4097 =>8192 : 2048
-//3 =8193 =>12288: 3072
-//4 =12289 =>16384 : 4095
+//1 =1024 =>4096 	: 1024
+//2 =4097 =>8192 	: 2048
+//3 =8193 =>12288	: 3072
+//4 =12289 =>16384  : 4095
 
 
 
@@ -15,41 +15,46 @@
 
 ///------------------------------------------------------------
 int main(int argc, char** argv) {
+
+	
 int i=0,nom=0,id=0;
-char** buff=malloc(0);
+char* test="123|456|789|abc|def";
+echo ("create array:\n");
+char** ex=libc_explode("|",test);
+
+while(ex[i]!=NULL){
+printf("%s\n",ex[i]);
+i++;}
+
+
+echo ("free_array:\n");
+free(ex);
+echo ("end:\n");
+echo ("ppp:\n");
+char* ppp=malloc(5);
+free(ppp);
+echo("endppp\n");
+/*
 id=getptrid(buff);
 
 nom=hope.i+1;
 printf("size:%i\n",sizeof(hope));
-printf("a==%i\n",hope.a[id]);
-printf("z==%i\n",hope.z[id]);
-//printf("max==%i\n",hope.max[id]);
-//printf("min==%i\n",hope.min[id]);
-printf("id==%i\n",id);
-    i=0;
-  /*  
-while(nom>i){
-printf("%i|a:%i|z:%i|min:%i|max:%i\n",i,hope.a[i],hope.z[i],hope.min[i],hope.max[i]);
-i++;
-	}
-*/
 
+    
+
+
+char* bf;
 i=0;
-while(i<10000){
+while(i<1000000){
 buff=realloc(buff,i+1);	
 buff[i]=libc_itos(i);
-//printf("%s\n",buff[i]);
-dropptr(buff[i]);
+printf("%s\n",buff[i]);
+free(buff[i]);
+
+
 	i++;
 	}	
-
-
-i=0;
-while(i<10000){
-	printf("%s\n",buff[i]);
-	//free(buff[i]);
-	i++;
-	}
+*/
 
 return 0;
 						}
