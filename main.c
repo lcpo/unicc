@@ -13,18 +13,36 @@ END_STR
 				}pattern_type;
 
 typedef struct pattern{
-	pattern_type type;
-	char** section;	
+	pattern_type* type;
+	char** section;
+	int step;	
 	int length;
 	}pattern;
 
+pattern* pt;
 
-void test(char* template,char* str){
-pattern* pt=malloc(sizeof(pattern));
+//tockens:
+//[...] list
+//(...) mask
+//{...} step
+
+//qualifiers:
+//?
+//+
+//*
+
+//or
+// |
+
+
+void get_tocken(char* template){
+pt=malloc(sizeof(pattern));
+pt
 char* p=template;
-int i=0,n=libc_strlen(template),flag=0;	
+int i=0,n=libc_strlen(template),flag=0,z=0;	
 while(i<n){
-//if(p[i]='['){}	
+if(p[i]='[' && p[i-1]='\\'){flag=1;}
+if(p[i]=']' && p[i-1]='\\'){flag=0;}	
 	i++;}
 	
 	
@@ -34,7 +52,7 @@ return;
 ///------------------------------------------------------------
 int main(int argc, char** argv) {
 
-test("[0-9]","");
+get_tocken("[0-9]");
 
 
 /*
