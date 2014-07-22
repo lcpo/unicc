@@ -5,10 +5,28 @@
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 
 
+void parce_char(char *str){
+int i=0;
+char* p=str;
+while(1){
+printf("%c|%i\n",*p,p);
+switch(*p){
+case '[':{break;}
+case ']':{break;}
+default:{p++;}	
+	}
 
+	if(*p==0){break;}	
+		}
+	
+	return;
+	}
 
 ///------------------------------------------------------------
 int main(int argc, char** argv) {
+
+
+parce_char("test str");
 
 /*
 echo ("create array:\n");	
