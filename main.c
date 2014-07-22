@@ -1,18 +1,14 @@
 #include "unicc.c"
 #include "json.c"
+
 //void __stack_chk_fail(void){return;}
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 
 
 
+
 ///------------------------------------------------------------
 int main(int argc, char** argv) {
-char*** out;
-libc_preg_match_all("|\\<[^>]+\\>(.*)\\<\\/[^>]+\\>|U", "<b>пример: </b>\n<div align=left>это тест</div>",out,0);
-//echo (out[0][0] , ", " , out[0][1] , "\n");
-//echo (out[1][0] , ", " , out[1][1] , "\n");
-
-//while()
 
 /*
 echo ("create array:\n");	

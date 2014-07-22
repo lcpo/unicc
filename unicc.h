@@ -82,7 +82,7 @@ typedef uni * (*func)(uni *p,...);
 #define obj($_p...)({(func*)arg((void*)$_p);})         			///создание массива аргуметов для объекта
 #define are(p,t) ((t)&p[0]) 										///получает все адреса элементов массива в бинарном файле, в виде макроса
 
-#include "external/pcre.h"
+
 
 #include "libc/libc.h"
 #include "libc/libc.c"
