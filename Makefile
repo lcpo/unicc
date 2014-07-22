@@ -1,7 +1,7 @@
 CC=gcc
 LIBCOMP=ranlib
 LIBCOMPA=ar rc
-LIBS= #-lpcre  `pcre-config --libs`
+LIBS= -lpcre  `pcre-config --libs`
 EXECUTABLE=unicc
 SOURCES=main.c unicc.c
 OBJECTS=main.o

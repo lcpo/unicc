@@ -5,9 +5,10 @@ extern char* dtos(double n);
 extern char* ftos(float n);
 
 char* atos(long n){///int to str
+
      int i=0, sign=0,j=0;
      uni l=libc_leni(n);
-     char* sint=libc_alloc(l+1*sizeof(sint));
+     char* sint=libc_malloc(l+1*sizeof(sint));
 	 sint+=0;
      if ((sign = n) < 0){n = -n; l++;}
 	 i = 0;

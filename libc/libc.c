@@ -1179,11 +1179,11 @@ if((f)==NULL){libc_preg_print_error(pattern,errchar,errstr);return -1;}
 pcre_extra *f_ext=pcre_study(f,0,&errstr);
 
 while((pairs=pcre_exec(f,f_ext,subject,libc_strlen(subject),p,j,vector,vecsize))>0){
-matches[i]=libc_malloc(sizeof(matches[i]));
+matches[i]=malloc(sizeof(matches[i]));
 n=0;
 if((pairs)<0){return -1;}
 while(pairs>n){
-matches[i][n]=libc_malloc(sizeof(matches[i][n]));
+matches[i][n]=malloc(sizeof(matches[i][n]));
 pcre_copy_substring(subject,vector,pairs,n,matches[i][n],libc_strlen(subject));
 n++;
 			  }
@@ -1193,7 +1193,61 @@ p=vector[1];
 
 return 1;
 																									}
+///---------------------------------------------------------------------
+char** simgen(char* sim, int cou){
+int i=0;
+char** outs=malloc(cou);
+char* numb=malloc(3);
+while(cou>i){
+numb=sim;
+libc_strcat(numb,libc_itos(i));
+outs[i]=numb;	
+i++;}
+return outs;	
+}																								
+///---------------------------------------------------------------------
+char *string_preg_replace(char* pattern, char* replacement, char* subject , int limit){
+int i=0;
+char* buffr=subject;
+char*** pat_ar=malloc(sizeof(pat_ar));	
+if(libc_preg_match_all(pattern,subject,pat_ar,0)){
+char* nbuffr=replacement;
+char** sim=simgen("$",100);
+char** newarr=malloc(sizeof(newarr));
+while(pat_ar[i]!=NULL){newarr[i]=pat_ar[i][0];i++;}
+char** aruq=libc_array_unique_sort(newarr);
+char** nsim=malloc(sizeof(nsim));
+i=0;
+while(sim[i]!=NULL){
+if(libc_strpos(nbuffr,sim[i])!=-1 && aruq[i]!=NULL){nsim[i]=sim[i];}else{nsim[i]="";}
+i++;
+}
+nbuffr=libc_array_replace(nbuffr,sim,nsim);
+i=0;
+char* tmp=malloc(sizeof(tmp));
+char** sep=malloc(sizeof(sep));
+while(aruq[i]!=NULL){
+if(nsim[i]!=""){
+tmp=libc_strstr(nbuffr,nsim[i]);
+tmp=libc_strpstr_nomo(tmp+1,"$");
+sep[i]="$";
+libc_strcat(sep[i],tmp);
+sep[i]=libc_string_replace(sep[i],nsim[i],aruq[i]);
+}else{sep[i]="";}
+i++;}
+buffr=libc_array_replace(buffr,aruq,sep);
+free(pat_ar);
+free(sim);
+free(newarr);
+free(aruq);
+free(nsim);
+free(nbuffr);
+free(tmp);
+free(sep);
+}
 
+return buffr;	
+																					}
 #endif
 ///------------------------------------------------------------
 char* libc_base64_encode(char *data) {
