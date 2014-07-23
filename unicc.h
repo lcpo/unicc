@@ -44,11 +44,11 @@
 ///----------------------------------------------------------------------
 
 	#ifdef __i386__
-typedef unsigned int size; 
+typedef unsigned int size_t; 
 	#endif
 
 	#ifdef __x86_64__
-typedef unsigned long size; 
+typedef unsigned long size_t; 
 	#endif
 
 #ifndef wchar
@@ -56,7 +56,7 @@ typedef void* wchar;
 #endif
 
 ///----------------------------------------------------------------------
-#define size_t size
+#define size size_t
 ///----------------------------------------------------------------------
 typedef uni_t uni;
 ///----------------------------------------------------------------------

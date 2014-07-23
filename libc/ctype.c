@@ -1,3 +1,4 @@
+
 ///---------------------------------------------------------------------
 int libc_isalnum(int ch){
 	return libc_isalpha(ch) || libc_isdigit(ch);
@@ -52,3 +53,4 @@ int libc_toupper(int ch){
 	if (libc_islower(ch)){ return (ch & 95);}
 	return ch;
 }
+///---------------------------------------------------------------------
