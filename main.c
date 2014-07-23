@@ -78,9 +78,25 @@ int main(int argc, char** argv) {
 
 char *errstr=malloc(8);
 int errchar;
-real_pcre *re;
+real_pcre *re=malloc(16);
+re->tables=malloc(8);
+char* subject="abcde.|test5str|1234556";
+int pairs=0,i=0,j=0,vecsize=libc_strlen(subject),vector[vecsize];
 
-real_pcre *f=pcre_compile(re,"/..\\../U", PCRE_CASELESS | PCRE_DOTALL,&errstr,&errchar,NULL);
+pcre_compile(re,"|(..\\..)\\||s", PCRE_CASELESS | PCRE_DOTALL,&errstr,&errchar,NULL);
+
+pairs=pcre_exec(re,NULL,subject,libc_strlen(subject),0,j,vector,vecsize);
+printf("%i\n",pairs);
+/*
+printf("%i\n",vector[1]);
+printf("%i\n",vector[2]);
+printf("%s\n",vector[3]);
+
+printf("%i\n",vector[4]);
+printf("%i\n",vector[5]);
+printf("%i\n",vector[6]);
+printf("%i\n",vector[7]);
+printf("%i\n",vector[8]);*/
 
 //ap->pattern = pcre_compile(ap->from + 7, PCRE_CASELESS | PCRE_DOTALL,(char **)(&errstr), &erroffset, NULL);
 //pcre_exec((pcre *)p, NULL, s, (int)strlen(s), 0, 0, pmatch,(pmatch == NULL)?0:PMATCH_SIZE) >= 0)

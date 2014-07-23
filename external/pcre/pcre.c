@@ -1533,11 +1533,18 @@ int branch_extra = 0;
 int branch_newextra;
 unsigned int brastackptr = 0;
 size_t sizes;
-unsigned char *code=malloc(4);
-unsigned char *ptr=malloc(4);
+unsigned char *code=malloc(20);
+unsigned char *ptr=malloc(20);
+
 compile_data compile_block;
-int *brastack=malloc(4);
-unsigned char* bralenstack=malloc(4);
+compile_block.lcc=malloc(20);
+compile_block.fcc=malloc(20);
+compile_block.cbits=malloc(20);
+compile_block.ctypes=malloc(20);
+return re;
+
+int *brastack=malloc(200);
+unsigned char* bralenstack=malloc(200);
 
 #ifndef SUPPORT_UTF8
 if ((options & PCRE_UTF8) != 0)
@@ -1799,7 +1806,7 @@ while ((c = *(++ptr)) != 0)
               options = (options | set) & (~unset);
               set = unset = 0;
               }
-            /* Fall through */
+
 
             case ':':
             if (((set|unset) & PCRE_IMS) != 0)
@@ -1994,7 +2001,7 @@ if (reqchar >= 0 && (countlits > 1 || (re->options & PCRE_FIRSTSET) == 0))
   re->options |= PCRE_REQCHSET;
   }
 
-return (real_pcre *)re;
+return re;
 }
 ///---------------------------------------------------------------------
 static BOOL match_ref(int offset, register unsigned char *eptr, int length, match_data *md, unsigned long int ims){
@@ -3067,11 +3074,7 @@ for (;;)
   }
 }
 
-int
-pcre_exec(pcre *external_re, pcre_extra *external_extra,
-  char *subject, int length, int start_offset, int options, int *offsets,
-  int offsetcount)
-{
+int pcre_exec(real_pcre *external_re, pcre_extra *external_extra,char *subject, int length, int start_offset, int options, int *offsets,  int offsetcount){
 int resetcount, ocount;
 int first_char = -1;
 int req_char = -1;
