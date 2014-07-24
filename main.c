@@ -9,7 +9,7 @@
 //http://www.illusionsphotographic.com/analog/src/pcre/
 
 ///---------------------------------------------------------------------
-
+/*
 char char_point_table[]={
 0,1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,
 29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,
@@ -30,20 +30,19 @@ int i=0;
 for(;i<255;i++){if(ch==char_point_table[i]){return ch;}}
 return -1;	
 	}
-
+*/
 //----------------------------------------------------------------------
 char* test(char* pt,char* str){
-int slen=libc_strlen(str)-1,zslen=1,bfnum=0,flag=0,dflag=0,si=0,i=0;
+int slen=libc_strlen(str)-1,zslen=1,bfnum=0,flag=0,dflag=0,si=0,step=0,i=0;
 char* p=pt;
 char* s=malloc(slen+1);
 libc_strcpy(s,str);
+char* buff;
 
-char oc='\0';//старый
-char c=*p; //Текущий
-char nc=*p++;//Новый
+char oc='\0';	//старый
+char c=*p; 		//Текущий
+char nc=*p++;	//Новый
 p--;
-
-
 
 while (*p!=0){
 c=*p;
@@ -52,38 +51,34 @@ p++;nc=*p;p--;
 
 switch(*p){
 
-case '<':{
+case '^':{
 p++;
-char buff1[slen+1];
-while(libc_isdigit(*p)!=0){buff1[bfnum]=*p;bfnum++;p++;}
-if(bfnum!=0){zslen--;zslen=zslen+libc_stoi(buff1);bfnum=0;}else{flag=1;}
-
-slen=libc_strlen(s)-zslen;	
-s=s+slen;
-if(flag==1){zslen++;flag=0;}
+buff=malloc(slen+1);
+while(libc_isdigit(*p)!=0){buff[bfnum]=*p;bfnum++;p++;}
+if(bfnum!=0){step=step+libc_stoi(buff);bfnum=0;}else{step++;}
+free(buff);
 break;
 }
+	
 case '>':{
 p++;
-char buff2[slen+1];
-while(libc_isdigit(*p)!=0){buff2[bfnum]=*p;bfnum++;p++;}
-if(bfnum!=0){s=s+libc_stoi(buff2);bfnum=0;}else{s++;}
+buff=malloc(slen+1);
+while(libc_isdigit(*p)!=0){buff[bfnum]=*p;bfnum++;p++;}
+if(bfnum!=0){s=s+libc_stoi(buff)+step;bfnum=0;}else{s++;}
+free(buff);
 break;
 }
-case ' ':{
+
+case '<':{
 p++;
-s=test(p,s);
-	}
-case '$':{
-p++;
-char buff3[slen+1];
-while(libc_isdigit(*p)!=0){buff3[bfnum]=*p;bfnum++;p++;}
-if(bfnum!=0){si=libc_stoi(buff3);bfnum=0; 
+buff=malloc(slen+1);
+while(libc_isdigit(*p)!=0){buff[bfnum]=*p;bfnum++;p++;}
+if(bfnum!=0){si=libc_stoi(buff)-step;bfnum=0; 
 slen=libc_strlen(s)-1;
 printf("%i\n",si);
 while(si>0){
 s[slen]='\0';
-slen=slen-si;
+slen--;
 si--;
 }
 
@@ -92,6 +87,7 @@ si--;
 slen=libc_strlen(s)-1;	
 s[slen]='\0';
 }
+free(buff);
 		 }	
 
 		 
@@ -124,9 +120,9 @@ str[1]='1';
 printf("%s\n",str);
 */
 
-char* trr=test("<9$8","abcdef123456789");
+char* trr=test("^10>2<9","abcdef123456789");
 printf("%s\n",trr);
-
+printf("%s\n",libc_substr("abcdef123456789", 2,  4));
 
 /*
 echo ("create array:\n");	
