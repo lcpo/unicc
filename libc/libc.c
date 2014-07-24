@@ -1074,7 +1074,7 @@ size_t libc_strnlen(char *str, size_t count){
 ///------------------------------------------------------------
 char *libc_strndup(char *str, size_t count){
 	size_t len = libc_strnlen(str, count);
-	char *dup = libc_malloc(len+count);
+	char *dup = malloc(len);
 	if (!dup){ return NULL;}
 	libc_memcpy(dup, str, len);
 	dup[len] = '\0';

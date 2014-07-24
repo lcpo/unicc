@@ -1,15 +1,15 @@
 #include "unicc.c"
 #include "json.c"
 
-#include "external/pcre/pcre.h"
-#include "external/pcre/pcre.c"
+//#include "external/pcre/pcre.h"
+//#include "external/pcre/pcre.c"
 
 //void __stack_chk_fail(void){return;}
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 //http://www.illusionsphotographic.com/analog/src/pcre/
 
 ///---------------------------------------------------------------------
-/*
+
 char char_point_table[]={
 0,1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,
 29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,
@@ -24,85 +24,108 @@ char char_point_table[]={
 209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,
 227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,
 245,246,247,248,249,250,251,252,253,254,255};
-
+//----------------------------------------------------------------------
 char ispoint(char ch){
 int i=0;
 for(;i<255;i++){if(ch==char_point_table[i]){return ch;}}
 return -1;	
 	}
 
-*/
+//----------------------------------------------------------------------
+char* test(char* pt,char* str){
+int slen=libc_strlen(str)-1,zslen=1,bfnum=0,flag=0,dflag=0,si=0,i=0;
+char* p=pt;
+char* s=malloc(slen+1);
+libc_strcpy(s,str);
 
-void libc_preg_print_error(char* pattern,int errchar, char* errstr){
-libc_print_str("Ошибка: ");
-libc_print_str((char*)errstr);
-libc_print_str("\nСимвол N ");
-libc_print_str(libc_itos(errchar));
-libc_print_str("\nШаблон:");
-libc_print_str(pattern);
-libc_print_str("\n");	
-return;	
+char oc='\0';//старый
+char c=*p; //Текущий
+char nc=*p++;//Новый
+p--;
+
+
+
+while (*p!=0){
+c=*p;
+p--;oc=*p;p++;
+p++;nc=*p;p--;
+
+switch(*p){
+
+case '<':{
+p++;
+char buff1[slen+1];
+while(libc_isdigit(*p)!=0){buff1[bfnum]=*p;bfnum++;p++;}
+if(bfnum!=0){zslen--;zslen=zslen+libc_stoi(buff1);bfnum=0;}else{flag=1;}
+
+slen=libc_strlen(s)-zslen;	
+s=s+slen;
+if(flag==1){zslen++;flag=0;}
+break;
+}
+case '>':{
+p++;
+char buff2[slen+1];
+while(libc_isdigit(*p)!=0){buff2[bfnum]=*p;bfnum++;p++;}
+if(bfnum!=0){s=s+libc_stoi(buff2);bfnum=0;}else{s++;}
+break;
+}
+case ' ':{
+p++;
+s=test(p,s);
+	}
+case '$':{
+p++;
+char buff3[slen+1];
+while(libc_isdigit(*p)!=0){buff3[bfnum]=*p;bfnum++;p++;}
+if(bfnum!=0){si=libc_stoi(buff3);bfnum=0; 
+slen=libc_strlen(s)-1;
+printf("%i\n",si);
+while(si>0){
+s[slen]='\0';
+slen=slen-si;
+si--;
+}
+
+}else{
+
+slen=libc_strlen(s)-1;	
+s[slen]='\0';
+}
+		 }	
+
+		 
+default:{p++;break;}	
 	}
 
-/*
+}
+return s;
 
-int libc_preg_match ( char* pattern, char* subject, char** matches , int flags , int offset){
-char *errstr=malloc(8);
-unsigned char *tables="";
-int pairs=0,i=0,j=0,vecsize=libc_strlen(subject),vector[vecsize],errchar;
-pcre *f=pcre_compile(pattern, PCRE_CASELESS | PCRE_DOTALL,&errstr,&errchar,NULL);
-if((f)==NULL){libc_preg_print_error(pattern,errchar,errstr);return -1;}
-pairs=pcre_exec(f,NULL,subject,libc_strlen(subject),offset,j,vector,vecsize);
+	}
 
-//printf("%i",pairs);
 
-//pcre_extra *f_ext=pcre_study(f,0,&errstr);
-//pairs=pcre_exec(f,f_ext,subject,libc_strlen(subject),offset,j,vector,vecsize);
-//while(pairs>i){
-//matches[i]=libc_malloc(sizeof(matches[i]));	
-//pcre_get_substring(subject,vector,pairs, i, &matches[i]);
-//pcre_copy_substring(subject, vector, pairs,   i, matches[i], sizeof(char*)*vecsize);
 
-//i++;
-//}
 
-return 1;
-																	}
 
-*/
 
 ///------------------------------------------------------------
 int main(int argc, char** argv) {
-//char** out=malloc(16);
-//libc_preg_match("|..\\..|U","abcde.|test5str|1234556",out,0,0);
-
-char *errstr=malloc(8);
-int errchar;
-real_pcre *re=malloc(16);
-re->tables=malloc(8);
-char* subject="abcde.|test5str|1234556";
-int pairs=0,i=0,j=0,vecsize=libc_strlen(subject),vector[vecsize];
-
-pcre_compile(re,"|(..\\..)\\||s", PCRE_CASELESS | PCRE_DOTALL,&errstr,&errchar,NULL);
-
-pairs=pcre_exec(re,NULL,subject,libc_strlen(subject),0,j,vector,vecsize);
-printf("%i\n",pairs);
 /*
-printf("%i\n",vector[1]);
-printf("%i\n",vector[2]);
-printf("%s\n",vector[3]);
+printf("%s\n",libc_substr("abcdef", 1,  -1));     // bcdef
+printf("%s\n",libc_substr("abcdef", 1,   3));     // bcd
+printf("%s\n",libc_substr("abcdef", 0,   4));     // abcd
+printf("%s\n",libc_substr("abcdef", 0,  8));      // abcdef
+printf("%s\n",libc_substr("abcdef", -1,   1));    // f
+*/
+/*
+char* str=malloc(5);
+strcpy(str,"abcdef");
+str[1]='1';
+printf("%s\n",str);
+*/
 
-printf("%i\n",vector[4]);
-printf("%i\n",vector[5]);
-printf("%i\n",vector[6]);
-printf("%i\n",vector[7]);
-printf("%i\n",vector[8]);*/
-
-//ap->pattern = pcre_compile(ap->from + 7, PCRE_CASELESS | PCRE_DOTALL,(char **)(&errstr), &erroffset, NULL);
-//pcre_exec((pcre *)p, NULL, s, (int)strlen(s), 0, 0, pmatch,(pmatch == NULL)?0:PMATCH_SIZE) >= 0)
-
-//printf("%i\n",ispoint('\0'));
-
+char* trr=test("<9$8","abcdef123456789");
+printf("%s\n",trr);
 
 
 /*

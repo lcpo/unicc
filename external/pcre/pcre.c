@@ -1523,7 +1523,7 @@ while (*code == OP_ALT);
 return c;
 }
 ///---------------------------------------------------------------------
-real_pcre * pcre_compile(real_pcre * re,char *pattern, int options, char **errorptr, int *erroroffset, unsigned char *tables){
+real_pcre * pcre_compile(real_pcre * re, compile_data compile_block,char *pattern, int options, char **errorptr, int *erroroffset, unsigned char *tables){
 int length = 3;
 int runlength;
 int c, reqchar, countlits;
@@ -1533,72 +1533,50 @@ int branch_extra = 0;
 int branch_newextra;
 unsigned int brastackptr = 0;
 size_t sizes;
-unsigned char *code=malloc(20);
-unsigned char *ptr=malloc(20);
 
-compile_data compile_block;
-compile_block.lcc=malloc(20);
-compile_block.fcc=malloc(20);
-compile_block.cbits=malloc(20);
-compile_block.ctypes=malloc(20);
-return re;
+unsigned char *code;
+unsigned char *ptr;
 
-int *brastack=malloc(200);
-unsigned char* bralenstack=malloc(200);
+
+
+
+int* brastack=malloc(200);
+unsigned char* bralenstack=malloc(400);
 
 #ifndef SUPPORT_UTF8
-if ((options & PCRE_UTF8) != 0)
-  {
-  *errorptr = ERR32;
-  return NULL;
-  }
+if((options & PCRE_UTF8) != 0){*errorptr = ERR32;return NULL;}
 #endif
 
-if (errorptr == NULL) return NULL;
+if (errorptr == NULL){return (real_pcre*)NULL;}
 *errorptr = NULL;
 
-if (erroroffset == NULL)
-  {
-  *errorptr = ERR16;
-  return NULL;
-  }
+if (erroroffset == NULL){*errorptr = ERR16;return (real_pcre*)NULL;}
 *erroroffset = 0;
+if ((options & ~PUBLIC_OPTIONS) != 0){*errorptr = ERR17;return (real_pcre*)NULL;}
 
-if ((options & ~PUBLIC_OPTIONS) != 0)
-  {
-  *errorptr = ERR17;
-  return NULL;
-  }
-
-if (tables == NULL) tables = pcre_default_tables;
+if (tables == NULL){tables = pcre_default_tables;}
 compile_block.lcc = tables + lcc_offset;
 compile_block.fcc = tables + fcc_offset;
 compile_block.cbits = tables + cbits_offset;
 compile_block.ctypes = tables + ctypes_offset;
 
 ptr = (unsigned char *)(pattern - 1);
-while ((c = *(++ptr)) != 0)
-  {
+
+while ((c = *(++ptr)) != 0){
   int min, max;
   int class_charcount;
 
-  if ((options & PCRE_EXTENDED) != 0)
-    {
-    if ((compile_block.ctypes[c] & ctype_space) != 0) continue;
-    if (c == '#')
-      {
-      while ((c = *(++ptr)) != 0 && c != '\n') ;
-      continue;
-      }
+  if ((options & PCRE_EXTENDED) != 0){
+    if ((compile_block.ctypes[c] & ctype_space) != 0){continue;}
+    if (c == '#'){   while ((c = *(++ptr)) != 0 && c != '\n'); continue;}
     }
 
-  switch(c)
-    {
-    case '\\':
-      {
+
+  switch(c){
+    case '\\':{
       unsigned char *save_ptr = ptr;
       c = check_escape(&ptr, errorptr, bracount, options, FALSE, &compile_block);
-      if (*errorptr != NULL) goto PCRE_ERROR_RETURN;
+      if (*errorptr != NULL){goto PCRE_ERROR_RETURN;}
       if (c >= 0)
         {
         ptr = save_ptr;
@@ -1608,20 +1586,17 @@ while ((c = *(++ptr)) != 0)
       }
     length++;
 
-    if (c <= -ESC_REF)
-      {
+    if (c <= -ESC_REF){
       int refnum = -c - ESC_REF;
       if (refnum > top_backref) top_backref = refnum;
       length++;
-      if (ptr[1] == '{' && is_counted_repeat(ptr+2, &compile_block))
-        {
-        ptr = read_repeat_counts(ptr+2, &min, &max, errorptr, &compile_block);
+      if (ptr[1] == '{' && is_counted_repeat(ptr+2, &compile_block)){
+        ptr =read_repeat_counts(ptr+2, &min, &max, errorptr, &compile_block);
         if (*errorptr != NULL) goto PCRE_ERROR_RETURN;
-        if ((min == 0 && (max == 1 || max == -1)) ||
-          (min == 1 && max == -1))
+        if ((min == 0 && (max == 1 || max == -1)) || (min == 1 && max == -1)){
             length++;
-        else length += 5;
-        if (ptr[1] == '?') ptr++;
+        }else{ length += 5;}
+        if (ptr[1] == '?'){ptr++;}
         }
       }
     continue;
@@ -1639,11 +1614,8 @@ while ((c = *(++ptr)) != 0)
     if (!is_counted_repeat(ptr+1, &compile_block)) goto NORMAL_CHAR;
     ptr = read_repeat_counts(ptr+1, &min, &max, errorptr, &compile_block);
     if (*errorptr != NULL) goto PCRE_ERROR_RETURN;
-    if ((min == 0 && (max == 1 || max == -1)) ||
-      (min == 1 && max == -1))
-        length++;
-    else
-      {
+    if ((min == 0 && (max == 1 || max == -1)) || (min == 1 && max == -1)){ length++;
+    }else{
       length--;
       if (min == 1) length++; else if (min > 0) length += 4;
       if (max > 0) length += 4; else length += 2;
@@ -1824,15 +1796,13 @@ while ((c = *(++ptr)) != 0)
           }
 
         END_OPTIONS:
-        if (c == ')')
-          {
-          if (branch_newextra == 2 && (branch_extra == 0 || branch_extra == 3))
-            branch_extra += branch_newextra;
+        if (c == ')'){
+          if (branch_newextra == 2 && (branch_extra == 0 || branch_extra == 3)){branch_extra += branch_newextra;}
           continue;
           }
         }
       }
-    else bracount++;
+    else{ bracount++;}
 
     if (brastackptr >= sizeof(brastack)/sizeof(int))
       {
@@ -1865,22 +1835,18 @@ while ((c = *(++ptr)) != 0)
         {
         ptr = read_repeat_counts(ptr+2, &minval, &maxval, errorptr,
           &compile_block);
-        if (*errorptr != NULL) goto PCRE_ERROR_RETURN;
+        if (*errorptr != NULL){ goto PCRE_ERROR_RETURN;}
         }
       else if (c == '*') { minval = 0; maxval = -1; ptr++; }
       else if (c == '+') { maxval = -1; ptr++; }
       else if (c == '?') { minval = 0; ptr++; }
 
-      if (minval == 0)
-        {
+      if (minval == 0){
         length++;
         if (maxval > 0) length += (maxval - 1) * (duplength + 7);
-        }
-      else
-        {
+        }else{
         length += (minval - 1) * duplength;
-        if (maxval > minval)
-          length += (maxval - minval) * (duplength + 7) - 6;
+        if (maxval > minval){length += (maxval - minval) * (duplength + 7) - 6;}
         }
       }
     continue;
@@ -1889,14 +1855,11 @@ while ((c = *(++ptr)) != 0)
     default:
     length += 2;
     runlength = 0;
-    do
-      {
-      if ((options & PCRE_EXTENDED) != 0)
-        {
+    do{
+      if ((options & PCRE_EXTENDED) != 0){
         if ((compile_block.ctypes[c] & ctype_space) != 0) continue;
-        if (c == '#')
-          {
-          while ((c = *(++ptr)) != 0 && c != '\n') ;
+        if (c == '#'){
+          while ((c = *(++ptr)) != 0 && c != '\n');
           continue;
           }
         }
@@ -1931,23 +1894,16 @@ while ((c = *(++ptr)) != 0)
     continue;
     }
   }
+//end while
 
 length += 4;
 
-if (length > 65539)
-  {
-  *errorptr = ERR20;
-  return NULL;
-  }
+if (length > 65539){*errorptr = ERR20;return re;}
 
-sizes = length + offsetof(real_pcre, code[0]);
-re = (real_pcre *)malloc(sizes);
+//sizes = length + offsetof(real_pcre, code[0]);
+//re = (real_pcre *)malloc(sizes);
 
-if (re == NULL)
-  {
-  *errorptr = ERR21;
-  return NULL;
-  }
+if (re == NULL){ *errorptr = ERR21;return re; }
 
 re->magic_number = MAGIC_NUMBER;
 re->size = sizes;
@@ -1958,8 +1914,7 @@ ptr = (unsigned char *)pattern;
 code = re->code;
 *code = OP_BRA;
 bracount = 0;
-(void)compile_regex(options, -1, &bracount, &code, &ptr, errorptr, FALSE, -1,
-  &reqchar, &countlits, &compile_block);
+(void)compile_regex(options, -1, &bracount, &code, &ptr, errorptr, FALSE, -1, &reqchar, &countlits, &compile_block);
 re->top_bracket = bracount;
 re->top_backref = top_backref;
 
@@ -1969,29 +1924,17 @@ if (*errorptr == NULL && *ptr != 0) *errorptr = ERR22;
 
 if (top_backref > re->top_bracket) *errorptr = ERR15;
 
-if (*errorptr != NULL)
-  {
-  (pcre_free)(re);
-  PCRE_ERROR_RETURN:
+if (*errorptr != NULL){PCRE_ERROR_RETURN:
   *erroroffset = ptr - (unsigned char *)pattern;
-  return NULL;
+  return re;
   }
 
-if ((options & PCRE_ANCHORED) == 0)
-  {
+if ((options & PCRE_ANCHORED) == 0){
   int temp_options = options;
-  if (is_anchored(re->code, &temp_options))
-    re->options |= PCRE_ANCHORED;
-  else
-    {
+  if (is_anchored(re->code, &temp_options)){re->options |= PCRE_ANCHORED;}else{
     int ch = find_firstchar(re->code, &temp_options);
-    if (ch >= 0)
-      {
-      re->first_char = ch;
-      re->options |= PCRE_FIRSTSET;
-      }
-    else if (is_startline(re->code))
-      re->options |= PCRE_STARTLINE;
+    if (ch >= 0){re->first_char = ch;re->options |= PCRE_FIRSTSET;}
+    else if (is_startline(re->code)){re->options |= PCRE_STARTLINE;}
     }
   }
 
@@ -2014,8 +1957,7 @@ if ((ims & PCRE_CASELESS) != 0)
   while (length-- > 0)
     if (md->lcc[*p++] != md->lcc[*eptr++]) return FALSE;
   }
-else
-  { while (length-- > 0) if (*p++ != *eptr++) return FALSE; }
+else{while (length-- > 0) if (*p++ != *eptr++) return FALSE; }
 
 return TRUE;
 }
