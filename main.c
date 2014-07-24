@@ -79,7 +79,7 @@ printf("%i\n",si);
 while(si>0){
 s[slen]='\0';
 slen--;
-si--;
+si--; 
 }
 
 }else{
