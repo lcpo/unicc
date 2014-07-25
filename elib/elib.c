@@ -181,9 +181,9 @@ int64_t __divdi3(int64_t num, int64_t den){
 }
 ///------------------------------------------------------------
 typedef struct mhope{
-int a[MAX_MEMORY_VAR];
-int z[MAX_MEMORY_VAR];
-int i;
+uni a[MAX_MEMORY_VAR];
+uni z[MAX_MEMORY_VAR];
+uni i;
 	}mhope;
 
 static mhope hope;
@@ -192,8 +192,8 @@ inline void init_malloc(void){hope.i=0;return;}
 void init_malloc(void)	__attribute__ ((constructor));
 ///------------------------------------------------------------
 void hope_sort(){
-int i=0,j=0,z=0,min=0,max=0,nom=hope.i+1;
-int a=0;	
+uni i=0,j=0,z=0,min=0,max=0,nom=hope.i+1;
+uni a=0;	
     for(i = 0 ; i < nom ; i++) { 
        for(j = 0 ; j < nom - i - 1 ; j++) {  
            if(hope.a[j] < hope.a[j+1]) {           
@@ -210,17 +210,17 @@ int a=0;
 if(hope.i>0){hope.i--;}    	
 	}
 ///------------------------------------------------------------
-int getptrid(void *ptr){
-int i=0,z=0,n=-1;
+uni getptrid(void *ptr){
+uni i=0,z=0,n=-1;
 while(i<hope.i){
-if(((int)ptr)==hope.a[i]){z=hope.z[i];n=i;break;}	
+if(((uni)ptr)==hope.a[i]){z=hope.z[i];n=i;break;}	
 	i++;
 	}
 return n;		
 	}
 ///------------------------------------------------------------
 void dropptr(void* ptr){
-int id=getptrid(ptr);
+uni id=getptrid(ptr);
 hope.a[id]=-1; 
 hope.z[id]=-1;
 hope_sort();
@@ -232,7 +232,7 @@ size_t libc_count(void** v);
 
 void free_ptr(void* ptr){
 if (ptr == NULL){return;}
-int id=getptrid(ptr);
+uni id=getptrid(ptr);
 if(id==-1){return;}
 if(hope.z[id]>0){
 if(munmap(ptr, hope.z[id]) == -1){write($O,"munmap failed!\n",15);}	
@@ -272,7 +272,7 @@ void *malloc(size_t __size){
 if(__size<=0){__size=1;}
 void *result=mmap(0, __size*sizeof(result) , PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);//+ sizeof(size_t)
 if (result == MAP_FAILED){write($O,"mmap failed!\n",13);return NULL;}
-hope.a[hope.i]=(int)result;
+hope.a[hope.i]=(uni)result;
 hope.z[hope.i]=__size*sizeof(result);
 hope.i++;
 
@@ -283,7 +283,7 @@ void *libc_memcpy (void *dest, void *src, size_t n);
 
 //!---------------------------------------------------------------------
 void *realloc(void *ptr, size_t __size){
-int i=0,z=0,id=getptrid(ptr);
+uni i=0,z=0,id=getptrid(ptr);
         if (!ptr){return malloc(__size);}
         if (!__size) {free(ptr);return malloc(1);}
           void *newptr = malloc(__size);
