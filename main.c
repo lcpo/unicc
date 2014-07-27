@@ -32,12 +32,88 @@ return -1;
 	}
 */
 //----------------------------------------------------------------------
-char* test(char* pt,char* str){
-int slen=libc_strlen(str)-1,zslen=1,bfnum=0,flag=0,dflag=0,si=0,step=0,i=0;
-char* p=pt;
+//	-1  unknown
+//	 0  possible
+//	 1  know
+//U
+/*
+if(flag==LAZY){	
+if(nc==s[z]){
+		n=0;
+		while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}p=p-n;
+		char* sbf=libc_strpart(s+z,0,n);
+		if(libc_strcmp(bf,sbf)==0){
+			//printf("yes|bf=%s|sbf=%s\n",bf,sbf);
+			while(*sbf!=0){
+				if(*sbf==s[z]){
+					vect->code[i]=s[z];
+					vect->fn[i]=know;
+					vect->pos[i]=z;
+					vect->tp[i]=V_CHAR;
+					vect->otp[i]=V_POINT;
+					i++;
+					}else{break;}sbf++;z++;
+					}
+			break;
+			}else{
+				//printf("no|bf=%s|sbf=%s\n",bf,sbf);
+				z++;
+				}
+		
+free(sbf);
+			
+	}
+}
+*/
+
+typedef enum {false,true}bool;
+typedef enum {unknown=-1,possible=0,know=1}finding;
+typedef enum {V_CHAR,V_ESC,V_POINT,VS_CLASS,V_GROUP}vect_type;
+typedef enum {GREEDY='s',LAZY='U',}p_flag;
+
+
+typedef struct s_vect{
+char* code;	
+uni* pos;
+finding* fn;
+vect_type* tp;
+vect_type* otp;
+size_t length;	
+}s_vect;
+
+///------------------------------------------------------------
+void rep_point(s_vect* vect,char* s,int i, int n){
+		if(vect->code[i-n]==0 && vect->tp[i-n]==V_POINT){
+			vect->code[i-n]=s[vect->pos[i]-n];
+			vect->fn[i-n]=know;
+			vect->pos[i-n]=vect->pos[i]-n;
+			vect->tp[i-n]=V_CHAR;
+			vect->otp[i-n]=V_POINT;
+			}	
+return;
+	}
+///------------------------------------------------------------
+char end_step[]={'(','[','{','?','!','.','+','*'};
+
+int is_end_step(char ch){
+int i=0;
+for(;i<8;i++){if(ch==end_step[i]){return ch;}}
+return -1;	
+	
+	}
+
+
+void preg(s_vect* vect,char* pt,char* str,p_flag flag){
+int slen=libc_strlen(str)-1,plen=libc_strlen(pt),recursive=0,i=0,z=0,n=0,co=0;
+char* p=malloc(plen);
 char* s=malloc(slen+1);
+char* bf=malloc(plen);
+char vbf[1];
+
+
 libc_strcpy(s,str);
-char* buff;
+libc_strcpy(p,pt);
+
 
 char oc='\0';	//старый
 char c=*p; 		//Текущий
@@ -50,79 +126,183 @@ p--;oc=*p;p++;
 p++;nc=*p;p--;
 
 switch(*p){
-
-case '^':{
+//----------------------------------------------------------------------
+case '\\':{
+	p++; i--;
+break;	
+		  }	
+//----------------------------------------------------------------------
+LABEL_CHARS:
+case 'q':case 'w':case 'e':case 'r':case 't':case 'y':case 'u':
+case 'i':case 'o':case 'p':case 'a':case 's':case 'd':case 'f':
+case 'g':case 'h':case 'j':case 'k':case 'l':case 'z':case 'x':
+case 'c':case 'v':case 'b':case 'n':case 'm':case '&':
+case '1':case '2':case '3':case '4':case '5':case '6':case '7':
+case '8':case '9':case '0':{
+for(z=0;z<slen+1;z++){
+if(c==s[z] && vect->pos[i-1]==0){vect->code[i]=c;vect->fn[i]=know;vect->pos[i]=z; vect->tp[i]=V_CHAR;break;}
+if(c==s[z] && (z-vect->pos[i-1])==1){vect->code[i]=c;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;break;}	
+					 }
+					 
 p++;
-buff=malloc(slen+1);
-while(libc_isdigit(*p)!=0){buff[bfnum]=*p;bfnum++;p++;}
-if(bfnum!=0){step=step+libc_stoi(buff);bfnum=0;}else{step++;}
-free(buff);
 break;
-}
+	}
+//----------------------------------------------------------------------
+case '.':{
 	
-case '>':{
+if(oc=='\\'){
+for(z=0;z<slen+1;z++){
+if(c==s[z] && vect->pos[i-1]==0){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;break;}
+if(c==s[z] && (z-vect->pos[i-1])==1){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;break;}
+		
+					 }		
+	
+	}else{
+		
+	if(vect->code[i-1]!=0){
+	vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;
+		}else{
+			vect->pos[i]=0;vect->fn[i]=0; vect->code[i]=0;vect->tp[i]=V_POINT;
+			}
+}
+
+
+p++;	
+break;	
+		}
+//----------------------------------------------------------------------
+case '*':{
 p++;
-buff=malloc(slen+1);
-while(libc_isdigit(*p)!=0){buff[bfnum]=*p;bfnum++;p++;}
-if(bfnum!=0){s=s+libc_stoi(buff)+step;bfnum=0;}else{s++;}
-free(buff);
-break;
+///
+for(z=vect->pos[i-1]+1;(slen+1)>z;z++){
+	
+if(nc==s[z]){
+		n=0; 
+while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
+p=p-n;
+char* sbf=libc_strpart(s+z,0,n);
+		if(libc_strcmp(bf,sbf)==0){
+			//printf("yes|bf=%s|sbf=%s\n",bf,sbf);
+			while(*sbf!=0){
+				if(*sbf==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_POINT;i++;}else{break;}
+				sbf++;z++;
+					}
+			break;
+			}else{
+				//printf("no|bf=%s|sbf=%s\n",bf,sbf);
+				//z++;
+				}
+free(sbf);		
+	}
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){if(vect->code[i-1]==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;i++;}	
 }
+/*	
+for(z=vect->pos[i-1]+1;(slen+1)>z;z++){
+vbf[0]=nc; vbf[1]='\0';
+co=libc_substr_count(s+z,vbf);
+if(nc==s[z] && co==1){
+		n=0;
+		while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
+		p=p-n;
+		char* sbf=libc_strpart(s+z,0,n);
 
-case '<':{
-p++;
-buff=malloc(slen+1);
-while(libc_isdigit(*p)!=0){buff[bfnum]=*p;bfnum++;p++;}
-if(bfnum!=0){si=libc_stoi(buff)-step;bfnum=0; 
-slen=libc_strlen(s)-1;
-printf("%i\n",si);
-while(si>0){
-s[slen]='\0';
-slen--;
-si--; 
-}
-
-}else{
-
-slen=libc_strlen(s)-1;	
-s[slen]='\0';
-}
-free(buff);
-		 }	
-
-		 
-default:{p++;break;}	
+		if(libc_strcmp(bf,sbf)==0){
+			while(*sbf!=0){
+				if(*sbf==s[z]){vect->code[i]=s[z];vect->fn[i]=know;	vect->pos[i]=z;	vect->tp[i]=V_CHAR;	vect->otp[i]=V_POINT;i++;}else{break;}sbf++;z++;}
+			break;
+			}//else{z++;}
+free(sbf);
 	}
 
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;i++;}
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){if(vect->code[i-1]==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}
+	}
+	*/ 
+///
+i=i-n;
+	break;
+	} 
+//----------------------------------------------------------------------	
+case '?':{p++;
+vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;
+//i--;
+break;} 
+//----------------------------------------------------------------------
+case '+':{
+p++;
+
+///
+for(z=vect->pos[i-1]+1;(slen+1)>z;z++){
+vbf[0]=nc; vbf[1]='\0';
+co=libc_substr_count(s+z,vbf);
+if(nc==s[z] && co==1){
+		n=0;
+		while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
+		p=p-n;
+		char* sbf=libc_strpart(s+z,0,n);
+
+		if(libc_strcmp(bf,sbf)==0){
+			while(*sbf!=0){
+				if(*sbf==s[z]){vect->code[i]=s[z];vect->fn[i]=know;	vect->pos[i]=z;	vect->tp[i]=V_CHAR;	vect->otp[i]=V_POINT;i++;}else{break;}sbf++;z++;}
+			break;
+			}//else{z++;}
+free(sbf);
+	}
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;i++;}
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){if(vect->code[i-1]==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}
+	}
+///
+	
+
+i=i-n;
+	break;
+	}
+//----------------------------------------------------------------------	 
+case '{':{p++;break;}
+		
+default:{p++;i--;break;}	
+	}
+i++;
 }
-return s;
+
+LABEL_EXIT_WHILE:
+vect->length=i;
+while(i>0){rep_point(vect,s,i,1);i--;}
+
+free(s);
+free(p);
+free(bf);
 
 	}
-
-
-
-
 
 
 ///------------------------------------------------------------
 int main(int argc, char** argv) {
-/*
-printf("%s\n",libc_substr("abcdef", 1,  -1));     // bcdef
-printf("%s\n",libc_substr("abcdef", 1,   3));     // bcd
-printf("%s\n",libc_substr("abcdef", 0,   4));     // abcd
-printf("%s\n",libc_substr("abcdef", 0,  8));      // abcdef
-printf("%s\n",libc_substr("abcdef", -1,   1));    // f
-*/
-/*
-char* str=malloc(5);
-strcpy(str,"abcdef");
-str[1]='1';
-printf("%s\n",str);
-*/
 
-char* trr=test("^10>2<9","abcdef123456789");
-printf("%s\n",trr);
-printf("%s\n",libc_substr("abcdef123456789", 2,  4));
+s_vect* vect;
+vect=malloc(20);
+vect->pos=malloc(20);
+vect->fn=malloc(20);
+vect->tp=malloc(20);
+vect->otp=malloc(20);
+vect->code=malloc(20);
+preg(vect,"..\\..*sp","abcde.ftest5str|12345sp56",LAZY);
+int i=0;
+while(i<vect->length){
+printf("fn=%i|pos=%i|code=%c|type=%i|old_type=%i\n",vect->fn[i],vect->pos[i],vect->code[i],vect->tp[i],vect->otp[i]);
+i++;
+}
+
+printf("%s\n",vect->code);
+
+//printf("%s\n",strpartlr("abcdef123456789",2,4,6));
+//printf("%s\n",strpart("abcdef123456789",6,5));
+
+
+
+
+
 
 /*
 echo ("create array:\n");	

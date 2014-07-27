@@ -1779,3 +1779,27 @@ return (void**)buff;
 
 #define array_merge(x,y...) (__array_merge((void*)x,(void*)y,NULL))
 ///---------------------------------------------------------------------
+
+char* libc_strpartlr(char* str,size_t offset, size_t right, size_t left){
+int slen=libc_strlen(str)-1,si=0;
+char* s=malloc(slen+1);
+libc_strcpy(s,str);	
+s=s+right+offset;
+si=left-offset;
+slen=libc_strlen(s)-1;
+while(si>0){s[slen]='\0';slen--;si--;}	
+return s;	
+																	}
+///------------------------------------------------------------
+char* libc_strpart(char* str,size_t offset, size_t len){
+int slen=libc_strlen(str)-1,si=0;
+char* s=malloc(slen+1);
+libc_strcpy(s,str);	
+s=s+offset;
+if(len>0){
+si=libc_strlen(s)-len;
+slen=libc_strlen(s)-1;
+while(si>0){s[slen]='\0';slen--;si--;}	
+}
+return s;	
+																	}
