@@ -219,7 +219,7 @@ if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn
 if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){if(vect->code[i-1]==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}
 	}
 	*/ 
-///
+///			
 i=i-n;
 	break;
 	} 
