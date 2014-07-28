@@ -102,6 +102,17 @@ long libc_substr_count(char* str_s, char* sub_s) {
     }
     return count_sub;
 }
+//!---------------------------------------------------------------------
+long libc_subchr_count(char* str_s, char sub_c) {
+    long count_sub=0;
+    str_s = libc_strchr(str_s,sub_c);
+    while (str_s!=0) {
+        str_s=str_s+1;
+        str_s = libc_strchr(str_s,sub_c);
+        count_sub++;
+    }
+    return count_sub;
+}
 
 //!---------------------------------------------------------------------
 
