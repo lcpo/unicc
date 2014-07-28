@@ -93,18 +93,90 @@ void rep_point(s_vect* vect,char* s,int i, int n){
 return;
 	}
 ///------------------------------------------------------------
-char end_step[]={'(','[','{','?','!','.','+','*'};
 
+char end_step[]={'(','[','{','?','!','.','+','*'};
 int is_end_step(char ch){
 int i=0;
 for(;i<8;i++){if(ch==end_step[i]){return ch;}}
 return -1;	
 	
 	}
+///------------------------------------------------------------
+int* greedy_step(s_vect* vect,char* s,char* p, int r, int slen){
+	int co=0,n=0,z=0,i=r;
+	char vbf[1];
+	char* bf=malloc(slen+1);
+	
+for(z=vect->pos[i-1]+1;(slen+1)>z;z++){
+if(*p!='\0'){vbf[0]=*p; vbf[1]='\0';co=libc_substr_count(s+z,vbf);}
+if(*p==s[z] && co==1){
+		n=0;
+		while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
+		p=p-n;
+		char* sbf=libc_strpart(s+z,0,n);
 
+		if(libc_strcmp(bf,sbf)==0){
+			//printf("yes|bf=%s|sbf=%s\n",bf,sbf);
+			while(*sbf!=0){
+				if(*sbf==s[z]){vect->code[i]=s[z];vect->fn[i]=know;	vect->pos[i]=z;	vect->tp[i]=V_CHAR;	vect->otp[i]=V_POINT;i++;}else{break;}sbf++;z++;}
+			break;
+			}else{
+			//printf("no|bf=%s|sbf=%s\n",bf,sbf);	
+				//z++;
+				}
+free(sbf);
+					}
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){
+	if(vect->code[i-1]==s[z]){
+		vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}	
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;i++;}
 
-void preg(s_vect* vect,char* pt,char* str,p_flag flag){
-int slen=libc_strlen(str)-1,plen=libc_strlen(pt),recursive=0,i=0,z=0,n=0,co=0;
+	}
+	
+free(bf);
+int* out=malloc(1);
+out[0]=n;
+out[1]=i;	
+return out;	
+				}
+///------------------------------------------------------------
+int* lazy_step(s_vect* vect,char* s,char* p, int r, int slen){
+	int co=0,n=0,z=0,i=r;
+	char vbf[1];
+	char* bf=malloc(slen+1);
+for(z=vect->pos[i-1]+1;(slen+1)>z;z++){
+
+if(*p==s[z]){
+		n=0; 
+while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
+p=p-n;
+char* sbf=libc_strpart(s+z,0,n);
+		if(libc_strcmp(bf,sbf)==0){
+			//printf("yes|bf=%s|sbf=%s\n",bf,sbf);
+			while(*sbf!=0){
+				if(*sbf==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_POINT;i++;}else{break;}
+				sbf++;z++;
+					}
+			break;
+			}else{
+				//printf("no|bf=%s|sbf=%s\n",bf,sbf);
+				//z++;
+				}
+free(sbf);		
+	}
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){if(vect->code[i-1]==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}
+if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;i++;}	
+}
+free(bf);
+int* out=malloc(1);	
+out[0]=n;
+out[1]=i;	
+return out;		
+	}
+///---------------------------------------------------------------------
+
+void preg(s_vect* vect,char* pt,char* str){
+int slen=libc_strlen(str)-1,plen=libc_strlen(pt),fl=0,i=0,z=0,n=0,co=0;
 char* p=malloc(plen);
 char* s=malloc(slen+1);
 char* bf=malloc(plen);
@@ -143,7 +215,7 @@ for(z=0;z<slen+1;z++){
 if(c==s[z] && vect->pos[i-1]==0){vect->code[i]=c;vect->fn[i]=know;vect->pos[i]=z; vect->tp[i]=V_CHAR;break;}
 if(c==s[z] && (z-vect->pos[i-1])==1){vect->code[i]=c;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;break;}	
 					 }
-					 
+printf("%c|\n",vect->code[i]);					 
 p++;
 break;
 	}
@@ -173,93 +245,110 @@ break;
 //----------------------------------------------------------------------
 case '*':{
 p++;
-///
-for(z=vect->pos[i-1]+1;(slen+1)>z;z++){
+
+if(*p=='?'){
+	p++;
+int* rb=lazy_step(vect,s,p,i,slen);
+n=rb[0];
+i=rb[1];
+printf("lazy\n");
+free(rb);
+p++;	
+	}else{
+printf("greedy\n");
+int* rb=greedy_step(vect,s,p,i,slen);
+n=rb[0];
+i=rb[1];
+free(rb);
+p++;	
+	}
 	
-if(nc==s[z]){
-		n=0; 
-while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
-p=p-n;
-char* sbf=libc_strpart(s+z,0,n);
-		if(libc_strcmp(bf,sbf)==0){
-			//printf("yes|bf=%s|sbf=%s\n",bf,sbf);
-			while(*sbf!=0){
-				if(*sbf==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_POINT;i++;}else{break;}
-				sbf++;z++;
-					}
-			break;
-			}else{
-				//printf("no|bf=%s|sbf=%s\n",bf,sbf);
-				//z++;
-				}
-free(sbf);		
-	}
-if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){if(vect->code[i-1]==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}
-if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;i++;}	
-}
-/*	
-for(z=vect->pos[i-1]+1;(slen+1)>z;z++){
-vbf[0]=nc; vbf[1]='\0';
-co=libc_substr_count(s+z,vbf);
-if(nc==s[z] && co==1){
-		n=0;
-		while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
-		p=p-n;
-		char* sbf=libc_strpart(s+z,0,n);
-
-		if(libc_strcmp(bf,sbf)==0){
-			while(*sbf!=0){
-				if(*sbf==s[z]){vect->code[i]=s[z];vect->fn[i]=know;	vect->pos[i]=z;	vect->tp[i]=V_CHAR;	vect->otp[i]=V_POINT;i++;}else{break;}sbf++;z++;}
-			break;
-			}//else{z++;}
-free(sbf);
-	}
-
-if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;i++;}
-if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){if(vect->code[i-1]==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}
-	}
-	*/ 
-///			
 i=i-n;
+	
 	break;
 	} 
-//----------------------------------------------------------------------	
+//----------------------------------------------------------------------
+	
 case '?':{p++;
 vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;
 //i--;
-break;} 
+break;
+} 
 //----------------------------------------------------------------------
 case '+':{
 p++;
 
-///
-for(z=vect->pos[i-1]+1;(slen+1)>z;z++){
-vbf[0]=nc; vbf[1]='\0';
-co=libc_substr_count(s+z,vbf);
-if(nc==s[z] && co==1){
-		n=0;
-		while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
-		p=p-n;
-		char* sbf=libc_strpart(s+z,0,n);
-
-		if(libc_strcmp(bf,sbf)==0){
-			while(*sbf!=0){
-				if(*sbf==s[z]){vect->code[i]=s[z];vect->fn[i]=know;	vect->pos[i]=z;	vect->tp[i]=V_CHAR;	vect->otp[i]=V_POINT;i++;}else{break;}sbf++;z++;}
-			break;
-			}//else{z++;}
-free(sbf);
+if(*p=='?'){
+	p++;
+int* rb=lazy_step(vect,s,p,i,slen);
+n=rb[0];
+i=rb[1];
+printf("lazy\n");
+free(rb);
+p++;	
+	}else{
+printf("greedy\n");
+int* rb=greedy_step(vect,s,p,i,slen);
+n=rb[0];
+i=rb[1];
+free(rb);
+p++;	
 	}
-if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_POINT){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT;i++;}
-if(vect->tp[i-1]==V_CHAR && vect->otp[i-1]==V_CHAR){if(vect->code[i-1]==s[z]){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;}}
-	}
-///
 	
-
 i=i-n;
+	
+	break;
+	} 
+//----------------------------------------------------------------------	 
+case '{':{
+char* quant=malloc(plen);
+n=0;p++;
+while(*p!='}' && *p!='\0'){
+quant[n]=*p;
+p++;n++;
+if(*p=='\0'){printf("error: no closing character '}'!!!\n");goto LABEL_EXIT_WHILE;}
+}
+int pos=libc_strpos(quant,",");
+if(pos==-1){
+	int iq=libc_stoi(quant);
+	int sslen=slen;
+if(iq>0){sslen=vect->pos[i-1]+libc_stoi(quant)-1;}
+
+
+int* rb=lazy_step(vect,s,p,i,sslen);
+n=rb[0]+1;
+i=rb[1];
+printf("lazy1\n");
+free(rb);
+
+if(iq==0){vect->code[i-1]=0;vect->fn[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0; vect->otp[i-1]=0; i--;  }
+}else{
+char* bf1=malloc(plen);
+char* bf2=malloc(plen);
+n=0;fl=0;
+while(*quant!='\0'){
+if(*quant==','){fl=1;quant++;n=0;}
+if(fl==0){bf1[n]=*quant;}else{bf2[n]=*quant;}
+quant++;n++;	
+	}
+printf("%s\n",bf1);
+printf("%s\n",bf2);
+slen=libc_stoi(bf1);
+
+int* rb=lazy_step(vect,s,p,i,slen);
+n=rb[0];
+i=rb[1];
+printf("lazy2\n");
+free(rb);
+
+
+free(bf1);
+free(bf2);	
+	}
+i=i-n;
+free(quant);	
 	break;
 	}
-//----------------------------------------------------------------------	 
-case '{':{p++;break;}
 		
 default:{p++;i--;break;}	
 	}
@@ -275,19 +364,31 @@ free(p);
 free(bf);
 
 	}
-
+///------------------------------------------------------------
+void free_vect(s_vect* vect){
+free(vect->pos);
+free(vect->fn);
+free(vect->tp);
+free(vect->otp);
+free(vect->code);
+free_ptr(vect);
+return;	
+	}
 
 ///------------------------------------------------------------
 int main(int argc, char** argv) {
 
 s_vect* vect;
-vect=malloc(20);
+vect=malloc(1*sizeof(vect));
 vect->pos=malloc(20);
 vect->fn=malloc(20);
 vect->tp=malloc(20);
 vect->otp=malloc(20);
 vect->code=malloc(20);
-preg(vect,"..\\..*sp","abcde.ftest5str|12345sp56",LAZY);
+//preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
+
+preg(vect,"colou?r","color");
+
 int i=0;
 while(i<vect->length){
 printf("fn=%i|pos=%i|code=%c|type=%i|old_type=%i\n",vect->fn[i],vect->pos[i],vect->code[i],vect->tp[i],vect->otp[i]);
@@ -295,6 +396,7 @@ i++;
 }
 
 printf("%s\n",vect->code);
+free_vect(vect);
 
 //printf("%s\n",strpartlr("abcdef123456789",2,4,6));
 //printf("%s\n",strpart("abcdef123456789",6,5));
