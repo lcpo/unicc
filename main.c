@@ -305,34 +305,39 @@ if(fl==0){bf1[n]=*quant;}else{bf2[n]=*quant;}
 quant++;n++;	
 					}
 
-int min=libc_stoi(bf1);
+int min=libc_stoi(bf1)-1;
 int max=libc_stoi(bf2);
 printf("min==%i\n",min);
 printf("max==%i\n",max);
+printf("--%c\n",*p);
 //--------
+
 if(min<max && min>0 && max>0){
 	p++;
 z=vect->pos[i-1]+1;
 ///-----------------------------
 n=0;
 if(vect->otp[i-1]==V_CHAR){
-while(max>0 && s[z]!=end){
-	if(s[z]==oc && max>min){
+while(n>max && s[z]!=end){
+	printf("%c|%i\n",s[z],min);
+	if(s[z]==oc){
 		vect->code[i]=s[z];
 		vect->fn[i]=know;
 		vect->pos[i]=vect->pos[i-1]+1;	
 		vect->tp[i]=V_CHAR;	
-		i++;z++; n++;
-		max--;
+		i++;n++;z++;
 	}else{
+		/*
 		vect->code[i-1]=0;
 		vect->fn[i-1]=0;
 		vect->pos[i-1]=0;
 		vect->tp[i-1]=0; 
-		vect->otp[i-1]=0;
-		i--;break;}
+		vect->otp[i-1]=0;*/
+		i--;break;
+		}
 		}
 						}
+						
 ///-----------------------------	
 	}else{
 vect->code[i-1]=0;vect->fn[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0; vect->otp[i-1]=0; i--; 
@@ -341,7 +346,7 @@ vect->code[i-1]=0;vect->fn[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0; vect->otp[i-
 free(bf1);
 free(bf2);	
 	}
-i=i-n;
+//i=i-n;
 free(quant);	
 	break;
 	}
@@ -384,7 +389,7 @@ vect->code=malloc(20);
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
 
-preg(vect,"colou{2,4}r","colouuur");
+preg(vect,"colou{2,4}r","colour");
 
 int i=0;
 while(i<vect->length){
