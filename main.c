@@ -261,33 +261,37 @@ if(co>=0){
 //----	
 p++;
 z=vect->pos[i-1]+1;
-while(co>0 && s[z]!=end){
-printf("s=%c|oc=%c\n",s[z],oc);
-printf("co=%i\n",co);	
-if(s[z]==oc && vect->otp[i-1]==V_CHAR){
-	vect->code[i]=s[z];
-	vect->fn[i]=know;
-	vect->pos[i]=vect->pos[i-1]+1;
-	vect->tp[i]=V_CHAR;
-	i++;co--;z++;
-	printf("f0\n");
-}else if(vect->otp[i-1]==V_POINT){
-	vect->code[i]=s[z];
-	vect->fn[i]=know;
-	vect->pos[i]=vect->pos[i-1]+1;
-	vect->tp[i]=V_CHAR;
-	vect->otp[i]=V_POINT;
-	i++;co--;z++;
-	printf("f2\n");
-}else{
-	printf("f3\n");
-	//vect->code[i-1]=0;vect->fn[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0; vect->otp[i-1]=0;
-	//i--;
-	break;
+if(vect->otp[i-1]==V_POINT){
+	printf("==%c\n",*p);
+libc_memchr(bf,0,plen);	
+n=0; 
+while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}
+p=p-n;
+do{
+vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;i++;z++;co--;
+}while(libc_strncmp(s+z,bf,n)!=0 && s[z]!=end && co>0);
+	//i--;	
+	
 	}
-
-}
-//----
+///-----------------------------
+if(vect->otp[i-1]==V_CHAR){
+while(co>0 && s[z]!=end){
+	if(s[z]==oc){
+		vect->code[i]=s[z];
+		vect->fn[i]=know;
+		vect->pos[i]=vect->pos[i-1]+1;	
+		vect->tp[i]=V_CHAR;	
+		i++;co--;z++;
+	}else{
+		vect->code[i-1]=0;
+		vect->fn[i-1]=0;
+		vect->pos[i-1]=0;
+		vect->tp[i-1]=0; 
+		vect->otp[i-1]=0;
+		i--;break;}
+		}
+						}
+///-----------------------------
 }else{vect->code[i-1]=0;vect->fn[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0; vect->otp[i-1]=0; i--;  }
 
 
@@ -300,18 +304,40 @@ if(*quant==','){fl=1;quant++;n=0;}
 if(fl==0){bf1[n]=*quant;}else{bf2[n]=*quant;}
 quant++;n++;	
 					}
-printf("%s\n",bf1);
-printf("%s\n",bf2);
-int sslen=libc_stoi(bf1);
-int sslen2=libc_stoi(bf1);
-/*
-int* rb=lazy_step(vect,s,p,i,slen);
-n=rb[0];
-i=rb[1];
-printf("lazy2\n");
-free(rb);
-*/
 
+int min=libc_stoi(bf1);
+int max=libc_stoi(bf2);
+printf("min==%i\n",min);
+printf("max==%i\n",max);
+//--------
+if(min<max && min>0 && max>0){
+	p++;
+z=vect->pos[i-1]+1;
+///-----------------------------
+n=0;
+if(vect->otp[i-1]==V_CHAR){
+while(max>0 && s[z]!=end){
+	if(s[z]==oc && max>min){
+		vect->code[i]=s[z];
+		vect->fn[i]=know;
+		vect->pos[i]=vect->pos[i-1]+1;	
+		vect->tp[i]=V_CHAR;	
+		i++;z++; n++;
+		max--;
+	}else{
+		vect->code[i-1]=0;
+		vect->fn[i-1]=0;
+		vect->pos[i-1]=0;
+		vect->tp[i-1]=0; 
+		vect->otp[i-1]=0;
+		i--;break;}
+		}
+						}
+///-----------------------------	
+	}else{
+vect->code[i-1]=0;vect->fn[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0; vect->otp[i-1]=0; i--; 
+		}
+//--------
 free(bf1);
 free(bf2);	
 	}
@@ -358,7 +384,7 @@ vect->code=malloc(20);
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
 
-preg(vect,"colou{4}r","colouuur");
+preg(vect,"colou{2,4}r","colouuur");
 
 int i=0;
 while(i<vect->length){
