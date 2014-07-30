@@ -1,6 +1,6 @@
 <?
 //echo 0xfff;
-preg_match("|colou{3}r|","colouuur",$out);
+preg_match("|colou{1,}r|","color",$out);
 print_r($out);
 
 /*

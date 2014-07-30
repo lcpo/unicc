@@ -96,10 +96,10 @@ typedef uni * (*func)(uni *p,...);
 
 #include "debug/debug.h"
 #include "debug/debug.c"
-
+/*
 #include "libu/libu.h"
 #include "libu/libu.c"
 
 #include "libo/libo.h"
 #include "libo/libo.c"
-
+*/
