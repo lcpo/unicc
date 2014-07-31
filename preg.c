@@ -469,24 +469,86 @@ scl[n]=*p;
 p++;n++;
 if(*p=='\0'){printf("error: no closing character ']'!!!\n");goto LABEL_EXIT_WHILE;}
 							}
-char* table=malloc(255)	;						
-printf("%s\n",scl);
-printf("%i\n",scl[2]-48);
+char* table=malloc(255);
+
+int a=0,*nst=malloc(10);
+
+co=0;n=0;z=0;
+char oscl='\0', nscl='\0';
+
+while(*scl!=0){
+scl--; oscl=*scl; scl++;
+scl++; nscl=*scl; scl--; 
+	/**/
+if(*scl=='-' && libc_isdigit(nscl)!=0 && libc_isdigit(oscl)!=0){
+if((oscl-'0')<(nscl-'0')){	
+for(z=(oscl-'0');z<=(nscl-'0');z++){nst[n]=z;n++;}
+}else{
+for(z=(nscl-'0');z<=(oscl-'0');z++){nst[n]=z;n++;}	
+	}
+															   }
+if(libc_isdigit(*scl)!=0 && nscl!='-' && oscl!='-'){nst[n]=*scl-'0';n++;}
+	/**/														   
+if(*scl=='-' && libc_isalpha(nscl)!=0 && libc_isalpha(oscl)!=0){
+if(libc_islower(nscl)!=0 && libc_islower(oscl)!=0){//a
+if((oscl)<(nscl)){	
+for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}
+}else{
+for(z=(nscl);z<=(oscl);z++){table[a]=z;a++;}	
+	}
+												 }
+												 
+if(libc_isupper(nscl)!=0 && libc_isupper(oscl)!=0){ //A
+if((oscl)<(nscl)){	
+for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}
+}else{
+for(z=(nscl);z<=(oscl);z++){table[a]=z;a++;}	
+	}
+												  }	
+												  
+if(libc_islower(nscl)!=0 && libc_isupper(oscl)!=0){printf("err1");}
+if(libc_islower(oscl)!=0 && libc_isupper(nscl)!=0){printf("err2");}
+												  
+																}
+if(libc_isalpha(*scl)!=0 && nscl!='-' && oscl!='-'){table[a]=*scl;a++;}	
+/**/														   
+//if(libc_isalpha(*scl)!=0){table[z]=*scl;z++;}
+co++; scl++;
+			}
+//65  - A
+//90  - Z
+//97  - a
+//122 - z			
+co=0;
+while(co<a){
+printf("%c\n",table[co]);
+	co++;
+	}
+			
+printf("//-----------------\n");
+co=0;
+/*
+while(co<255){
+printf("%i|%c\n",co,co);
+	co++;
+	}
+	*/ 	
+	/*
+printf("%i\n",nst[0]);
+printf("%i\n",nst[1]);
+printf("%i\n",nst[2]);
+printf("co=%i\n",n);*/
+printf("//-----------------\n");
+
+		
 //libc_isdigit() //0-9
 //libc_isalpha() //a-z
-//libc_islower()
-//libc_isupper()
-printf("%i\n","а");
-printf("%i\n","б");
-printf("%i\n","в");
+//libc_islower() 
+//libc_isupper() 
 
-printf("%c\n",42);
-printf("%c\n",57);
-printf("%c\n",65);
-
-printf("%c\n",'а');
-printf("%c\n",'а');
-printf("%c\n",'а');
+//free(nst);
+//free(table);
+//free(scl);
 break;
 		}
 //----------------------------------------------------------------------
@@ -515,7 +577,6 @@ free_ptr(vect);
 return;	
 	}
 
-///------------------------------------------------------------
 ///---------------------------------------------------------------------
 /*
 char char_point_table[]={

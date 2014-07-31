@@ -23,13 +23,13 @@ vect->code=malloc(20);
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
 
-preg(vect,"colo[0-9]r","colo5r");
+preg(vect,"colo[A-Za-z]r","colo4r");
 
 int i=0;
 while(i<vect->length){
 printf("fn=%i|pos=%i|code=%c|type=%i|old_type=%i\n",vect->fn[i],vect->pos[i],vect->code[i],vect->tp[i],vect->otp[i]);
 i++;
-}
+					}
 
 printf("%s\n",vect->code);
 free_vect(vect);
