@@ -8,7 +8,7 @@ int libc_isalpha(int ch){
 	return ((unsigned)ch|32)-'a' < 26;
 }
 ///---------------------------------------------------------------------
-int iscntrl(int ch){
+int libc_iscntrl(int ch){
 	return (unsigned)ch < 0x20 || ch == 0x7f;
 }
 ///---------------------------------------------------------------------
@@ -28,7 +28,7 @@ int libc_isprint(int ch){
 	return (unsigned)ch-0x20 < 0x5f;
 }
 ///---------------------------------------------------------------------
-int ispunct(int ch){
+int libc_ispunct(int ch){
 	return libc_isgraph(ch) && !libc_isalnum(ch);
 }
 ///---------------------------------------------------------------------

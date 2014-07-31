@@ -23,7 +23,7 @@ vect->code=malloc(20);
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
 
-preg(vect,"colo.{1,}r","color");
+preg(vect,"colo[0-9]r","colo5r");
 
 int i=0;
 while(i<vect->length){

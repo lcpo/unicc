@@ -191,7 +191,7 @@ while(*p!='}' && *p!='\0'){
 quant[n]=*p;
 p++;n++;
 if(*p=='\0'){printf("error: no closing character '}'!!!\n");goto LABEL_EXIT_WHILE;}
-}
+							}
 int pos=libc_strpos(quant,",");
 if(pos==-1){
 
@@ -461,7 +461,34 @@ free(quant);
 	break;
 	}
 //----------------------------------------------------------------------
-case '[':{p++;break;}
+case '[':{
+char* scl=malloc(plen);
+n=0;p++;
+while(*p!=']' && *p!='\0'){
+scl[n]=*p;
+p++;n++;
+if(*p=='\0'){printf("error: no closing character ']'!!!\n");goto LABEL_EXIT_WHILE;}
+							}
+char* table=malloc(255)	;						
+printf("%s\n",scl);
+printf("%i\n",scl[2]-48);
+//libc_isdigit() //0-9
+//libc_isalpha() //a-z
+//libc_islower()
+//libc_isupper()
+printf("%i\n","а");
+printf("%i\n","б");
+printf("%i\n","в");
+
+printf("%c\n",42);
+printf("%c\n",57);
+printf("%c\n",65);
+
+printf("%c\n",'а');
+printf("%c\n",'а');
+printf("%c\n",'а');
+break;
+		}
 //----------------------------------------------------------------------
 default:{p++;i--;break;}	
 	}
