@@ -11,7 +11,7 @@
 
 // ~ подлежит обязательному экранированию для получения этого символа иначе он будет использован в качестве \
 
-typedef long* o_wchar;
+typedef long o_wchar;
 int main(int argc, char** argv) {
 
 s_vect* vect;
@@ -40,10 +40,9 @@ free_vect(vect);
 
 
 
-o_wchar tst="я";
-i=0;
-//write(0,(void*)tst,2);
-printf("%s\n",*tst);
+wchar tst[]=L"я";
+printf("%c\n",tst[0]);
+printf("%c\n",tst[2]);
 
 
 
