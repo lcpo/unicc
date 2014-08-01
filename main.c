@@ -43,13 +43,7 @@ free_vect(vect);
 o_wchar tst="я";
 i=0;
 //write(0,(void*)tst,2);
-printf("%i\n",tst[0]);
-printf("%i\n",tst[1]);
-printf("%i\n",tst[2]);
-printf("%i\n",tst[4]);
-printf("%i\n",tst[5]);
-printf("%i\n",tst[6]);
-printf("%i\n",tst[7]);
+printf("%s\n",*tst);
 
 
 
