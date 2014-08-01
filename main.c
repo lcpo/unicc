@@ -1,6 +1,6 @@
 #include "unicc.c"
-#include "json.c"
-#include "preg.c"
+#include "json/json.c"
+#include "preg/preg.c"
 
 //#include "external/pcre/pcre.h"
 //#include "external/pcre/pcre.c"
@@ -21,35 +21,29 @@ vect->fn=malloc(20);
 vect->tp=malloc(20);
 vect->otp=malloc(20);
 vect->code=malloc(20);
+vect->table=malloc(20);
+
+
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
 
-char* char_table=malloc(20);
 
-preg(vect,"colo[0-9]*r","colo331210r");
+preg(vect,"colo[0-9]*[a-z][0-9]*ro","colo331a210ro1235678ra");
 
 int i=0;
 while(i<vect->length){
-printf("fn=%i|pos=%i|code=%c|type=%i|old_type=%i\n",vect->fn[i],vect->pos[i],vect->code[i],vect->tp[i],vect->otp[i]);
+printf("%i|fn=%i|pos=%i|code=%c|type=%i|old_type=%i|fd=%i|tablen=%i|table=%s\n",i,vect->fn[i],vect->pos[i],vect->code[i],vect->tp[i],vect->otp[i],vect->flag_denial,vect->table_length,vect->table);
 i++;
-					}
-
-
+					 }
 printf("%s\n",vect->code);
 free_vect(vect);
 
 
-
+/*
 wchar tst[]=L"я";
 printf("%c\n",tst[0]);
 printf("%c\n",tst[2]);
-
-
-
-
-
-
-printf("\n");
+printf("\n");*/
 //printf("%s\n",strpartlr("abcdef123456789",2,4,6));
 //printf("%s\n",strpart("abcdef123456789",6,5));
 

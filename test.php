@@ -1,6 +1,6 @@
 <?
 //echo 0xfff;
-preg_match("|colo[^a]+r|","colo331210r",$out);
+preg_match("|colo[0-9]*[a-z][0-9]*ro|","colo331a210ro1235678ra",$out);
 print_r($out);
 
 /*
