@@ -51,8 +51,18 @@ typedef unsigned int size_t;
 typedef unsigned long size_t; 
 	#endif
 
+#ifndef	_BSD_WCHAR_T_DEFINED_
+#define	_BSD_WCHAR_T_DEFINED_
+#ifdef	__WCHAR_TYPE__
+typedef	__WCHAR_TYPE__	wchar_t;
+#else	/* ! __WCHAR_TYPE__ */
+typedef	_BSD_WCHAR_T_	wchar_t;
+#endif	/* __WCHAR_TYPE__ */
+#endif	/* _BSD_WCHAR_T_DEFINED_ */
+
+
 #ifndef wchar
-typedef void* wchar;
+typedef wchar_t wchar;
 #endif
 
 ///----------------------------------------------------------------------

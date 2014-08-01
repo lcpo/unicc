@@ -9,8 +9,9 @@
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 //http://www.illusionsphotographic.com/analog/src/pcre/
 
+// ~ подлежит обязательному экранированию для получения этого символа иначе он будет использован в качестве \
 
-
+typedef long* o_wchar;
 int main(int argc, char** argv) {
 
 s_vect* vect;
@@ -23,7 +24,9 @@ vect->code=malloc(20);
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
 
-preg(vect,"colo[A-Za-z]r","colo4r");
+char* char_table=malloc(20);
+
+preg(vect,"colo[0-9]*r","colo331210r");
 
 int i=0;
 while(i<vect->length){
@@ -31,9 +34,29 @@ printf("fn=%i|pos=%i|code=%c|type=%i|old_type=%i\n",vect->fn[i],vect->pos[i],vec
 i++;
 					}
 
+
 printf("%s\n",vect->code);
 free_vect(vect);
 
+
+
+o_wchar tst="я";
+i=0;
+//write(0,(void*)tst,2);
+printf("%i\n",tst[0]);
+printf("%i\n",tst[1]);
+printf("%i\n",tst[2]);
+printf("%i\n",tst[4]);
+printf("%i\n",tst[5]);
+printf("%i\n",tst[6]);
+printf("%i\n",tst[7]);
+
+
+
+
+
+
+printf("\n");
 //printf("%s\n",strpartlr("abcdef123456789",2,4,6));
 //printf("%s\n",strpart("abcdef123456789",6,5));
 

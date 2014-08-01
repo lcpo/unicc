@@ -38,12 +38,10 @@ return;
 ///------------------------------------------------------------
 
 char end_step[]={'(','[','{','?','!','.','+','*'};
-int is_end_step(char ch){
-int i=0;
-for(;i<8;i++){if(ch==end_step[i]){return ch;}}
-return -1;	
-	
-	}
+char end_step_others[]={')','}',']',' ','|',','};
+
+static inline int is_end_step(char ch){int i=0;for(;i<8;i++){if(ch==end_step[i]){return ch;}}return -1;}
+static inline int is_end_step_others(char ch){int i=0;for(;i<6;i++){if(ch==end_step_others[i]){return ch;}}return -1;}
 
 ///------------------------------------------------------------
 
@@ -462,93 +460,105 @@ free(quant);
 	}
 //----------------------------------------------------------------------
 case '[':{
+	
 char* scl=malloc(plen);
-n=0;p++;
-while(*p!=']' && *p!='\0'){
-scl[n]=*p;
-p++;n++;
-if(*p=='\0'){printf("error: no closing character ']'!!!\n");goto LABEL_EXIT_WHILE;}
-							}
 char* table=malloc(255);
+int *nst=malloc(10);
+LABEL_ST:
+//printf("==%s\n",p);
+if(*p!='['){free_ptr(nst);free_ptr(table);free_ptr(scl);break;}///!!!!
+n=0;p++;
+fl=0;
 
-int a=0,*nst=malloc(10);
+while(*p!='\0'){
+p--;oc=*p;p++;
+p++;nc=*p;p--;
 
+if(*p=='\\' && nc=='\\'){scl[n]=18;n++;p++;oc=18;p++;p++;nc=*p;}else
+if(oc!='\\' && *p=='^'){fl=1;p--;oc=*p;p++;p++;nc=*p;p--;}else
+if(oc!='\\' && *p==' '){p--;oc=*p;p++;p++;nc=*p;p--;}else
+if(oc!='\\' && *p==']'){break;}else
+if(p=='\0'){printf("error: no closing character ']'!!!\n");goto LABEL_EXIT_WHILE;}else{scl[n]=*p;n++;}
+p++;
+				}
+plen=libc_strlen(scl)+2;				
+//vect->src=malloc(10);							
+//libc_strcpy(vect->src[i],scl);
+//vect->src[i]=scl;							
+
+
+int a=0,fl1=0,fl2=0;
+//printf("%s\n",scl);
 co=0;n=0;z=0;
-char oscl='\0', nscl='\0';
+char ooscl='\0', oscl='\0', nscl='\0';
 
 while(*scl!=0){
 scl--; oscl=*scl; scl++;
 scl++; nscl=*scl; scl--; 
+if(oscl!='\\' && *scl==18){table[a]='\\';a++;}
+if(oscl=='\\' && *scl==18){table[a]=18;a++;}
+if(oscl=='\\' && *scl=='-' && libc_isalpha(nscl)!=0){table[a]=nscl;a++;}
+if(oscl=='\\' && *scl=='-' && libc_isdigit(nscl)!=0){nst[n]=nscl-'0';n++;}
+if(oscl=='\\' && *scl=='-'){table[a]=*scl;a++;}
+if(oscl=='\\' && (is_end_step(*scl)!=-1 || is_end_step_others(*scl)!=-1)){table[a]=*scl;a++;}
+if(oscl!='\\' && (is_end_step(*scl)!=-1 || is_end_step_others(*scl)!=-1)){printf("error: character is not shielded '%c' !!!\n",*scl);goto LABEL_EXIT_WHILE;}
 	/**/
-if(*scl=='-' && libc_isdigit(nscl)!=0 && libc_isdigit(oscl)!=0){
-if((oscl-'0')<(nscl-'0')){	
-for(z=(oscl-'0');z<=(nscl-'0');z++){nst[n]=z;n++;}
-}else{
-for(z=(nscl-'0');z<=(oscl-'0');z++){nst[n]=z;n++;}	
-	}
-															   }
+if(*scl=='-' && libc_isdigit(nscl)!=0 && libc_isdigit(oscl)!=0){if((oscl-'0')<(nscl-'0')){for(z=(oscl-'0');z<=(nscl-'0');z++){nst[n]=z;n++;}}else{for(z=(nscl-'0');z<=(oscl-'0');z++){nst[n]=z;n++;}}}
 if(libc_isdigit(*scl)!=0 && nscl!='-' && oscl!='-'){nst[n]=*scl-'0';n++;}
+	/**/
 	/**/														   
 if(*scl=='-' && libc_isalpha(nscl)!=0 && libc_isalpha(oscl)!=0){
 if(libc_islower(nscl)!=0 && libc_islower(oscl)!=0){//a
-if((oscl)<(nscl)){	
-for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}
-}else{
-for(z=(nscl);z<=(oscl);z++){table[a]=z;a++;}	
-	}
+if((oscl)<(nscl)){for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}}else{for(z=(nscl);z<=(oscl);z++){table[a]=z;a++;}}
 												 }
 												 
 if(libc_isupper(nscl)!=0 && libc_isupper(oscl)!=0){ //A
-if((oscl)<(nscl)){	
-for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}
-}else{
-for(z=(nscl);z<=(oscl);z++){table[a]=z;a++;}	
-	}
+if((oscl)<(nscl)){for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}}else{for(z=(nscl);z<=(oscl);z++){table[a]=z;a++;}}
 												  }	
-												  
-if(libc_islower(nscl)!=0 && libc_isupper(oscl)!=0){printf("err1");}
-if(libc_islower(oscl)!=0 && libc_isupper(nscl)!=0){printf("err2");}
-												  
+/**/
+//////
+if(libc_islower(nscl)!=0 && libc_isupper(oscl)!=0){
+if(oscl<90){for(z=oscl;z<=90;z++){table[a]=z;a++;}}else{for(z=65;z<=(oscl);z++){table[a]=z;a++;}}
+if(nscl<122){for(z=nscl;z<=122;z++){table[a]=z;a++;}}else{for(z=97;z<=(nscl);z++){table[a]=z;a++;}}	
+//printf("err1\n oscl=%c|%i\n",oscl,oscl);	
+	}
+if(libc_islower(oscl)!=0 && libc_isupper(nscl)!=0){
+if(oscl<122){for(z=oscl;z<=122;z++){table[a]=z;a++;}}else{for(z=97;z<=(oscl);z++){table[a]=z;a++;}}
+if(nscl<90){for(z=nscl;z<=90;z++){table[a]=z;a++;}}else{for(z=65;z<=(nscl);z++){table[a]=z;a++;}}
+//printf("err2\n oscl=%c|%i\n",oscl,oscl);
+	}
+//////												  
 																}
 if(libc_isalpha(*scl)!=0 && nscl!='-' && oscl!='-'){table[a]=*scl;a++;}	
-/**/														   
-//if(libc_isalpha(*scl)!=0){table[z]=*scl;z++;}
+
 co++; scl++;
 			}
-//65  - A
-//90  - Z
-//97  - a
-//122 - z			
-co=0;
-while(co<a){
-printf("%c\n",table[co]);
-	co++;
-	}
 			
-printf("//-----------------\n");
+z=vect->pos[i-1]+1;
+c=s[z];
+fl1=0;
 co=0;
-/*
-while(co<255){
-printf("%i|%c\n",co,co);
-	co++;
+while(co<a){if(table[co]==c){fl1++;break;}co++;}
+co=0;
+while(co<n){if(nst[co]+'0'==c && fl1==0){fl1++;break;}co++;}
+if(fl==0){
+if(fl1>0){vect->code[i]=c;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;}else{vect->code[i]=0;vect->fn[i]=0;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=VS_CLASS;}
+	}else{
+if(fl1<1){vect->code[i]=c;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;}else{vect->code[i]=0;vect->fn[i]=0;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=VS_CLASS;}
+		}
+
+p++;
+if(*p=='*'){if(i<slen){p=p-plen;i++;goto LABEL_ST;}
+else{
+	i--;//printf("err");
 	}
-	*/ 	
-	/*
-printf("%i\n",nst[0]);
-printf("%i\n",nst[1]);
-printf("%i\n",nst[2]);
-printf("co=%i\n",n);*/
-printf("//-----------------\n");
+	}///!!!
 
-		
-//libc_isdigit() //0-9
-//libc_isalpha() //a-z
-//libc_islower() 
-//libc_isupper() 
+free_ptr(nst);
+free_ptr(table);
+free_ptr(scl);
 
-//free(nst);
-//free(table);
-//free(scl);
+
 break;
 		}
 //----------------------------------------------------------------------
