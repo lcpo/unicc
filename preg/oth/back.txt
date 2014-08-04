@@ -1,0 +1,72 @@
+/*
+int z=vect->pos[i-1],n=0;
+
+if(*p==s[z+1] && vect->otp[i-1]==V_CHAR){free(bf);out[0]=i;return;}
+
+if(*p!=s[z+1] && vect->otp[i-1]==V_CHAR){if(flag==0){vect->code[i]=0;vect->fn[i]=0;vect->pos[i]=0;vect->tp[i]=0; vect->otp[i]=0; i--;}if(flag==1){p++;travel3(p,oc,c,nc);i--;}free(bf);out[0]=i;return;}
+
+//------------------
+if(vect->otp[i-1]==V_POINT){
+	printf("1|%c\n",oc);
+if(nc=='?' && c!='\\'){p++;
+libc_memchr(bf,0,plen);	
+n=0; int fl=0;
+while(*p!=0){if(is_end_step(*p)==-1 && *p!=0){bf[n]=*p;n++;p++;}else{fl=1;break;}}
+//p=p-n;
+do{
+vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;vect->otp[i]=V_POINT;i++;z++;
+}while(libc_strncmp(s+z,bf,n)!=0 && s[z]!=end && s[z]!=0);
+	//i--;
+}else{
+libc_memchr(bf,0,plen);	
+n=0; int fl=0; 
+while(*p!=0){if(is_end_step(*p)==-1 && *p!=0){bf[n]=*p;n++;p++;}else{fl=1;break;}}
+//if(fl==1){free(bf);return i;}
+do{
+vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;vect->otp[i]=V_POINT;i++;z++;
+}while(libc_substr_count(s+(z+1),bf)>0 && s[z+n]!=end && s[z]!=0);
+//	i--;
+	}
+printf("f2\n");
+free(bf);
+out[0]=i;		
+return;
+							}
+
+//------------------										
+									
+if(vect->otp[i-1]==VS_CLASS){
+if(nc=='?' && c!='\\'){p++;
+libc_memchr(bf,0,plen);	
+n=0;
+while(is_end_step(*p)==-1 && *p!=0){if(is_end_step(*p)==-1 && *p!=0){bf[n]=*p;n++;p++;}else{break;}}
+
+do{
+i=add_tablae_symbol(vect,s[vect->pos[i-1]+1],vect->pos[i-1]+1,i);z++;
+if(vect->code[i-1]==0 && libc_strncmp(s+z,bf,n)!=0){i--;break;}
+}while(libc_strncmp(s+z,bf,n)!=0 && s[z]!=end && s[z]!=0);
+out[0]=i;
+free(bf);
+return;
+}else{
+libc_memchr(bf,0,plen);	
+n=0; int fl=0;
+while(is_end_step(*p)==-1 && *p!=0){if(is_end_step(*p)==-1 && *p!=0){bf[n]=*p;n++;p++;}else{break;}}
+if(*bf==0){
+	p=p-n;
+if(*p=='['){p=p+n; fl=1;}
+		}
+
+do{
+i=add_tablae_symbol(vect,s[vect->pos[i-1]+1],vect->pos[i-1]+1,i);z++;
+if(fl==1){if(vect->code[i-1]==0){break;}}else{if(libc_substr_count(s+z,bf)>0){break;}}
+}while(s[z]!=end && s[z]!=0);
+if(fl==1){i--;p--;}
+out[0]=i;
+free(bf);
+return;
+	}
+	
+										}										
+		
+*/

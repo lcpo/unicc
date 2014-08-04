@@ -7,14 +7,15 @@ while(co<vect->table_length){if(vect->table[co]==ch){ret++;break;}co++;}
 ///---------------------------------------------------------------------
 int add_tablae_symbol(s_vect* vect,char ch, int z, int i){
 int fl=is_tablae_symbol(vect,ch);
-
 if(vect->flag_denial==0){
-if(fl>0){vect->code[i]=ch;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{i++;}//else{vect->code[i]=0;vect->fn[i]=-1;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
+if(fl>0){vect->code[i]=ch;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{vect->code[i]=-1;vect->fn[i]=0;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
 	}else{
-if(fl<1){vect->code[i]=ch;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{i++;}//else{vect->code[i]=0;vect->fn[i]=-2;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
+if(fl<1){vect->code[i]=ch;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{vect->code[i]=-2;vect->fn[i]=0;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
 		}
+	
 return i;	
 	}
+
 ///---------------------------------------------------------------------
 static int bracket_symbol(s_vect* vect, char* s, char* p,char oc,char nc,char c, char end, int i){
 int plen=libc_strlen(p);
@@ -22,7 +23,6 @@ char* bf=malloc(plen);
 char* scl=malloc(plen);
 int n=0,z=0,co=0;
 vect->flag_denial=0;
-libc_memchr(vect->table,0,libc_strlen(vect->table)+100);	
 while(*p!='\0'){
 p--;oc=*p;p++;
 p++;nc=*p;p--;
@@ -103,11 +103,11 @@ co++; scl++;
 			
 z=vect->pos[i-1]+1;
 c=s[z];
-
+vect->table[a]='\0';
 vect->table_length=a;
 i=add_tablae_symbol(vect,c,z,i);
-		
-p++;
+//printf("%s\n",vect->table);		
+p++;p++;
 
 free_ptr(scl);
 free(bf);

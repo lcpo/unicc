@@ -1,24 +1,14 @@
-//!TODO: []->*|+
-//!TODO: \S\W\B\G
-//!TODO: ^$
-//!TODO: (|)
-//!TODO: (..)
-//!TODO: (?=)
-//!TODO: preg_match
-//!TODO: preg_match_all
-//!TODO: preg_replace
-//!TODO: preg_split
+
+#define travel3(str,oc,c,nc)({c=*str;str--;oc=*str;str++;str++;nc=*str;str--;}) 
+#define travel5(str,ooc,oc,c,nc,nnc)({c=*str;str--;str--;ooc=*str;str++;str++;str--;oc=*str;str++;str++;nc=*str;str--;str++;str++;nc=*str;str--;str--;})
 
 typedef enum {false,true}bool;
-typedef enum {unknown=-1,possible=0,know=1}finding;
-typedef enum {V_CHAR,V_ESC,V_POINT,VS_CLASS,V_GROUP}vect_type;
-
+typedef enum {V_NULL,V_CHAR,V_POINT,VS_CLASS,V_GROUP}vect_type;
 
 
 typedef struct s_vect{
-char* code;	
+char* c;	
 uni* pos;
-finding* fn;
 vect_type* tp;
 vect_type* otp;
 size_t length;
@@ -26,240 +16,163 @@ char* table;
 int table_length;
 int flag_denial;
 }s_vect;
-char end_step[]={'(','[','{','?','!','.','+','*'};
-char end_step_others[]={')','}',']',' ','|',','};
+
+
 
 ///---------------------------------------------------------------------
-static int start_point(s_vect* vect,char* s,char c,char oc, char nc,int i){
-	int slen=libc_strlen(s),z=0;
-if(oc=='\\'){
-for(z=0;z<slen+1;z++){
-if(c==s[z] && vect->pos[i-1]==0){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;break;}
-if(c==s[z] && (z-vect->pos[i-1])==1){vect->code[i]=s[z];vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;i++;break;}
-		
-					 }		
+bool v_char_exists(s_vect* vect){ 
+int i=0;
+while(i<vect->length){if(vect->tp[i]==V_CHAR){return true;} i++;}
+return false;		
+	}
+///---------------------------------------------------------------------
+bool v_point_exists(s_vect* vect){
+int i=0;
+while(i<vect->length){if(vect->tp[i]==V_POINT){return true;} i++;}
+return false;		
+	}
 	
-	}else{
-		
-	if(vect->code[i-1]!=0){
-	vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR; vect->otp[i]=V_POINT; i++;
-		}else{
-			vect->pos[i]=0;vect->fn[i]=0; vect->code[i]=0;vect->tp[i]=V_POINT; i++;
-			}
-}
-
+///---------------------------------------------------------------------
+//char end_step[]={'(','[','{','?','!','.','+','*'};
+//char end_step_others[]={')','}',']',' ','|',','};
+///---------------------------------------------------------------------
+int preg_add(s_vect* vect,char ch,int pos, int i, vect_type type,vect_type old_type){
+//if(ch!=0){
+vect->c[i]=ch;
+vect->pos[i]=pos;
+vect->tp[i]=type;
+vect->otp[i]=old_type;
+i++;
+//}	
 	return i;
 	}
 ///---------------------------------------------------------------------
-static void end_point(s_vect* vect,char* s,int i, int n){if(vect->code[i-n]==0 && vect->tp[i-n]==V_POINT){vect->code[i-n]=s[vect->pos[i]-n];	vect->fn[i-n]=know;	vect->pos[i-n]=vect->pos[i]-n;vect->tp[i-n]=V_CHAR;	vect->otp[i-n]=V_POINT;	}return;}
-///---------------------------------------------------------------------
-static int is_end_step(char ch){int i=0;for(;i<8;i++){if(ch==end_step[i]){return ch;}}return -1;}
-///---------------------------------------------------------------------
-static int is_end_step_others(char ch){int i=0;for(;i<6;i++){if(ch==end_step_others[i]){return ch;}}return -1;}
-///------------------------------------------------------------
-static int question_symbol(s_vect* vect, char* s, char* p,char oc, int i){ //?
-int z=vect->pos[i-1];
-if(oc!=s[z]){vect->code[i]=0;vect->fn[i]=0;vect->pos[i]=0;vect->tp[i]=0; vect->otp[i]=0; i--;
-}else{
-vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;i++;
-p++;	
+void point_reindex(s_vect* vect,char* s){
+int i=0,co=0;
+while(i<vect->length){
+	if(vect->tp[i]==V_CHAR && vect->tp[i+1]==V_POINT){vect->c[i+1]=s[vect->pos[i]+1];vect->pos[i+1]=vect->pos[i]+1;	vect->tp[i+1]=V_CHAR;vect->otp[i+1]=V_POINT;}	
+	i++;
 	}
-return i;	
-	}
-///---------------------------------------------------------------------
-#include "bracket_symbol.c"	
-///---------------------------------------------------------------------
-static void step_symbol(int* out,int flag,s_vect* vect, char* s, char* p,char oc,char nc,char c, char end, int i){
-int plen=libc_strlen(p);
-char* bf=malloc(plen);
-int z=vect->pos[i-1],n=0;
-
-if(oc!=s[z] && vect->otp[i-1]==V_CHAR){
-if(flag==0){vect->code[i]=0;vect->fn[i]=0;vect->pos[i]=0;vect->tp[i]=0; vect->otp[i]=0; i--;}
-if(flag==1){p++;i--;}
-printf("f1\n");
-free(bf);
-out[0]=i;		
-return;
-}
-
-//------------------
-if(oc==s[z] && vect->otp[i-1]==V_POINT){
-if(nc=='?' && c!='\\'){p++;
-libc_memchr(bf,0,plen);	
-n=0; int fl=0;
-while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{fl=1;break;}}
-p=p-n;
-do{
-vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;i++;z++;
-}while(libc_strncmp(s+z,bf,n)!=0 && s[z]!=end && s[z]!=0);
-	//i--;
-}else{
-libc_memchr(bf,0,plen);	
-n=0; int fl=0; 
-while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{fl=1;break;}}
-//if(fl==1){free(bf);return i;}
-do{
-vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;i++;z++;
-}while(libc_substr_count(s+(z+1),bf)>0 && s[z+n]!=end && s[z]!=0);
-//	i--;
-	}
-printf("f2\n");
-free(bf);
-out[0]=i;		
-return;
-										}
-
-//------------------										
-									
-if(oc!=s[z] && vect->otp[i-1]==VS_CLASS){
-if(nc=='?' && c!='\\'){p++;
-libc_memchr(bf,0,plen);	
-n=0; int fl=0;
-while(*p!=0 && *p!=end){if(is_end_step(*p)==-1 && *p!=0){bf[n]=*p;n++;p++;}else{fl=1;break;}}
-if(fl==1){
-	p=p-n;
-
-
-	p--;out[1]=*p;p++;
-		out[2]=*p;
-	p++;out[3]=*p;p--;
 	
-		out[0]=i;
-free(bf);
-return;
-}
-do{
-//vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;z++;
-i=add_tablae_symbol(vect,s[vect->pos[i-1]+1],vect->pos[i-1]+1,i);z++;
-if(vect->code[i-1]==0){i--;break;}
-}while(libc_strncmp(s+z,bf,n)!=0 && s[z]!=end && s[z]!=0);
-}else{
-libc_memchr(bf,0,plen);	
-n=0; int fl=0;
-while(*p!=0 && *p!=end){if(is_end_step(*p)==-1 && *p!=0){bf[n]=*p;n++;p++;}else{fl=1;break;}}
-if(fl==1){
-	p=p-n;
-
-
-	p--;out[1]=*p;p++;
-		out[2]=*p;
-	p++;out[3]=*p;p--;
-	
-		out[0]=i;
-free(bf);
-return;
-}
-do{
-//vect->code[i]=s[vect->pos[i-1]+1];vect->fn[i]=know;vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;z++;
-i=add_tablae_symbol(vect,s[vect->pos[i-1]+1],vect->pos[i-1]+1,i);z++;
-//if(vect->code[i]==0){i--;break;}
-}while(libc_substr_count(s+(z+1),bf)>0 && s[z+n]!=end && s[z]!=0);
-
+i=0;co=0;
+while(i<vect->length){
+	if(vect->tp[i]==V_CHAR && vect->tp[i-1]==V_POINT){vect->c[i-1]=s[vect->pos[i]-1];vect->pos[i-1]=vect->pos[i]-1;	vect->tp[i-1]=V_CHAR;vect->otp[i-1]=V_POINT;}	
+	i++;
 	}
-
-printf("f3\n");										
-free(bf);
-out[0]=i;
-										}										
-		
-return;
-																		}
 	
-
-///---------------------------------------------------------------------
-#include "wavy_bracket_symbol.c"
-///---------------------------------------------------------------------
-int alphanum_symbol(s_vect* vect, char* s, char* p, char c, int i){
-int z=0,slen=libc_strlen(s);	
-	for(;z<slen+1;z++){
-if(c==s[z] && vect->pos[i-1]==0){vect->code[i]=c;vect->fn[i]=know;vect->pos[i]=z; vect->tp[i]=V_CHAR;vect->otp[i]=V_CHAR;i++;break;}
-if(c==s[z] && (z-vect->pos[i-1])==1){vect->code[i]=c;vect->fn[i]=know;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_CHAR;i++;break;}	
-					 }
-return i;	
+return;	
 	}
+	
 ///---------------------------------------------------------------------
 void preg(s_vect* vect,char* pt,char* str){
-int slen=libc_strlen(str)-1,plen=libc_strlen(pt),fl=0,i=0,z=0,n=0,co=0;
-char *p=malloc(plen),*s=malloc(slen+1),*bf=malloc(plen);
+int strlen=libc_strlen(str),
+ patlen=libc_strlen(pt),
+i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,back=0,old_z=0;
+char *p=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
+libc_strcpy(s,str); libc_strcpy(p,pt);
 
+char oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
 
-libc_strcpy(s,str);
-libc_strcpy(p,pt);
-
-char oc='\0', c=*p,nc=*p++; p--;
-char end='\n';
-
-while (*p!=0){
-c=*p;
-p--;oc=*p;p++;
-p++;nc=*p;p--;
-
+while (*p!=e){
+travel3(p,oc,c,nc);
+point_reindex(vect,s);
 switch(*p){
 //----------------------------------------------------------------------
-case '\\':{p++;break;}	
+case '\\':{if(flag_esc==0){flag_esc=1;}else{
+if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}
+if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
+}p++;break;}
 //----------------------------------------------------------------------
-case '*':{p++;
-int* out=malloc(5);
-step_symbol(out,0,vect,s,p,oc,nc,c,end,i);
-i=out[0];
-if(out[1]){oc=out[1];}
-if(out[2]){c=out[2];}
-if(out[3]){nc=out[3];}
-//printf("2|o=%c|c=%c|n=%c\n",oc,c,nc);
-free_ptr(out);
-break;
-} 
+case '.':{
+	if(flag_esc==1){
+		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+		if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}
+		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
+		}else{
+if(vect->tp[i+1]==V_CHAR && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}else
+if(vect->tp[i-1]==V_CHAR && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}else
+{i=preg_add(vect,0,0,i,V_POINT,V_NULL);z++;p++;break;}
+		
+			}
+	
+	p++;break;
+	}
 //----------------------------------------------------------------------
-case '+':{p++;
-int* out=malloc(5);
-step_symbol(out,1,vect,s,p,oc,nc,c,end,i);
-i=out[0];
-if(out[1]){oc=out[1];}
-if(out[2]){c=out[2];}
-if(out[3]){nc=out[3];}
-
-free_ptr(out);
-break;}
+case '^':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
 //----------------------------------------------------------------------
-case '?':{p++; i=question_symbol(vect,s,p,oc,i);break;} 
+case '$':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
 //----------------------------------------------------------------------
-case '.':{i=start_point(vect,s,c,oc,nc,i);p++;break;}
+case 'b':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}	
 //----------------------------------------------------------------------
-case '{':{p++;i=wavy_bracket_symbol(vect,s,p,oc,nc,c,end,i);break;}
+case 'B':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}
 //----------------------------------------------------------------------
-case '[':{p++;
-printf("ok|o=%c|c=%c|n=%c\n",oc,c,nc);
- i=bracket_symbol(vect,s,p,oc,nc,c,end,i);break;}
+case 'd':{if(flag_esc==0){
+	
+	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+	if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\" \"%c\"!!! \n",c,s[z]);return;}
+	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}
+	}
+	p++;break;
+	}
 //----------------------------------------------------------------------
-case 'q':case 'w':case 'e':case 'r':case 't':case 'y':case 'u':
-case 'i':case 'o':case 'p':case 'a':case 's':case 'd':case 'f':
-case 'g':case 'h':case 'j':case 'k':case 'l':case 'z':case 'x':
-case 'c':case 'v':case 'b':case 'n':case 'm':case '&':
-case '1':case '2':case '3':case '4':case '5':case '6':case '7':
-case '8':case '9':case '0':{i=alphanum_symbol(vect,s,p,c,i);p++;break;}
+case 'D':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}
 //----------------------------------------------------------------------
-default:{p++;break;}
+case 's':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}
+//----------------------------------------------------------------------
+case 'S':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}
+//----------------------------------------------------------------------
+case 'w':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}
+//----------------------------------------------------------------------
+case 'W':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}	
+//----------------------------------------------------------------------
+case '*':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;} 
+//----------------------------------------------------------------------
+case '+':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
+//----------------------------------------------------------------------
+case '?':{
+	if(flag_esc==1){
+		if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}
+		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
+		}else{
+			//?
+		if(nc==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}else{p++;break;}
+		//?	
+			}
+	p++;break;
+	} 
+//----------------------------------------------------------------------
+case '{':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
+//----------------------------------------------------------------------
+case '[':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
+//----------------------------------------------------------------------
+case '(':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
+//----------------------------------------------------------------------
+default:{
+	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+	if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}
+	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}
+	p++;break;
+	}
 //----------------------------------------------------------------------
 				}
+vect->length=i;
 
 }
 
-vect->length=i;
-while(i>0){end_point(vect,s,i,1);i--;}
+point_reindex(vect,s);
 
 free(s);
 free(p);
 free(bf);
-
 	}
 ///------------------------------------------------------------
 void free_vect(s_vect* vect){
-free(vect->pos);
-free(vect->fn);
-free(vect->tp);
-free(vect->otp);
-free(vect->code);
+free_ptr(vect->pos);
+free_ptr(vect->tp);
+free_ptr(vect->otp);
+free_ptr(vect->c);
 free_ptr(vect);
 return;	
 	}

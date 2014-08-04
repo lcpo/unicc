@@ -13,6 +13,11 @@ uni libc_strpos(char *haystack, char *needle){
    if (p){return p - haystack;}else{return -1;}  
 } 
 //!------------------------------------------------------------
+uni libc_chrpos(char *haystack, char needle){
+   char *p = libc_strchr(haystack, needle);
+   if (p){return p - haystack;}else{return -1;}  
+} 
+//!------------------------------------------------------------
 int libc_ads(int i){return (i)?0:1;}
 
 ///------------------------------------------------------------

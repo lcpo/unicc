@@ -11,31 +11,35 @@
 
 // ~ подлежит обязательному экранированию для получения этого символа иначе он будет использован в качестве \
 
-typedef long o_wchar;
+
 int main(int argc, char** argv) {
 
 s_vect* vect;
 vect=malloc(1*sizeof(vect));
-vect->pos=malloc(20);
-vect->fn=malloc(20);
-vect->tp=malloc(20);
-vect->otp=malloc(20);
-vect->code=malloc(20);
-vect->table=malloc(20);
+vect->pos=malloc(200);
+vect->tp=malloc(200);
+vect->otp=malloc(200);
+vect->c=malloc(200);
+vect->table=malloc(200);
+vect->table_length=0;
+
 
 
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
+//colo[0-9]*a[0-9]*ro
 
 
-preg(vect,"colo[0-9]*[a-z][0-9]*ro","colo331a210ro1235678ra");
+preg(vect,".c?d.","abcdef");
+
+
 
 int i=0;
 while(i<vect->length){
-printf("%i|fn=%i|pos=%i|code=%c|type=%i|old_type=%i|fd=%i|tablen=%i|table=%s\n",i,vect->fn[i],vect->pos[i],vect->code[i],vect->tp[i],vect->otp[i],vect->flag_denial,vect->table_length,vect->table);
+printf("%i|pos=%i|code=%c|type=%i|old_type=%i|fd=%i|tb=%s\n",i,vect->pos[i],vect->c[i],vect->tp[i],vect->otp[i],vect->flag_denial,vect->table);
 i++;
 					 }
-printf("%s\n",vect->code);
+printf("%s\n",vect->c);
 free_vect(vect);
 
 
@@ -131,6 +135,24 @@ return 0;
 
 
 
+/*
+int i=0;
+char* test="1234567890";
+while(i<10){
+printf("%s\n",test);
+test++;
+	
+	i++;}
+*/
+/*
+int i=0;
+char* test="1234567890";
+while(i<10){
+char* new=libc_strpart(test,0, libc_strlen(test)-i);
+printf("%s\n",new);
+free(new);
+i++;}
+*/
 
 
 
