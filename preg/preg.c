@@ -67,7 +67,7 @@ return;
 void preg(s_vect* vect,char* pt,char* str){
 int strlen=libc_strlen(str),
  patlen=libc_strlen(pt),
-i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,back=0,old_z=0;
+i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,back=0,old_i=0,old_z=0;
 char *p=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
 libc_strcpy(s,str); libc_strcpy(p,pt);
 
@@ -99,16 +99,27 @@ if(vect->tp[i-1]==V_CHAR && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);
 	p++;break;
 	}
 //----------------------------------------------------------------------
-case '^':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
+case '^':{
+	if(flag_esc==1){
+		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+		if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}
+		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
+		}else{flag_start=1;}
+		p++;break;}
 //----------------------------------------------------------------------
-case '$':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
+case '$':{if(flag_esc==1){
+	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+	if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}
+	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
+	}else{flag_end=1;}
+	p++;break;}
 //----------------------------------------------------------------------
 case 'b':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}	
 //----------------------------------------------------------------------
 case 'B':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}
 //----------------------------------------------------------------------
 case 'd':{if(flag_esc==0){
-	
+	printf("%c,%c\n",c,s[z]);
 	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
 	if(c!=s[z] && v_char_exists(vect)==true){printf("Report: no exists - \"%c\" \"%c\"!!! \n",c,s[z]);return;}
 	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}
@@ -137,7 +148,11 @@ case '?':{
 		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 		}else{
 			//?
-		if(nc==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}else{p++;break;}
+			//
+			printf("?==%c,%c\n",nc,s[z]);
+		if(nc==s[z]){
+			i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;p++;p++;break;
+		}else{i--;i--;i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);p++;z++;break;}
 		//?	
 			}
 	p++;break;
@@ -158,7 +173,24 @@ default:{
 //----------------------------------------------------------------------
 				}
 vect->length=i;
-
+if(*p==0 && v_char_exists(vect)==false && flag_start==0 && flag_end==0){
+	z=0; p=p-i; i=0;
+	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;}
+																	   }
+if(*p==0 && v_char_exists(vect)==false && flag_start==1 && flag_end==0){
+	z=0; p=p-i; i=0;
+	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;}
+																	   }
+if(*p==0 && v_char_exists(vect)==false && flag_start==0 && flag_end==1){
+	z=strlen-1; 
+	p=p-(i+flag_end);
+	i--;
+	if(*p=='.'){
+		printf("===%c\n",s[z]);
+		i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;
+		p++;p++;
+		}
+																   }																	   																	   
 }
 
 point_reindex(vect,s);
@@ -178,59 +210,4 @@ return;
 	}
 
 ///---------------------------------------------------------------------
-/*
-char char_point_table[]={
-0,1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,
-29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,
-53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,
-77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,
-101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,
-119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,
-137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,
-155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,
-173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,
-191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,
-209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,
-227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,
-245,246,247,248,249,250,251,252,253,254,255};
-//----------------------------------------------------------------------
-char ispoint(char ch){
-int i=0;
-for(;i<255;i++){if(ch==char_point_table[i]){return ch;}}
-return -1;	
-	}
-*/
-//----------------------------------------------------------------------
-//	-1  unknown
-//	 0  possible
-//	 1  know
-//U
-/*
-if(flag==LAZY){	
-if(nc==s[z]){
-		n=0;
-		while(*p!=0){if(is_end_step(*p)==-1 || *p!=0){bf[n]=*p;n++;p++;}else{break;}}p=p-n;
-		char* sbf=libc_strpart(s+z,0,n);
-		if(libc_strcmp(bf,sbf)==0){
-			//printf("yes|bf=%s|sbf=%s\n",bf,sbf);
-			while(*sbf!=0){
-				if(*sbf==s[z]){
-					vect->code[i]=s[z];
-					vect->fn[i]=know;
-					vect->pos[i]=z;
-					vect->tp[i]=V_CHAR;
-					vect->otp[i]=V_POINT;
-					i++;
-					}else{break;}sbf++;z++;
-					}
-			break;
-			}else{
-				//printf("no|bf=%s|sbf=%s\n",bf,sbf);
-				z++;
-				}
-		
-free(sbf);
-			
-	}
-}
-*/
+
