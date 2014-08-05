@@ -30,7 +30,7 @@ vect->table_length=0;
 //colo[0-9]*a[0-9]*ro
 
 
-preg(vect,"...$","abcdef");
+preg(vect,"c.?f.","abcdef");
 
 
 

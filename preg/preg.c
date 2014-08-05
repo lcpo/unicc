@@ -148,7 +148,7 @@ case '?':{
 		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 		}else{
 			//?
-			//
+		if(nc!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,nc);}	
 			printf("?==%c,%c\n",nc,s[z]);
 		if(nc==s[z]){
 			i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;p++;p++;break;
