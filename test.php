@@ -17,3 +17,4 @@ preg_match("|colou*r|","colouur",$out);
 print_r($out);
 */
 ?>
+   
