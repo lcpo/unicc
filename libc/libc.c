@@ -869,7 +869,7 @@ char * 	libc_string_replace(char *string, char *delimiter, char *replacement) {
         return string;
     }
     int bret = 0, ldel=libc_strlen(delimiter), lrep=libc_strlen(replacement),lstr=libc_strlen(string), i=0,j=0;
-    char* ret = libc_malloc(ldel+lrep+lstr);
+    char* ret = malloc(ldel+lrep+lstr);
     while (string[i] != '\0') {
         if (!libc_strncmp(&string[i], delimiter, ldel)) {
             i += ldel;

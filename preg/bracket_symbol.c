@@ -27,7 +27,9 @@ if(fl<1){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i
 	
 return i;	
 	}
-///---------------------------------------------------------------------
+
+///------------------------------------------------------------
+
 char* parce_tag(char* p,char tag_start, char tag_end){
 int plen=libc_strlen(p);
 char* scl=malloc(plen);
@@ -54,16 +56,16 @@ if(*p=='\\' && nc=='\\'){
 	}else if(oc!='\\' && *p==tag_start){
 		scl[n]=*p;n++;
 		p--;oc=*p;p++;p++;nc=*p;p--;
-		}else if(oc!='\\' && *p==' '){p--;oc=*p;p++;p++;nc=*p;p--;}else if(oc!='\\' && *p==tag_end){scl[n]=*p;break;}else 
-if(p=='\0'){
+		}//else if(oc!='\\' && *p==' '){p--;oc=*p;p++;p++;nc=*p;p--;}
+		else if(oc!='\\' && *p==tag_end){scl[n]=*p;break;}else if(p=='\0'){
 printf("error: no closing character '%c'!!!\n",tag_end); return scl;
 }else{scl[n]=*p;n++;}
 p++;
 				}
 				p++;
 return scl;	
-								}
-///---------------------------------------------------------------------
+													}
+///------------------------------------------------------------
 int tag_count(char *p, char tag_start, char tag_end){
 int ns=0,ne=0;
 char oc='\0',c=*p,nc=*p++; p--;
@@ -75,9 +77,121 @@ while(*p!=0){
 	if(oc!='\\' && *p==tag_end){ne++;}
 	}
 	if(ns!=ne){printf("warning :no end tag or no start tag!!!\n");}
-	return ns;	
+	return ne;	
 	}
-///---------------------------------------------------------------------
+///------------------------------------------------------------
+void table_init(char* p, ch_tab* tb, char tag_start, char tag_end){ 
+tb->table_count=tag_count(p,tag_start,tag_end);
+tb->table=malloc(tb->table_count); 
+tb->length=0; 
+tb->rep=17;
+tb->tag_start=tag_start;
+tb->tag_end=tag_end;
+return;
+									}
+
+
+///------------------------------------------------------------
+char* bracket_string(char* scl){
+int plen=libc_strlen(scl)+2;				
+int a=0,fl1=0,co=0,n=0,z=0;
+char ooscl='\0',oscl='\0',nscl='\0';
+char* table=malloc(1024);
+scl++;
+while(*scl!=']'){
+scl--; oscl=*scl; scl++;
+scl++; nscl=*scl; scl--;
+if(oscl!='\\' && *scl==' '){scl++;continue;}
+if(oscl!='\\' && *scl=='^'){scl++;continue;}
+if(oscl!='\\' && *scl==18){table[a]='\\';	a++;}
+if(oscl=='\\' && *scl==18){table[a]=18;	a++;}
+if(oscl=='\\' && *scl=='-' && libc_isalpha(nscl)!=0){table[a]=nscl;a++;}
+//if(oscl=='\\' && *scl=='-' && libc_isdigit(nscl)!=0){table[a]=nscl;a++;}
+if(oscl=='\\' && *scl=='-'){table[a]=*scl;a++;}
+if(oscl=='\\' && (*scl=='[' || *scl==']')){table[a]=*scl;a++;}
+if(oscl!='\\' && (*scl=='[' || *scl==']')){printf("error: character is not shielded '%c' !!!\n",*scl); return;}
+
+	/**/
+if(*scl=='-' && libc_isdigit(nscl)!=0 && libc_isdigit(oscl)!=0){
+if((oscl)<(nscl)){
+for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}
+}else{
+for(z=(nscl);z<=(oscl);z++){table[n]=z;a++;}
+	 }
+															   }
+if(libc_isdigit(*scl)!=0 && nscl!='-' && oscl!='-'){table[n]=*scl;a++;}
+	/**/
+	/**/														   
+if(*scl=='-' && libc_isalpha(nscl)!=0 && libc_isalpha(oscl)!=0){
+if(libc_islower(nscl)!=0 && libc_islower(oscl)!=0){//a
+if((oscl)<(nscl)){
+	for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}
+	}else{
+		for(z=(nscl);z<=(oscl);z++){table[a]=z;a++;}
+		}
+												 }
+												 
+if(libc_isupper(nscl)!=0 && libc_isupper(oscl)!=0){ //A
+if((oscl)<(nscl)){
+	for(z=(oscl);z<=(nscl);z++){table[a]=z;a++;}
+}else{
+	for(z=(nscl);z<=(oscl);z++){table[a]=z;a++;}}
+												  }	
+/**/
+//////
+if(libc_islower(nscl)!=0 && libc_isupper(oscl)!=0){
+if(oscl<90){for(z=oscl;z<=90;z++){table[a]=z;a++;}}else{for(z=65;z<=(oscl);z++){table[a]=z;a++;}}
+if(nscl<122){for(z=nscl;z<=122;z++){table[a]=z;a++;}}else{for(z=97;z<=(nscl);z++){table[a]=z;a++;}}	
+//printf("err1\n oscl=%c|%i\n",oscl,oscl);	
+	}
+if(libc_islower(oscl)!=0 && libc_isupper(nscl)!=0){
+if(oscl<122){for(z=oscl;z<=122;z++){table[a]=z;a++;}}else{for(z=97;z<=(oscl);z++){table[a]=z;a++;}}
+if(nscl<90){for(z=nscl;z<=90;z++){table[a]=z;a++;}}else{for(z=65;z<=(nscl);z++){table[a]=z;a++;}}
+//printf("err2\n oscl=%c|%i\n",oscl,oscl);
+	}
+//////												  
+																}
+if(libc_isalpha(*scl)!=0 && nscl!='-' && oscl!='-'){table[a]=*scl;a++;}	
+
+co++; scl++;
+			}
+	return table;
+	}																		
+	
+///------------------------------------------------------------	
+
+char* bracket_table(char* p,ch_tab *tb){
+int i=0,plen=strlen(p); 
+char* scl, bf[1];
+tb->table_count=tag_count(p,tb->tag_start,tb->tag_end);
+//printf("co=%i\n",tb->table_count);
+while(i<tb->table_count){
+scl=parce_tag(p,tb->tag_start,tb->tag_end);
+tb->table[tb->length]=bracket_string(scl);
+tb->table_src[tb->length]=scl;
+p=p+libc_strpos(p,scl)+libc_strlen(scl);
+tb->length++;
+i++;
+						}
+
+p=p-plen;
+bf[0]=tb->rep;
+bf[1]='\0';
+char* out;
+i=0;
+while(i<tb->table_count){
+out=libc_string_replace(p,tb->table_src[i],bf);
+free(p);
+p=out;
+free(tb->table_src[i]);
+	i++;
+						}
+
+return p;	
+										}
+///------------------------------------------------------------	
+
+/*
 static int bracket_symbol(s_vect* vect, char* s, char* p,char oc,char nc,char c, char end, int i){
 	p++;
 int plen=libc_strlen(p);
@@ -120,7 +234,7 @@ if(oscl=='\\' && (is_end_step(*scl)!=-1 || is_end_step_others(*scl)!=-1)){vect->
 if(oscl!='\\' && (is_end_step(*scl)!=-1 || is_end_step_others(*scl)!=-1)){printf("error: character is not shielded '%c' !!!\n",*scl);
 //goto LABEL_EXIT_WHILE;
 }
-	/**/
+	
 if(*scl=='-' && libc_isdigit(nscl)!=0 && libc_isdigit(oscl)!=0){
 if((oscl-'0')<(nscl-'0')){
 	for(z=(oscl-'0');z<=(nscl-'0');z++){vect->table[a]=z+'0';a++;}
@@ -129,8 +243,7 @@ if((oscl-'0')<(nscl-'0')){
 		}
 															   }
 if(libc_isdigit(*scl)!=0 && nscl!='-' && oscl!='-'){vect->table[n]=*scl;a++;}
-	/**/
-	/**/														   
+														   
 if(*scl=='-' && libc_isalpha(nscl)!=0 && libc_isalpha(oscl)!=0){
 if(libc_islower(nscl)!=0 && libc_islower(oscl)!=0){//a
 if((oscl)<(nscl)){
@@ -146,7 +259,7 @@ if((oscl)<(nscl)){
 }else{
 	for(z=(nscl);z<=(oscl);z++){vect->table[a]=z;a++;}}
 												  }	
-/**/
+
 //////
 if(libc_islower(nscl)!=0 && libc_isupper(oscl)!=0){
 if(oscl<90){for(z=oscl;z<=90;z++){vect->table[a]=z;a++;}}else{for(z=65;z<=(oscl);z++){vect->table[a]=z;a++;}}
@@ -176,3 +289,4 @@ printf("==%s\n",p);
 free_ptr(scl);
 return i;
 }
+*/

@@ -22,7 +22,10 @@ typedef struct ch_tab{
 int rep;
 char** table_src;
 char** table;
-size_t length;	
+size_t table_count;
+size_t length;
+char tag_start;
+char tag_end;
 	}ch_tab;
 
 ///---------------------------------------------------------------------
@@ -75,12 +78,12 @@ return;
 void preg(s_vect* vect,char* pt,char* str){
 int strlen=libc_strlen(str),
  patlen=libc_strlen(pt),
-i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,back=0,old_i=0,old_z=0;
+i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,back=0,old_i=0,old_z=0,count17=0;
 char *p=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
 libc_strcpy(s,str); libc_strcpy(p,pt);
 
-char oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
 
+char oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
 while (*p!=e){
 travel3(p,oc,c,nc);
 point_reindex(vect,s);
@@ -101,8 +104,7 @@ case '.':{
 if(vect->tp[i+1]==V_CHAR && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}else
 if(vect->tp[i-1]==V_CHAR && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}else
 {i=preg_add(vect,0,0,i,V_POINT,V_NULL);z++;p++;break;}
-		
-			}
+			 }
 	
 	p++;break;
 	}
@@ -173,12 +175,22 @@ case '[':{
 	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
 	if(c!=s[z] && v_char_exists(vect)==true){printf("Report 17: no exists - \"%c\"!!! \n",c);return;}
 	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
-	}else{
-		
+	}
+/*
+	else{
 		i=bracket_symbol(vect,s,p,oc,nc,c,end,i);
 		p++;break;
 		}
-	p++;break;}
+*/
+	p++;break;
+	}
+//----------------------------------------------------------------------
+case 17:{
+i=add_tablae_symbol(vect,c,z,i);
+count17++;
+p++;
+break;
+		}	
 //----------------------------------------------------------------------
 case '(':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report 18: no exists - \"%c\"!!! \n",c);return;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
 //----------------------------------------------------------------------

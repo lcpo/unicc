@@ -11,11 +11,11 @@
 
 // ~ подлежит обязательному экранированию для получения этого символа иначе он будет использован в качестве \
 
-
+///------------------------------------------------------------																		
 int main(int argc, char** argv) {
+int z=0; int co=0;
 
 s_vect* vect;
-vect=malloc(1*sizeof(vect));
 vect->pos=malloc(200);
 vect->tp=malloc(200);
 vect->otp=malloc(200);
@@ -23,11 +23,6 @@ vect->c=malloc(200);
 vect->table=malloc(200);
 vect->table_length=0;
 
-ch_tab* tb=malloc(10);
-tb->rep=17;
-tb->table_src=malloc(10);
-tb->table=malloc(10);
-tb->length=0;
 
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
@@ -36,43 +31,25 @@ tb->length=0;
 
 //preg(vect,"[a-z].?e.","abcdef");
 char* p=malloc(100);
-p="123\\[456[a-z].?e.[0-9][A-Z]";
-char* scl;
+p="123\\[456[^ a-z].?e.[0-9][A-Z][0-4][a-f]";
 
-int co=tag_count(p,'[',']');
+ch_tab* tb;
+
+//printf("==%s\n",p);
+
+table_init(p,tb,'[',']');
+p=bracket_table(p,tb);
+
+//printf("==%s\n",p);
 
 
-scl=parce_tag(p,'[',']');
-tb->table_src[tb->length]=scl;
-tb->length++;
-p=p+libc_strpos(p,scl)+libc_strlen(scl);
-printf("%s\n",p);
-
-scl=parce_tag(p,'[',']');
-tb->table_src[tb->length]=scl;
-tb->length++;
-p=p+libc_strpos(p,scl)+libc_strlen(scl);
-printf("%s\n",p);
-
-scl=parce_tag(p,'[',']');
-tb->table_src[tb->length]=scl;
-tb->length++;
-p=p+libc_strpos(p,scl)+libc_strlen(scl);
-printf("%s\n",p);
-
-scl=parce_tag(p,'[',']');
-tb->table_src[tb->length]=scl;
-tb->length++;
-p=p+libc_strpos(p,scl)+libc_strlen(scl);
-printf("%s\n",p);
-
-int n=0;
-while(n<tb->length){
-printf("%i|%s\n",n,tb->table_src[n]);
-n++;
+z=0;
+while(z<tb->length){
+printf("%i|%s|%s\n",z,tb->table[z]);//,tb->table_src[z]
+z++;
 					}
 
-
+/*
 int i=0;
 while(i<vect->length){
 printf("%i|pos=%i|code=%c|type=%i|old_type=%i|fd=%i|tb=%s\n",i,vect->pos[i],vect->c[i],vect->tp[i],vect->otp[i],vect->flag_denial,vect->table);
@@ -80,8 +57,8 @@ i++;
 					 }
 					 
 printf("%s\n",vect->c);
-free_vect(vect);
-
+//free_vect(vect);
+*/
 
 /*
 wchar tst[]=L"я";
