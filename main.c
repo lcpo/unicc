@@ -23,15 +23,54 @@ vect->c=malloc(200);
 vect->table=malloc(200);
 vect->table_length=0;
 
-
+ch_tab* tb=malloc(10);
+tb->rep=17;
+tb->table_src=malloc(10);
+tb->table=malloc(10);
+tb->length=0;
 
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
 //colo[0-9]*a[0-9]*ro
 
 
-preg(vect,"c.?f.","abcdef");
+//preg(vect,"[a-z].?e.","abcdef");
+char* p=malloc(100);
+p="123\\[456[a-z].?e.[0-9][A-Z]";
+char* scl;
 
+int co=tag_count(p,'[',']');
+
+
+scl=parce_tag(p,'[',']');
+tb->table_src[tb->length]=scl;
+tb->length++;
+p=p+libc_strpos(p,scl)+libc_strlen(scl);
+printf("%s\n",p);
+
+scl=parce_tag(p,'[',']');
+tb->table_src[tb->length]=scl;
+tb->length++;
+p=p+libc_strpos(p,scl)+libc_strlen(scl);
+printf("%s\n",p);
+
+scl=parce_tag(p,'[',']');
+tb->table_src[tb->length]=scl;
+tb->length++;
+p=p+libc_strpos(p,scl)+libc_strlen(scl);
+printf("%s\n",p);
+
+scl=parce_tag(p,'[',']');
+tb->table_src[tb->length]=scl;
+tb->length++;
+p=p+libc_strpos(p,scl)+libc_strlen(scl);
+printf("%s\n",p);
+
+int n=0;
+while(n<tb->length){
+printf("%i|%s\n",n,tb->table_src[n]);
+n++;
+					}
 
 
 int i=0;
@@ -39,6 +78,7 @@ while(i<vect->length){
 printf("%i|pos=%i|code=%c|type=%i|old_type=%i|fd=%i|tb=%s\n",i,vect->pos[i],vect->c[i],vect->tp[i],vect->otp[i],vect->flag_denial,vect->table);
 i++;
 					 }
+					 
 printf("%s\n",vect->c);
 free_vect(vect);
 
