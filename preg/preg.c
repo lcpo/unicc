@@ -12,9 +12,6 @@ uni* pos;
 vect_type* tp;
 vect_type* otp;
 size_t length;
-char* table;
-int table_length;
-int flag_denial;
 						}s_vect;
 
 ///---------------------------------------------------------------------
@@ -22,6 +19,7 @@ typedef struct ch_tab{
 int rep;
 char** table_src;
 char** table;
+char* flag_denial;
 size_t table_count;
 size_t length;
 char tag_start;
@@ -79,10 +77,12 @@ void preg(s_vect* vect,char* pt,char* str){
 int strlen=libc_strlen(str),
  patlen=libc_strlen(pt),
 i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,back=0,old_i=0,old_z=0,count17=0;
-char *p=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
-libc_strcpy(s,str); libc_strcpy(p,pt);
+char *p=malloc(patlen),*np=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
+libc_strcpy(s,str); libc_strcpy(np,pt);
 
 
+
+exit(0);/*
 char oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
 while (*p!=e){
 travel3(p,oc,c,nc);
@@ -176,17 +176,11 @@ case '[':{
 	if(c!=s[z] && v_char_exists(vect)==true){printf("Report 17: no exists - \"%c\"!!! \n",c);return;}
 	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 	}
-/*
-	else{
-		i=bracket_symbol(vect,s,p,oc,nc,c,end,i);
-		p++;break;
-		}
-*/
 	p++;break;
 	}
 //----------------------------------------------------------------------
 case 17:{
-i=add_tablae_symbol(vect,c,z,i);
+i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;
 count17++;
 p++;
 break;
@@ -224,7 +218,8 @@ point_reindex(vect,s);
 
 free(s);
 free(p);
-free(bf);
+free(bf);*/
+return;
 	}
 ///------------------------------------------------------------
 void free_vect(s_vect* vect){

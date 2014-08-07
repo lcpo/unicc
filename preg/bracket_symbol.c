@@ -11,20 +11,19 @@ static int is_end_step(char ch){int i=0;for(;i<8;i++){if(ch==end_step[i]){return
 ///---------------------------------------------------------------------
 static int is_end_step_others(char ch){int i=0;for(;i<6;i++){if(ch==end_step_others[i]){return ch;}}return -1;}
 ///---------------------------------------------------------------------
-static int is_tablae_symbol(s_vect* vect,char ch){
-int ret=0,co=0;
-while(co<vect->table_length){if(vect->table[co]==ch){ret++;break;}co++;}
+static int is_tablae_symbol(ch_tab* tb,int n,char ch){
+int ret=0,co=0,tblen=libc_strlen(tb->table[n][co]); 
+while(co<tblen){if(tb->table[n][co]==ch){ret++;break;}co++;}
 	return ret;
-													}
+														}
 ///---------------------------------------------------------------------
-int add_tablae_symbol(s_vect* vect,char ch, int z, int i){
-int fl=is_tablae_symbol(vect,ch);
-if(vect->flag_denial==0){
+int add_tablae_symbol(s_vect* vect,ch_tab* tb, int tbn,char ch, int z, int i){
+int fl=is_tablae_symbol(tb,tbn,ch);
+if(tb->flag_denial[tbn]==0){
 if(fl>0){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{vect->c[i]=-1;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
 	}else{
 if(fl<1){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{vect->c[i]=-2;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
 		}
-	
 return i;	
 	}
 
@@ -69,22 +68,30 @@ return scl;
 int tag_count(char *p, char tag_start, char tag_end){
 int ns=0,ne=0;
 char oc='\0',c=*p,nc=*p++; p--;
-while(*p!=0){
+
+while(nc!=0){
+	if(oc!='\\' && *p==tag_start){ns++;}
+	if(oc!='\\' && *p==tag_end){ne++;}
 	p++;
 	p--;oc=*p;p++; 
 	p++;nc=*p;p--;
-	if(oc!='\\' && *p==tag_start){ns++;}
-	if(oc!='\\' && *p==tag_end){ne++;}
+	if(nc==0){break;}
+
+
 	}
 	if(ns!=ne){printf("warning :no end tag or no start tag!!!\n");}
+	//p=p-ne;
 	return ne;	
 	}
 ///------------------------------------------------------------
 void table_init(char* p, ch_tab* tb, char tag_start, char tag_end){ 
+tb=malloc(1);
 tb->table_count=tag_count(p,tag_start,tag_end);
-tb->table=malloc(tb->table_count); 
-tb->length=0; 
+tb->table=malloc(tb->table_count);
+tb->table_src=malloc(tb->table_count);
+tb->flag_denial=malloc(tb->table_count);
 tb->rep=17;
+tb->length=0;
 tb->tag_start=tag_start;
 tb->tag_end=tag_end;
 return;
@@ -92,24 +99,25 @@ return;
 
 
 ///------------------------------------------------------------
-char* bracket_string(char* scl){
+char* bracket_string(ch_tab *tb,char* scl){
 int plen=libc_strlen(scl)+2;				
 int a=0,fl1=0,co=0,n=0,z=0;
 char ooscl='\0',oscl='\0',nscl='\0';
-char* table=malloc(1024);
+char* table=malloc(256);
+tb->flag_denial[tb->length]=0;
 scl++;
 while(*scl!=']'){
 scl--; oscl=*scl; scl++;
 scl++; nscl=*scl; scl--;
 if(oscl!='\\' && *scl==' '){scl++;continue;}
-if(oscl!='\\' && *scl=='^'){scl++;continue;}
-if(oscl!='\\' && *scl==18){table[a]='\\';	a++;}
+if(oscl!='\\' && *scl=='^'){tb->flag_denial[tb->length]=1;scl++;continue;}
+if(oscl!='\\' && *scl==18){table[a]='\\';a++;}
 if(oscl=='\\' && *scl==18){table[a]=18;	a++;}
 if(oscl=='\\' && *scl=='-' && libc_isalpha(nscl)!=0){table[a]=nscl;a++;}
 //if(oscl=='\\' && *scl=='-' && libc_isdigit(nscl)!=0){table[a]=nscl;a++;}
 if(oscl=='\\' && *scl=='-'){table[a]=*scl;a++;}
 if(oscl=='\\' && (*scl=='[' || *scl==']')){table[a]=*scl;a++;}
-if(oscl!='\\' && (*scl=='[' || *scl==']')){printf("error: character is not shielded '%c' !!!\n",*scl); return;}
+if(oscl!='\\' && (*scl=='[' || *scl==']')){printf("error: character is not shielded '%c' !!!\n",*scl);return scl;}
 
 	/**/
 if(*scl=='-' && libc_isdigit(nscl)!=0 && libc_isdigit(oscl)!=0){
@@ -121,7 +129,7 @@ for(z=(nscl);z<=(oscl);z++){table[n]=z;a++;}
 															   }
 if(libc_isdigit(*scl)!=0 && nscl!='-' && oscl!='-'){table[n]=*scl;a++;}
 	/**/
-	/**/														   
+	/**/
 if(*scl=='-' && libc_isalpha(nscl)!=0 && libc_isalpha(oscl)!=0){
 if(libc_islower(nscl)!=0 && libc_islower(oscl)!=0){//a
 if((oscl)<(nscl)){
@@ -155,26 +163,30 @@ if(libc_isalpha(*scl)!=0 && nscl!='-' && oscl!='-'){table[a]=*scl;a++;}
 
 co++; scl++;
 			}
+			//p=p-plen;
 	return table;
 	}																		
 	
 ///------------------------------------------------------------	
 
 char* bracket_table(char* p,ch_tab *tb){
-int i=0,plen=strlen(p); 
-char* scl, bf[1];
+int i=0,plen=libc_strlen(p); 
+char* scl,bf[1];
+
 tb->table_count=tag_count(p,tb->tag_start,tb->tag_end);
-//printf("co=%i\n",tb->table_count);
+
 while(i<tb->table_count){
 scl=parce_tag(p,tb->tag_start,tb->tag_end);
-tb->table[tb->length]=bracket_string(scl);
+tb->table[tb->length]=bracket_string(tb,scl);
 tb->table_src[tb->length]=scl;
 p=p+libc_strpos(p,scl)+libc_strlen(scl);
 tb->length++;
 i++;
 						}
+//printf("1===%s|\n",p);
+//p=p-plen;
+//printf("2===%s|\n",p);
 
-p=p-plen;
 bf[0]=tb->rep;
 bf[1]='\0';
 char* out;

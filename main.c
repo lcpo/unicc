@@ -15,50 +15,44 @@
 int main(int argc, char** argv) {
 int z=0; int co=0;
 
-s_vect* vect;
+s_vect* vect=malloc(1);
 vect->pos=malloc(200);
 vect->tp=malloc(200);
 vect->otp=malloc(200);
 vect->c=malloc(200);
-vect->table=malloc(200);
-vect->table_length=0;
 
+
+char* np=malloc(100);
+np="[a-z][0-9][1-5][a-f].?e.";
+ch_tab* tb;
+printf("|%s|\n",np);
+
+table_init(np,tb,'[',']');
+
+np=bracket_table(np,tb);
+printf("|%s|\n",np);
+
+
+//preg(vect,"[a-z][0-9][1-5][a-f].?e.","abcdef");
+
+/*
+int i=0;
+while(i<vect->length){
+printf("%i|pos=%i|code=%c|type=%i|old_type=%i|fd=%i|tb=%s\n",i,vect->pos[i],vect->c[i],vect->tp[i],vect->otp[i]);
+i++;
+					 }
+printf("%s\n",vect->c);
+//free_vect(vect);
+*/
 
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
 //colo[0-9]*a[0-9]*ro
 
 
-//preg(vect,"[a-z].?e.","abcdef");
-char* p=malloc(100);
-p="123\\[456[^ a-z].?e.[0-9][A-Z][0-4][a-f]";
-
-ch_tab* tb;
-
-//printf("==%s\n",p);
-
-table_init(p,tb,'[',']');
-p=bracket_table(p,tb);
-
-//printf("==%s\n",p);
-
-
-z=0;
-while(z<tb->length){
-printf("%i|%s|%s\n",z,tb->table[z]);//,tb->table_src[z]
-z++;
-					}
-
-/*
-int i=0;
-while(i<vect->length){
-printf("%i|pos=%i|code=%c|type=%i|old_type=%i|fd=%i|tb=%s\n",i,vect->pos[i],vect->c[i],vect->tp[i],vect->otp[i],vect->flag_denial,vect->table);
-i++;
-					 }
 					 
-printf("%s\n",vect->c);
-//free_vect(vect);
-*/
+
+
 
 /*
 wchar tst[]=L"я";
