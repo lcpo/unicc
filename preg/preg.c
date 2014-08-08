@@ -40,7 +40,12 @@ int i=0;
 while(i<vect->length){if(vect->tp[i]==V_POINT){return true;} i++;}
 return false;		
 	}
-	
+///---------------------------------------------------------------------
+bool vs_classes_exists(s_vect* vect){
+int i=0;
+while(i<vect->length){if(vect->tp[i]==VS_CLASS){return true;} i++;}
+return false;		
+	}
 ///---------------------------------------------------------------------
 //char end_step[]={'(','[','{','?','!','.','+','*'};
 //char end_step_others[]={')','}',']',' ','|',','};
@@ -65,28 +70,45 @@ if(vect->tp[i]==V_CHAR && vect->tp[i+1]==VS_CLASS){
 
 fl=is_tablae_symbol(tb,vect->c[i+1],s[vect->pos[i]+1]);
 if(tb->flag_denial[vect->c[i+1]]==0){
-if(fl>0){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=VS_CLASS;}else{vect->c[i+1]=0;vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
+if(fl>0){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=VS_CLASS;}else{vect->c[i+1]='#';vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
 	}else{
-if(fl<1){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=VS_CLASS;}else{vect->c[i+1]=0;vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
+if(fl<1){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=VS_CLASS;}else{vect->c[i+1]='@';vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
 		}
 
 		}
 	i++;
 	}
 	
-i=0;co=0;
+i=0;co=0;fl=0;
 while(i<vect->length){
-	if(vect->tp[i]==V_CHAR && vect->tp[i-1]==V_POINT){vect->c[i-1]=s[vect->pos[i]-1];vect->pos[i-1]=vect->pos[i]-1;	vect->tp[i-1]=V_CHAR;vect->otp[i-1]=V_POINT;}
-	
-	if(vect->tp[i]==V_CHAR && vect->tp[i-1]==VS_CLASS){
+	if(vect->tp[i]==V_CHAR && vect->tp[i-1]==V_POINT){
+		vect->c[i-1]=s[vect->pos[i]-1];
+		vect->pos[i-1]=vect->pos[i]-1;
+		vect->tp[i-1]=V_CHAR;
+		vect->otp[i-1]=V_POINT;
+		}
 
+printf("%i|%i\n",vect->tp[i],vect->tp[i-1]);	
+if(vect->tp[i]==V_CHAR && vect->tp[i-1]==VS_CLASS){
 fl=is_tablae_symbol(tb,vect->c[i-1],s[vect->pos[i]-1]);
+printf("fl=%i\n",fl);
 if(tb->flag_denial[vect->c[i-1]]==0){
-if(fl>0){vect->c[i-1]=s[vect->pos[i]-1]; vect->pos[i-1]=vect->pos[i]-1;vect->tp[i-1]=V_CHAR;vect->otp[i-1]=VS_CLASS;}else{vect->c[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
+if(fl>0){
+	vect->c[i-1]=s[vect->pos[i]-1]; 
+	vect->pos[i-1]=vect->pos[i]-1;
+	vect->tp[i-1]=V_CHAR;
+	vect->otp[i-1]=VS_CLASS;
+	}else{vect->c[i-1]='#';vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
 	}else{
-if(fl<1){vect->c[i-1]=s[vect->pos[i]-1]; vect->pos[i-1]=vect->pos[i]-1;vect->tp[i-1]=V_CHAR;vect->otp[i-1]=VS_CLASS;}else{vect->c[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
+if(fl<1){
+	vect->c[i-1]=s[vect->pos[i]-1];
+	vect->pos[i-1]=vect->pos[i]-1;
+	vect->tp[i-1]=V_CHAR;
+	vect->otp[i-1]=VS_CLASS;
+	}else{vect->c[i-1]='@';vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
 		}
 		}		
+
 	i++;
 	}
 	
@@ -101,6 +123,7 @@ i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,back=0,old_i=0,o
 char *p=malloc(patlen),*np=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
 libc_strcpy(s,str); libc_strcpy(np,pt);
 
+tb->table_count=tag_count(np,'[',']');
 p=bracket_table(np,tb);
 printf("rex==%s\n",p);
 
@@ -230,20 +253,27 @@ default:{
 				}
 vect->length=i;
 if(*p==0 && v_char_exists(vect)==false && flag_start==0 && flag_end==0){
-	z=0; p=p-i; i=0;
+	z=0; p=p-i; i=0; count17=0;
 	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;}
+	if(*p==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;p++;}
 																	   }
 if(*p==0 && v_char_exists(vect)==false && flag_start==1 && flag_end==0){
-	z=0; p=p-i; i=0;
+	z=0; p=p-i; i=0; count17=0;
 	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;}
+	if(*p==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;p++;}
 																	   }
 if(*p==0 && v_char_exists(vect)==false && flag_start==0 && flag_end==1){
-	z=strlen-1; 
+	z=strlen-1; //count17=tb->table_count-1;
 	p=p-(i+flag_end); i--; //printf("===%c\n",s[z]);
 	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;p++;}
+	if(*p==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;p++;p++;}
 	
-																   }
-//!TODO: ^...$																   																	   																	   
+																       }
+//!TODO: ^...$														
+
+
+
+		   																	   																	   
 }
 
 point_reindex(vect,tb,s);

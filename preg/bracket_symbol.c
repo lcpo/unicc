@@ -70,15 +70,13 @@ int tag_count(char *p, char tag_start, char tag_end){
 int ns=0,ne=0;
 char oc='\0',c=*p,nc=*p++; p--;
 
-while(nc!=0){
+while(*p!=0){
 	if(oc!='\\' && *p==tag_start){ns++;}
 	if(oc!='\\' && *p==tag_end){ne++;}
 	p++;
 	p--;oc=*p;p++; 
 	p++;nc=*p;p--;
-	if(nc==0){break;}
-
-
+	if(*p==0){break;}
 	}
 	if(ns!=ne){printf("warning :no end tag or no start tag!!!\n");}
 	//printf("<==%i\n",ne);
@@ -187,18 +185,18 @@ psum=psum+psmes;
 tb->length++;
 i++;
 						}
-printf("1===%s|\n",p);
+//printf("1===%s|\n",p);
 p=p-psum;
-printf("2===%s|\n",p);
+//printf("2===%s|\n",p);
 
 bf[0]=tb->rep;
 bf[1]='\0';
 char* out;
-	printf("=>%s\n",p);
+	//printf("=>%s\n",p);
 i=0;
 while(i<tb->table_count){
-	printf("s->%s\n",tb->table_src[i]);
-	printf("r->%s\n",bf);
+	//printf("s->%s\n",tb->table_src[i]);
+	//printf("r->%s\n",bf);
 p=libc_string_replace(p,tb->table_src[i],bf);
 //free(p);
 //p=out;

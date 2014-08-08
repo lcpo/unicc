@@ -21,7 +21,6 @@ vect->tp=malloc(200);
 vect->otp=malloc(200);
 vect->c=malloc(200);
 ch_tab* tb=malloc(1);
-//tb->table_count=tag_count(np,'[',']');
 tb->table=malloc(100);
 tb->table_src=malloc(100);
 tb->flag_denial=malloc(100);
@@ -30,7 +29,7 @@ tb->length=0;
 tb->tag_start='[';
 tb->tag_end=']';
 
-preg(vect,tb,"^[a-z][a-z][a-z]","abcdef1");
+preg(vect,tb,"[a-z][a-z][a-z][a-z]e","abcdef");
 
 
 int i=0;
