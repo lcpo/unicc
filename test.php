@@ -3,7 +3,7 @@
 //preg_match("|colo[0-9]+?a[0-9]+ro[0-9]+ra|","colo331a210ro1235678ra",$out);
 //print_r($out);
 
-preg_match("|c.?f.|","abcdef",$out);
+preg_match("|c?..f|","abcdef",$out);
 print_r($out);
 
 /*

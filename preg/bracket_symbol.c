@@ -173,7 +173,7 @@ int i=0,plen=libc_strlen(p),psmes=0,psum=0;
 char* scl,bf[1];
 
 tb->table_count=tag_count(p,tb->tag_start,tb->tag_end);
-	printf("=>%i\n",tb->table_count);
+	//printf("=>%i\n",tb->table_count);
 
 while(i<tb->table_count){
 scl=parce_tag(p,tb->tag_start,tb->tag_end);
@@ -195,11 +195,11 @@ char* out;
 	//printf("=>%s\n",p);
 i=0;
 while(i<tb->table_count){
-	//printf("s->%s\n",tb->table_src[i]);
+	//printf("s->%s\n",tb->table[i]);
 	//printf("r->%s\n",bf);
-p=libc_string_replace(p,tb->table_src[i],bf);
+out=libc_string_replace(p,tb->table_src[i],bf);
 //free(p);
-//p=out;
+p=out;
 free(tb->table_src[i]);
 	i++;
 						}

@@ -143,6 +143,7 @@ if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 case '.':{
 	if(flag_esc==1){
 		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+		printf("%c,%c",s[z],c);
 		if(c!=s[z] && v_char_exists(vect)==true){printf("Report 2: no exists - \"%c\"!!! \n",c);return;}
 		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 		}else{
@@ -209,7 +210,14 @@ case '?':{
 			printf("?==%c,%c\n",nc,s[z]);
 		if(nc==s[z]){
 			i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;p++;p++;break;
-		}else{i--;i--;i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);p++;z++;break;}
+		}else
+		if(nc=='.'){if(s[z]!=e && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;p++;p++;break;}}
+		else
+		if(nc==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;p++;break;}	
+		else
+		{
+		i--;i--;
+		i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);p++;z++;break;}
 		//?	
 			}
 	p++;break;
@@ -232,7 +240,7 @@ case 17:{
 		if(c!=s[z] && v_char_exists(vect)==true){printf("Report 18: no exists - \"%c\"!!! \n",c);return;}
 		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 		}else{
-printf("cure:%i\n",cure);
+//printf("cure:%i\n",cure);
 if(cure==0){			
 if(vect->tp[i+1]==V_CHAR && s[z]!=end){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;break;}else
 if(vect->tp[i-1]==V_CHAR && s[z]!=end){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;break;}else
