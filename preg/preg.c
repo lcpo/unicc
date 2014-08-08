@@ -119,7 +119,7 @@ return;
 void preg(s_vect* vect,ch_tab* tb,char* pt,char* str){
 int strlen=libc_strlen(str),
  patlen=libc_strlen(pt),
-i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,back=0,old_i=0,old_z=0,count17=0;
+i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,back=0,old_i=0,old_z=0,cure=0,count17=0;
 char *p=malloc(patlen),*np=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
 libc_strcpy(s,str); libc_strcpy(np,pt);
 
@@ -146,9 +146,11 @@ case '.':{
 		if(c!=s[z] && v_char_exists(vect)==true){printf("Report 2: no exists - \"%c\"!!! \n",c);return;}
 		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 		}else{
+if(cure==0){			
 if(vect->tp[i+1]==V_CHAR && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}else
 if(vect->tp[i-1]==V_CHAR && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}else
 {i=preg_add(vect,0,0,i,V_POINT,V_NULL);z++;p++;break;}
+			}
 			 }
 	
 	p++;break;
@@ -225,17 +227,17 @@ case '[':{
 	}
 //----------------------------------------------------------------------
 case 17:{
-//	printf("str==%s\n",s+z);
-//i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;
-
 	if(flag_esc==1){
 		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
 		if(c!=s[z] && v_char_exists(vect)==true){printf("Report 18: no exists - \"%c\"!!! \n",c);return;}
 		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 		}else{
+printf("cure:%i\n",cure);
+if(cure==0){			
 if(vect->tp[i+1]==V_CHAR && s[z]!=end){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;break;}else
 if(vect->tp[i-1]==V_CHAR && s[z]!=end){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;break;}else
 {i=preg_add(vect,count17,z,i,VS_CLASS,V_NULL);z++;count17++;p++;break;}
+		} 
 			 }
 count17++;p++;
 break;
@@ -256,24 +258,26 @@ if(*p==0 && v_char_exists(vect)==false && flag_start==0 && flag_end==0){
 	z=0; p=p-i; i=0; count17=0;
 	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;}
 	if(*p==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;p++;}
+	cure++;
 																	   }
+																	   
 if(*p==0 && v_char_exists(vect)==false && flag_start==1 && flag_end==0){
 	z=0; p=p-i; i=0; count17=0;
 	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;}
 	if(*p==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;p++;}
+	cure++;
 																	   }
+																	   
 if(*p==0 && v_char_exists(vect)==false && flag_start==0 && flag_end==1){
 	z=strlen-1; count17--;
 	p=p-(i+flag_end); i--; //printf("===%c\n",s[z]);
 	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;p++;}
 	if(*p==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;p++;p++;}
-	
+	cure++;
 																       }
 //!TODO: ^...$														
 
 
-
-		   																	   																	   
 }
 
 point_reindex(vect,tb,s);

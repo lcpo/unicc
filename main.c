@@ -34,7 +34,7 @@ preg(vect,tb,"[a-z][a-z][a-z][a-z]$","abcdef");
 
 int i=0;
 while(i<vect->length){
-printf("%i|pos=%i|code=%c|type=%i|old_type=%i\n",i,vect->pos[i],vect->c[i],vect->tp[i],vect->otp[i]);
+printf("%i|pos=%i|code=%c:%i|type=%i|old_type=%i\n",i,vect->pos[i],vect->c[i],vect->c[i],vect->tp[i],vect->otp[i]);
 i++;
 					 }
 printf("%s\n",vect->c);
