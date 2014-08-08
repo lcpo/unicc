@@ -217,7 +217,8 @@ case '?':{
 		else
 		{
 		i--;i--;
-		i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);p++;z++;break;}
+		i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);p++;z++;break;
+		}
 		//?	
 			}
 	p++;break;
