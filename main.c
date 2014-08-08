@@ -29,7 +29,7 @@ tb->length=0;
 tb->tag_start='[';
 tb->tag_end=']';
 
-preg(vect,tb,"[a-z][a-z][a-z][a-z]e","abcdef");
+preg(vect,tb,"[a-z][a-z][a-z][a-z]$","abcdef");
 
 
 int i=0;

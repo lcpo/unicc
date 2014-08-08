@@ -62,7 +62,7 @@ i++;
 	}
 ///---------------------------------------------------------------------
 void point_reindex(s_vect* vect,ch_tab* tb,char* s){
-int i=0,co=0,fl=0;
+int i=0,fl=0;
 while(i<vect->length){
 if(vect->tp[i]==V_CHAR && vect->tp[i+1]==V_POINT){vect->c[i+1]=s[vect->pos[i]+1];vect->pos[i+1]=vect->pos[i]+1;	vect->tp[i+1]=V_CHAR;vect->otp[i+1]=V_POINT;}	
 
@@ -79,8 +79,8 @@ if(fl<1){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[
 	i++;
 	}
 	
-i=0;co=0;fl=0;
-while(i<vect->length){
+fl=0;
+while(i>0){
 	if(vect->tp[i]==V_CHAR && vect->tp[i-1]==V_POINT){
 		vect->c[i-1]=s[vect->pos[i]-1];
 		vect->pos[i-1]=vect->pos[i]-1;
@@ -88,10 +88,10 @@ while(i<vect->length){
 		vect->otp[i-1]=V_POINT;
 		}
 
-printf("%i|%i\n",vect->tp[i],vect->tp[i-1]);	
+//printf("%i|%i\n",vect->tp[i],vect->tp[i-1]);	
 if(vect->tp[i]==V_CHAR && vect->tp[i-1]==VS_CLASS){
 fl=is_tablae_symbol(tb,vect->c[i-1],s[vect->pos[i]-1]);
-printf("fl=%i\n",fl);
+//printf("fl=%i\n",fl);
 if(tb->flag_denial[vect->c[i-1]]==0){
 if(fl>0){
 	vect->c[i-1]=s[vect->pos[i]-1]; 
@@ -109,7 +109,7 @@ if(fl<1){
 		}
 		}		
 
-	i++;
+	i--;
 	}
 	
 return;	
@@ -125,7 +125,7 @@ libc_strcpy(s,str); libc_strcpy(np,pt);
 
 tb->table_count=tag_count(np,'[',']');
 p=bracket_table(np,tb);
-printf("rex==%s\n",p);
+//printf("rex==%s\n",p);
 
 
 char oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
@@ -263,7 +263,7 @@ if(*p==0 && v_char_exists(vect)==false && flag_start==1 && flag_end==0){
 	if(*p==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;p++;}
 																	   }
 if(*p==0 && v_char_exists(vect)==false && flag_start==0 && flag_end==1){
-	z=strlen-1; //count17=tb->table_count-1;
+	z=strlen-1; count17--;
 	p=p-(i+flag_end); i--; //printf("===%c\n",s[z]);
 	if(*p=='.'){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;p++;}
 	if(*p==17){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;p++;p++;}
