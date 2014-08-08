@@ -20,30 +20,27 @@ vect->pos=malloc(200);
 vect->tp=malloc(200);
 vect->otp=malloc(200);
 vect->c=malloc(200);
+ch_tab* tb=malloc(1);
+//tb->table_count=tag_count(np,'[',']');
+tb->table=malloc(100);
+tb->table_src=malloc(100);
+tb->flag_denial=malloc(100);
+tb->rep=17;
+tb->length=0;
+tb->tag_start='[';
+tb->tag_end=']';
+
+preg(vect,tb,"^[a-z][a-z][a-z]","abcdef1");
 
 
-char* np=malloc(100);
-np="[a-z][0-9][1-5][a-f].?e.";
-ch_tab* tb;
-printf("|%s|\n",np);
-
-table_init(np,tb,'[',']');
-
-np=bracket_table(np,tb);
-printf("|%s|\n",np);
-
-
-//preg(vect,"[a-z][0-9][1-5][a-f].?e.","abcdef");
-
-/*
 int i=0;
 while(i<vect->length){
-printf("%i|pos=%i|code=%c|type=%i|old_type=%i|fd=%i|tb=%s\n",i,vect->pos[i],vect->c[i],vect->tp[i],vect->otp[i]);
+printf("%i|pos=%i|code=%c|type=%i|old_type=%i\n",i,vect->pos[i],vect->c[i],vect->tp[i],vect->otp[i]);
 i++;
 					 }
 printf("%s\n",vect->c);
 //free_vect(vect);
-*/
+
 
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
 //preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");

@@ -19,7 +19,7 @@ typedef struct ch_tab{
 int rep;
 char** table_src;
 char** table;
-char* flag_denial;
+int* flag_denial;
 size_t table_count;
 size_t length;
 char tag_start;
@@ -56,16 +56,37 @@ i++;
 	return i;
 	}
 ///---------------------------------------------------------------------
-void point_reindex(s_vect* vect,char* s){
-int i=0,co=0;
+void point_reindex(s_vect* vect,ch_tab* tb,char* s){
+int i=0,co=0,fl=0;
 while(i<vect->length){
-	if(vect->tp[i]==V_CHAR && vect->tp[i+1]==V_POINT){vect->c[i+1]=s[vect->pos[i]+1];vect->pos[i+1]=vect->pos[i]+1;	vect->tp[i+1]=V_CHAR;vect->otp[i+1]=V_POINT;}	
+if(vect->tp[i]==V_CHAR && vect->tp[i+1]==V_POINT){vect->c[i+1]=s[vect->pos[i]+1];vect->pos[i+1]=vect->pos[i]+1;	vect->tp[i+1]=V_CHAR;vect->otp[i+1]=V_POINT;}	
+
+if(vect->tp[i]==V_CHAR && vect->tp[i+1]==VS_CLASS){
+
+fl=is_tablae_symbol(tb,vect->c[i+1],s[vect->pos[i]+1]);
+if(tb->flag_denial[vect->c[i+1]]==0){
+if(fl>0){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=VS_CLASS;}else{vect->c[i+1]=0;vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
+	}else{
+if(fl<1){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=VS_CLASS;}else{vect->c[i+1]=0;vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
+		}
+
+		}
 	i++;
 	}
 	
 i=0;co=0;
 while(i<vect->length){
-	if(vect->tp[i]==V_CHAR && vect->tp[i-1]==V_POINT){vect->c[i-1]=s[vect->pos[i]-1];vect->pos[i-1]=vect->pos[i]-1;	vect->tp[i-1]=V_CHAR;vect->otp[i-1]=V_POINT;}	
+	if(vect->tp[i]==V_CHAR && vect->tp[i-1]==V_POINT){vect->c[i-1]=s[vect->pos[i]-1];vect->pos[i-1]=vect->pos[i]-1;	vect->tp[i-1]=V_CHAR;vect->otp[i-1]=V_POINT;}
+	
+	if(vect->tp[i]==V_CHAR && vect->tp[i-1]==VS_CLASS){
+
+fl=is_tablae_symbol(tb,vect->c[i-1],s[vect->pos[i]-1]);
+if(tb->flag_denial[vect->c[i-1]]==0){
+if(fl>0){vect->c[i-1]=s[vect->pos[i]-1]; vect->pos[i-1]=vect->pos[i]-1;vect->tp[i-1]=V_CHAR;vect->otp[i-1]=VS_CLASS;}else{vect->c[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
+	}else{
+if(fl<1){vect->c[i-1]=s[vect->pos[i]-1]; vect->pos[i-1]=vect->pos[i]-1;vect->tp[i-1]=V_CHAR;vect->otp[i-1]=VS_CLASS;}else{vect->c[i-1]=0;vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
+		}
+		}		
 	i++;
 	}
 	
@@ -73,20 +94,21 @@ return;
 	}
 	
 ///---------------------------------------------------------------------
-void preg(s_vect* vect,char* pt,char* str){
+void preg(s_vect* vect,ch_tab* tb,char* pt,char* str){
 int strlen=libc_strlen(str),
  patlen=libc_strlen(pt),
 i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,back=0,old_i=0,old_z=0,count17=0;
 char *p=malloc(patlen),*np=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
 libc_strcpy(s,str); libc_strcpy(np,pt);
 
+p=bracket_table(np,tb);
+printf("rex==%s\n",p);
 
 
-exit(0);/*
 char oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
 while (*p!=e){
 travel3(p,oc,c,nc);
-point_reindex(vect,s);
+point_reindex(vect,tb,s);
 switch(*p){
 //----------------------------------------------------------------------
 case '\\':{if(flag_esc==0){flag_esc=1;}else{
@@ -180,9 +202,19 @@ case '[':{
 	}
 //----------------------------------------------------------------------
 case 17:{
-i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;
-count17++;
-p++;
+//	printf("str==%s\n",s+z);
+//i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;
+
+	if(flag_esc==1){
+		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+		if(c!=s[z] && v_char_exists(vect)==true){printf("Report 18: no exists - \"%c\"!!! \n",c);return;}
+		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
+		}else{
+if(vect->tp[i+1]==V_CHAR && s[z]!=end){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;break;}else
+if(vect->tp[i-1]==V_CHAR && s[z]!=end){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;break;}else
+{i=preg_add(vect,count17,z,i,VS_CLASS,V_NULL);z++;count17++;p++;break;}
+			 }
+count17++;p++;
 break;
 		}	
 //----------------------------------------------------------------------
@@ -214,11 +246,11 @@ if(*p==0 && v_char_exists(vect)==false && flag_start==0 && flag_end==1){
 //!TODO: ^...$																   																	   																	   
 }
 
-point_reindex(vect,s);
+point_reindex(vect,tb,s);
 
 free(s);
 free(p);
-free(bf);*/
+free(bf);
 return;
 	}
 ///------------------------------------------------------------
