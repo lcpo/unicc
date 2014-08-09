@@ -28,7 +28,7 @@ tb->rep=17;
 tb->length=0;
 tb->tag_start='[';
 tb->tag_end=']';
-
+   
 preg(vect,tb,"...","abccccdef");
 /*
 while(z<255){
