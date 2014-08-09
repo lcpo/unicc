@@ -29,9 +29,12 @@ tb->length=0;
 tb->tag_start='[';
 tb->tag_end=']';
 
-preg(vect,tb,"c?[a-b].f","abcdef");
-
-
+preg(vect,tb,"...","abccccdef");
+/*
+while(z<255){
+printf("%i|%c\n",z,z);
+z++;}
+*/
 int i=0;
 while(i<vect->length){
 printf("%i|pos=%i|code=%c:%i|type=%i|old_type=%i\n",i,vect->pos[i],vect->c[i],vect->c[i],vect->tp[i],vect->otp[i]);

@@ -3,103 +3,7 @@
  * выделить токен из строки паттерна
  * модифицировать строку паттерна
  */ 
- /*
-char end_step[]={'(','[','{','?','!','.','+','*'};
-///---------------------------------------------------------------------
-char end_step_others[]={')','}',']',' ','|',','};
-///---------------------------------------------------------------------
-static int is_end_step(char ch){int i=0;for(;i<8;i++){if(ch==end_step[i]){return ch;}}return -1;}
-///---------------------------------------------------------------------
-static int is_end_step_others(char ch){int i=0;for(;i<6;i++){if(ch==end_step_others[i]){return ch;}}return -1;}
-///---------------------------------------------------------------------
-*/ 
-int is_tablae_symbol(ch_tab* tb,int n,char ch){
-int ret=0,co=0,tblen=libc_strlen(tb->table[n]); 
-while(co<tblen){if(tb->table[n][co]==ch){ret++;break;}co++;}
-	return ret;
-														}
-///---------------------------------------------------------------------
-int add_tablae_symbol(s_vect* vect,ch_tab* tb, int tbn,char ch, int z, int i){
 
-int fl=is_tablae_symbol(tb,tbn,ch);
-if(tb->flag_denial[tbn]==0){
-if(fl>0){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{vect->c[i]=-1;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
-	}else{
-if(fl<1){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{vect->c[i]=-2;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
-		}
-return i;	
-	}
-
-///------------------------------------------------------------
-
-char* parce_tag(char* p,char tag_start, char tag_end){
-int plen=libc_strlen(p);
-char* scl=malloc(plen);
-int n=0,fl=1;
-char oc='\0',c=*p,nc=*p++; p--;
-
-if(*p!=tag_start){ 
-while(fl!=0){
-	p++;
-	p--;oc=*p;p++; 
-	p++;nc=*p;p--;
-	if(oc!='\\' && *p==tag_start){fl=0;break;}
-	if(*p=='\0'){fl=0;break;}
-
-	}
-}
-
-while(*p!='\0'){
-	//printf("->%c\n",*p);
-p--;oc=*p;p++;
-p++;nc=*p;p--;
-if(*p=='\\' && nc=='\\'){
-	scl[n]=18;n++;p++;oc=18;p++;p++;nc=*p;
-	}else if(oc!='\\' && *p==tag_start){
-		scl[n]=*p;n++;
-		p--;oc=*p;p++;p++;nc=*p;p--;
-		}//else if(oc!='\\' && *p==' '){p--;oc=*p;p++;p++;nc=*p;p--;}
-		else if(oc!='\\' && *p==tag_end){scl[n]=*p;break;}else if(p=='\0'){
-printf("error: no closing character '%c'!!!\n",tag_end); return scl;
-}else{scl[n]=*p;n++;}
-p++;
-				}
-				p++;
-return scl;	
-													}
-///------------------------------------------------------------
-int tag_count(char *p, char tag_start, char tag_end){
-int ns=0,ne=0;
-char oc='\0',c=*p,nc=*p++; p--;
-
-while(*p!=0){
-	if(oc!='\\' && *p==tag_start){ns++;}
-	if(oc!='\\' && *p==tag_end){ne++;}
-	p++;
-	p--;oc=*p;p++; 
-	p++;nc=*p;p--;
-	if(*p==0){break;}
-	}
-	if(ns!=ne){printf("warning :no end tag or no start tag!!!\n");}
-	//printf("<==%i\n",ne);
-//	p=p-ne;
-	return ne;	
-	}
-///------------------------------------------------------------
-void table_init(char* p, ch_tab* tb, char tag_start, char tag_end){ 
-tb->table_count=tag_count(p,tag_start,tag_end);
-tb->table=malloc(tb->table_count);
-tb->table_src=malloc(tb->table_count);
-tb->flag_denial=malloc(tb->table_count);
-tb->rep=17;
-tb->length=0;
-tb->tag_start=tag_start;
-tb->tag_end=tag_end;
-return;
-																	}
-
-
-///------------------------------------------------------------
 char* bracket_string(ch_tab *tb,char* scl){
 int plen=libc_strlen(scl)+2;				
 int a=0,fl1=0,co=0,n=0,z=0;
@@ -112,8 +16,8 @@ scl--; oscl=*scl; scl++;
 scl++; nscl=*scl; scl--;
 if(oscl!='\\' && *scl==' '){scl++;continue;}
 if(oscl!='\\' && *scl=='^'){tb->flag_denial[tb->length]=1;scl++;continue;}
-if(oscl!='\\' && *scl==18){table[a]='\\';a++;}
-if(oscl=='\\' && *scl==18){table[a]=18;	a++;}
+if(oscl!='\\' && *scl==1){table[a]='\\';a++;}
+if(oscl=='\\' && *scl==1){table[a]=1;	a++;}
 if(oscl=='\\' && *scl=='-' && libc_isalpha(nscl)!=0){table[a]=nscl;a++;}
 //if(oscl=='\\' && *scl=='-' && libc_isdigit(nscl)!=0){table[a]=nscl;a++;}
 if(oscl=='\\' && *scl=='-'){table[a]=*scl;a++;}
