@@ -187,7 +187,7 @@ psum=psum+psmes;
 tb->length++;
 i++;
 						}
-//printf("1===%s|\n",p);
+//printf("1===%s|\n",p); 
 p=p-psum;
 //printf("2===%s|\n",p);
 
