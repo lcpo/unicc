@@ -9,8 +9,6 @@
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 //http://www.illusionsphotographic.com/analog/src/pcre/
 
-// ~ подлежит обязательному экранированию для получения этого символа иначе он будет использован в качестве \
-
 ///------------------------------------------------------------																		
 int main(int argc, char** argv) {
 int z=0; int co=0;
