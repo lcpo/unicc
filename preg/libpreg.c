@@ -11,9 +11,9 @@ while(i<vect->length){if(vect->tp[i]==V_POINT){return true;} i++;}
 return false;		
 	}
 ///---------------------------------------------------------------------
-bool vs_classes_exists(s_vect* vect){
+bool v_classes_exists(s_vect* vect){
 int i=0;
-while(i<vect->length){if(vect->tp[i]==VS_CLASS){return true;} i++;}
+while(i<vect->length){if(vect->tp[i]==V_CLASS){return true;} i++;}
 return false;		
 	}
 ///---------------------------------------------------------------------
@@ -27,9 +27,9 @@ int add_tablae_symbol(s_vect* vect,ch_tab* tb, int tbn,char ch, int z, int i){
 
 int fl=is_tablae_symbol(tb,tbn,ch);
 if(tb->flag_denial[tbn]==0){
-if(fl>0){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{vect->c[i]=-1;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
+if(fl>0){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_CLASS;i++;}else{vect->c[i]=-1;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
 	}else{
-if(fl<1){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=VS_CLASS;i++;}else{vect->c[i]=-2;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
+if(fl<1){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_CLASS;i++;}else{vect->c[i]=-2;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
 		}
 return i;	
 	}
@@ -120,13 +120,13 @@ int i=0,fl=0;
 while(i<vect->length){
 if(vect->tp[i]==V_CHAR && vect->tp[i+1]==V_POINT){printf("pfl:reindex-next\n");vect->c[i+1]=s[vect->pos[i]+1];vect->pos[i+1]=vect->pos[i]+1;	vect->tp[i+1]=V_CHAR;vect->otp[i+1]=V_POINT;}	
 
-if(vect->tp[i]==V_CHAR && vect->tp[i+1]==VS_CLASS){
+if(vect->tp[i]==V_CHAR && vect->tp[i+1]==V_CLASS){
 
-fl=is_tablae_symbol(tb,vect->c[i+1],s[vect->pos[i]+1]);
-if(tb->flag_denial[vect->c[i+1]]==0){
-if(fl>0){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=VS_CLASS;}else{vect->c[i+1]='#';vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
+fl=is_tablae_symbol(tb,vect->pos[i+1],s[vect->pos[i]+1]);
+if(tb->flag_denial[vect->pos[i+1]]==0){
+if(fl>0){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=V_CLASS;}else{vect->c[i+1]=1;vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
 	}else{
-if(fl<1){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=VS_CLASS;}else{vect->c[i+1]='@';vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
+if(fl<1){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=V_CLASS;}else{vect->c[i+1]=1;vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
 		}
 
 		}
@@ -143,23 +143,23 @@ while(i>0){
 		}
 
 //printf("%i|%i\n",vect->tp[i],vect->tp[i-1]);	
-if(vect->tp[i]==V_CHAR && vect->tp[i-1]==VS_CLASS){
-fl=is_tablae_symbol(tb,vect->c[i-1],s[vect->pos[i]-1]);
+if(vect->tp[i]==V_CHAR && vect->tp[i-1]==V_CLASS){
+fl=is_tablae_symbol(tb,vect->pos[i-1],s[vect->pos[i]-1]);
 //printf("fl=%i\n",fl);
-if(tb->flag_denial[vect->c[i-1]]==0){
+if(tb->flag_denial[vect->pos[i-1]]==0){
 if(fl>0){
 	vect->c[i-1]=s[vect->pos[i]-1]; 
 	vect->pos[i-1]=vect->pos[i]-1;
 	vect->tp[i-1]=V_CHAR;
-	vect->otp[i-1]=VS_CLASS;
-	}else{vect->c[i-1]='#';vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
+	vect->otp[i-1]=V_CLASS;
+	}else{vect->c[i-1]=1;vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
 	}else{
 if(fl<1){
 	vect->c[i-1]=s[vect->pos[i]-1];
 	vect->pos[i-1]=vect->pos[i]-1;
 	vect->tp[i-1]=V_CHAR;
-	vect->otp[i-1]=VS_CLASS;
-	}else{vect->c[i-1]='@';vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
+	vect->otp[i-1]=V_CLASS;
+	}else{vect->c[i-1]=1;vect->pos[i-1]=0;vect->tp[i-1]=0;vect->otp[i-1]=0;}
 		}
 		}		
 

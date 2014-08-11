@@ -22,12 +22,12 @@ ch_tab* tb=malloc(1);
 tb->table=malloc(100);
 tb->table_src=malloc(100);
 tb->flag_denial=malloc(100);
-tb->rep=17;
+tb->rep=1;
 tb->length=0;
 tb->tag_start='[';
 tb->tag_end=']';
      
-preg(vect,tb,".*","abccccdef");
+preg(vect,tb,"a.+?c+?[a-z]..","abccccdef");
 /*
 while(z<255){
 printf("%i|%c\n",z,z);
