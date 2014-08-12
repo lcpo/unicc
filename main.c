@@ -11,34 +11,17 @@
 
 ///------------------------------------------------------------																		
 int main(int argc, char** argv) {
-int z=0; int co=0;
 
-s_vect* vect=malloc(1);
-vect->pos=malloc(200);
-vect->tp=malloc(200);
-vect->otp=malloc(200);
-vect->c=malloc(200);
-ch_tab* tb=malloc(1);
-tb->table=malloc(100);
-tb->table_src=malloc(100);
-tb->flag_denial=malloc(100);
-tb->rep=1;
-tb->length=0;
-tb->tag_start='[';
-tb->tag_end=']';
+
      
-preg(vect,tb,"a.+?c+?[a-z]..","abccccdef");
+s_vect* vect=preg("^ab[c]*[0-9]*[a-z]..","abcccc12345678def");
 /*
+int z=0;
 while(z<255){
 printf("%i|%c\n",z,z);
 z++;}
 */
-int i=0;
-while(i<vect->length){
-printf("%i|pos=%i|code=%c:%i|type=%i|old_type=%i\n",i,vect->pos[i],vect->c[i],vect->c[i],vect->tp[i],vect->otp[i]);
-i++;
-					 }
-printf("%s\n",vect->c);
+print_vect(vect);
 //free_vect(vect);
 
 
