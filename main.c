@@ -14,7 +14,8 @@ int main(int argc, char** argv) {
 
 
      
-s_vect* vect=preg("^ab[c]*[0-9]*[a-z]..","abcccc12345678def");
+//s_vect* vect=preg("^ab[c]*[0-9].*[a-z]..","abcccc12345678def");
+s_vect* vect=preg("[0-9][0-9][0-9][0-9][0-9]","abcccc12345678def");
 /*
 int z=0;
 while(z<255){

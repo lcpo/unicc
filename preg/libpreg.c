@@ -35,6 +35,18 @@ return i;
 	}
 
 ///------------------------------------------------------------
+int tablae_symbol(ch_tab* tb, int tbn,char ch){
+
+int fl=is_tablae_symbol(tb,tbn,ch);
+if(tb->flag_denial[tbn]==0){
+if(fl>0){return 1;}else{return 0;}
+	}else{
+if(fl<1){return 1;}else{return 0;}
+		}
+
+	}
+
+///------------------------------------------------------------
 
 char* parce_tag(char* p,char tag_start, char tag_end){
 int plen=libc_strlen(p);

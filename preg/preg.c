@@ -74,7 +74,7 @@ int isbreak(int ch){
 int i;
 for(i=0;i<5;i++){
 if(break_symbols[i]==ch){return 1;}	
-	}
+				}
 return 0;		
 					}
 ///---------------------------------------------------------------------
@@ -86,6 +86,10 @@ while(*p!=0){
 
 return;
 }	
+///---------------------------------------------------------------------
+int class_pos(ch_tab* tb,int tbid,char* s){ //получить позицию класса относительно другого неопределенного символа.
+	
+	}
 ///---------------------------------------------------------------------
 
 
@@ -246,18 +250,40 @@ case '{':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpo
 //----------------------------------------------------------------------
 case '[':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report 17: no exists - \"%c\"!!! \n",c);return vect;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
 //----------------------------------------------------------------------
+
+///!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 case 1:{
 	if(flag_esc==1){
 		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
 		if(c!=s[z] && v_char_exists(vect)==true){printf("Report 18: no exists - \"%c\"!!! \n",c);return vect;}
 		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
 		}else{
-if(cure==0){			
+		//----------------	
+		if(v_char_exists(vect)==false){
+		int fltbco=0,fltb=0,z0=0,z1=0;
+		z=0;
+while(*p==1){z0++;p++;}
+p=p-z0;fltbco=count17;
+
+while(fltb<z0){
+if(tablae_symbol(tb,fltbco,s[z])==1){fltb++;fltbco++;}
+
+if(fltb==z0 && fltbco==1){i=add_tablae_symbol(vect,tb,fltbco-1,s[z],z,i);break;}
+if(fltb==z0 && fltbco>1){i=add_tablae_symbol(vect,tb,fltbco-1,s[z],z,i);break;}
+printf("fltbco=%i|fltb=%i|z=%i|s=%c\n",fltbco,fltb,z,s[z]);
+z++;z1++;
+}
+
+p++;break;
+									  }	
+		//----------------
+if(cure==0){
 if(vect->tp[i+1]==V_CHAR && s[z]!=end){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;break;}else
 if(vect->tp[i-1]==V_CHAR && s[z]!=end){i=add_tablae_symbol(vect,tb,count17,s[z],z,i);z++;count17++;p++;break;}else
 {printf("cfl1:null\n");
 	i=preg_add(vect,1,count17,i,V_CLASS,V_NULL);z++;count17++;p++;break;}
-		} 
+			} 
 			 }
 count17++;p++;
 break;
@@ -333,8 +359,9 @@ travel3(p,oc,c,nc);
 //if(vect->otp[n]==V_CLASS){count17++;}
 switch(*p){
 case '?':{p++;n++;break;}
+
 case '*':{
-	printf("%c|otpold:%i|tpold:%i|otpnew:%i|tpnew:%i|\n",*p,vect->otp[n-1],vect->tp[n-1],vect->otp[n+1],vect->tp[n+1]);
+	//printf("%c|otpold:%i|tpold:%i|otpnew:%i|tpnew:%i|\n",*p,vect->otp[n-1],vect->tp[n-1],vect->otp[n+1],vect->tp[n+1]);
 p++;
 if(nc=='?' && c!='\\'){p++;flag_quest=1;}
 gainvalknownbreak(bf,p); 
@@ -392,13 +419,19 @@ n++;break;
 					}
 													}
 //!************************************************************
+
 if(vect->otp[n-1]==V_CLASS && vect->tp[n-1]==V_CHAR && vect->tp[n+1]!=V_CHAR){
-printf("ex|table=%s|flag_denial=%i|%s|\n",tb->table[vect->pos[n+1]],tb->flag_denial[vect->pos[n+1]],s[z]);
+int r=0;
+
+printf("ex|table=%s|flag_denial=%i|%c|\n",tb->table[vect->pos[n+1]],tb->flag_denial[vect->pos[n+1]],s[z]);
+printf("%i",tablae_symbol(tb, vect->pos[n+1],s[z]));
 //создать динамический подставляемый буфер неопределенной длинны
-//и вести сравнение с ним.	
+//и вести сравнение с ним.
+
+																			 }
+//!************************************************************	
+	n++;p++;break;
 	}
-//!************************************************************													
-	n++;p++;break;}
 case '+':{p++;n++;break;}	
 default:{
 	if(c!=s[z] && v_char_exists(new_vect)==false){z=libc_chrpos(s,c);}
@@ -408,12 +441,9 @@ default:{
 	}
 new_vect->length=i;
 }
-
 free(s);
 free(bf);
 return new_vect;
 	}
-
-
-///---------------------------------------------------------------------
+//!------------------------------------------------------------
 
