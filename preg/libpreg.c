@@ -23,13 +23,16 @@ while(co<tblen){if(tb->table[n][co]==ch){ret++;break;}co++;}
 	return ret;
 														}
 ///---------------------------------------------------------------------
-int add_tablae_symbol(s_vect* vect,ch_tab* tb, int tbn,char ch, int z, int i){
+int add_tablae_symbol(s_vect* vect,ch_tab* tb, int tbn,char ch, int z, int i,int addflag){
 
 int fl=is_tablae_symbol(tb,tbn,ch);
 if(tb->flag_denial[tbn]==0){
-if(fl>0){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_CLASS;i++;}else{vect->c[i]=-1;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
+if(fl>0){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_CLASS;i++;}else{
+	if(addflag==1){vect->c[i]=-1;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
+	}
 	}else{
-if(fl<1){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_CLASS;i++;}else{vect->c[i]=-2;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
+if(fl<1){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_CLASS;i++;}else{
+	if(addflag==1){vect->c[i]=-2;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}}
 		}
 return i;	
 	}
