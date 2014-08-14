@@ -111,29 +111,4 @@ return 0;
 
 
 
-/*
-int i=0;
-char* test="1234567890";
-while(i<10){
-printf("%s\n",test);
-test++;
-	
-	i++;}
-*/
-/*
-int i=0;
-char* test="1234567890";
-while(i<10){
-char* new=libc_strpart(test,0, libc_strlen(test)-i);
-printf("%s\n",new);
-free(new);
-i++;}
-*/
-
- 
- 
-
-
-
-
 
