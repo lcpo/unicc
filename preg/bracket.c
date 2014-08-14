@@ -19,7 +19,6 @@ if(oscl!='\\' && *scl=='^'){tb->flag_denial[tb->length]=1;scl++;continue;}
 if(oscl!='\\' && *scl==1){table[a]='\\';a++;}
 if(oscl=='\\' && *scl==1){table[a]=1;	a++;}
 if(oscl=='\\' && *scl=='-' && libc_isalpha(nscl)!=0){table[a]=nscl;a++;}
-//if(oscl=='\\' && *scl=='-' && libc_isdigit(nscl)!=0){table[a]=nscl;a++;}
 if(oscl=='\\' && *scl=='-'){table[a]=*scl;a++;}
 if(oscl=='\\' && (*scl=='[' || *scl==']')){table[a]=*scl;a++;}
 if(oscl!='\\' && (*scl=='[' || *scl==']')){printf("error: character is not shielded '%c' !!!\n",*scl);return scl;}
@@ -73,16 +72,16 @@ co++; scl++;
 	}																		
 	
 ///------------------------------------------------------------	
-
-char* bracket_table(char* p,ch_tab *tb){
+/*
+char* bracket_table(char* p,ch_tab *tb, char tag_start, char tag_end){
 int i=0,plen=libc_strlen(p),psmes=0,psum=0; 
 char* scl,bf[1];
 
-tb->table_count=tag_count(p,tb->tag_start,tb->tag_end);
-	//printf("=>%i\n",tb->table_count);
+tb->table_count=tag_count(p,tag_start,tag_end);
+
 
 while(i<tb->table_count){
-scl=parce_tag(p,tb->tag_start,tb->tag_end);
+scl=parce_tag(p,tag_start,tag_end);
 tb->table[tb->length]=bracket_string(tb,scl);
 tb->table_src[tb->length]=scl;
 psmes=libc_strpos(p,scl)+libc_strlen(scl);
@@ -91,9 +90,7 @@ psum=psum+psmes;
 tb->length++;
 i++;
 						}
-//printf("1===%s|\n",p); 
 p=p-psum;
-//printf("2===%s|\n",p);
 
 bf[0]=tb->rep;
 bf[1]='\0';
@@ -101,8 +98,7 @@ char* out;
 	//printf("=>%s\n",p);
 i=0;
 while(i<tb->table_count){
-	//printf("s->%s\n",tb->table[i]);
-	//printf("r->%s\n",bf);
+
 out=libc_string_replace(p,tb->table_src[i],bf);
 //free(p);
 p=out;
@@ -111,5 +107,5 @@ free(tb->table_src[i]);
 						}
 
 return p;	
-										}
+										}*/
 ///------------------------------------------------------------	

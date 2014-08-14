@@ -1,5 +1,5 @@
 #include "unicc.c"
-#include "json/json.c"
+//#include "json/json.c"
 #include "preg/preg.c"
 
 //#include "external/pcre/pcre.h"
@@ -8,12 +8,12 @@
 //void __stack_chk_fail(void){return;}
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 //http://www.illusionsphotographic.com/analog/src/pcre/
-#include "preg.h"
+//#include "preg.h"
 ///------------------------------------------------------------																		
 int main(int argc, char** argv) {
 
 //s_vect* vect=preg("^ab[c]*[0-9].*[a-z]..","abcccc12345678def");
-s_vect* vect=preg("[a-z][0-9]","abcccc12345678tef");
+s_vect* vect=preg("ab...[a-z]12[0-9]te","abcccc12345678tef");
 /*
 int z=0;
 while(z<255){
@@ -21,7 +21,7 @@ printf("%i|%c\n",z,z);
 z++;}
 */
 print_vect(vect);
-//free_vect(vect);
+free_vect(vect);
 
 
 //preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");

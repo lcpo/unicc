@@ -8,8 +8,7 @@
 
 #define _(x) _preg_ ## x
 
-typedef struct
-{
+typedef struct{
 	union
 	{
 		struct
@@ -22,8 +21,7 @@ typedef struct
 	char typ;
 }_(token);
 
-typedef struct
-{
+typedef struct{
 	long  cycle;
 	long  alter;
 	long  chain;
@@ -31,8 +29,7 @@ typedef struct
 	long *point;
 }_(track);
 
-typedef struct
-{
+typedef struct{
 	long l,r;
 	long i,o;
 }_(solve);
@@ -43,16 +40,14 @@ typedef struct
 	long   len;
 }_(table);
 
-typedef struct
-{
+typedef struct{
 	_(track) *trk;
 	long      len;
 	long      etr;
 	long      out;
 }_(NFA);
 
-typedef struct
-{
+typedef struct{
 	long *chr;
 	long *end;
 	long *tbl;
@@ -60,25 +55,21 @@ typedef struct
 	long  len;
 }_(DFA);
 
-typedef struct
-{
+typedef struct{
 	char    bgn;
 	_(DFA) *dfa;
 	char    end;
 }regex;
 
-typedef struct
-{
+typedef struct{
 	long pos;
 	long len;
 }group;
 
-static void _(SetAs)(long *a,const long *b,long l)
-{
+static void _(SetAs)(long *a,const long *b,long l){
 	while(l){--l,a[l] = b[l];}
 }
-static void _(SetAsNot)(long *a,const long *b,long l)
-{
+static void _(SetAsNot)(long *a,const long *b,long l){
 	while(l){--l,a[l] = ~b[l];}
 }
 static void _(SetBoth)(long *a,const long *b,const long *c,long l)
@@ -838,6 +829,7 @@ extern group preg_find(const regex *reg,const char *str)
 	ans.pos=ans.len=-1;
 	return ans;
 }
+/*
 extern void preg_show(const regex *reg,long typ)
 {
 	long i,j,t;
@@ -877,7 +869,7 @@ extern void preg_show(const regex *reg,long typ)
 	printf("\n");
 	printf("head : %d\n",(int)reg->bgn);
 	printf("tail : %d\n",(int)reg->end);
-}
+}*/
 extern void preg_free(regex *reg)
 {
 	if(reg==NULL)return;

@@ -5,59 +5,14 @@
 ///---------------------------------------------------------------------
 #include "bracket.c"
 ///---------------------------------------------------------------------
-/*
-int step_symbol(int flag,s_vect* vect, char* s, char* p,char oc,char nc,char c, char end, int i){
-int plen=libc_strlen(p);
-char* bf=malloc(plen);
 
-int z=vect->pos[i-1],n=0;
-if(*p==s[z+1] && vect->otp[i-1]==V_CHAR){free(bf);return i;}
-if(*p!=s[z+1] && vect->otp[i-1]==V_CHAR){
-if(flag==0){vect->c[i]=0;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i--;}
-if(flag==1){p++;travel3(p,oc,c,nc);i--;} 
-free(bf); return i;
-}
-
-//------------------
-if(vect->otp[i-1]==V_POINT){
-	printf("1|%c\n",oc);
-if(nc=='?' && c!='\\'){
-p++;
-n=0; int fl=0;
-while(*p!=0){
-	if(*p!=0){bf[n]=*p;n++;p++;}else{fl=1;break;}}
-
-do{
-vect->c[i]=s[vect->pos[i-1]+1];vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;vect->otp[i]=V_POINT;i++;z++;
-}while(libc_strncmp(s+z,bf,n)!=0 && s[z]!=end && s[z]!=0);
-	
-}else{
-
-n=0; int fl=0; 
-printf("==%s\n",p);
-while(*p!=0){if(*p!=0){bf[n]=*p;n++;p++;}else{fl=1;break;}}
-do{
-vect->c[i]=s[vect->pos[i-1]+1];vect->pos[i]=vect->pos[i-1]+1;vect->tp[i]=V_CHAR;vect->otp[i]=V_POINT;i++;z++;
-}while(libc_substr_count(s+(z+1),bf)>0 && s[z+n]!=end && s[z]!=0);
-
-	}
-
-free(bf);
-
-return i;
-							}
-
-									
-free(bf);		
-return i;
-																		}
 
 //[] = 1
 //.	 = 2
 //{} = 3
 //() = 4
 
-*/
+
 ///---------------------------------------------------------------------
 void print_vect(s_vect* vect){
 int i=0;
@@ -69,10 +24,10 @@ printf("%s\n",vect->c);
 return;
 	}
 ///---------------------------------------------------------------------
-const char break_symbols[]={'*','+',1,2,3,4};
+const char break_symbols[]={'*','+','?',1,2,3,4};
 int isbreak(int ch){
 int i;
-for(i=0;i<5;i++){
+for(i=0;i<6;i++){
 if(break_symbols[i]==ch){return 1;}	
 				}
 return 0;		
@@ -87,71 +42,85 @@ while(*p!=0){
 return;
 }	
 ///---------------------------------------------------------------------
-int class_pos(ch_tab* tb,int tbid,char* s){ //получить позицию класса относительно другого неопределенного символа.
-	
-	}
+int count_char_table(ch_tab* tb,char* s,int id,char end){
+	int co=0,i=0;
+	while(*s!=0 && *s!=end){
+		if(is_tablae_symbol(tb,id,*s)==1){co++;}
+		s++;i++;}
+		s=s-i;
+	return co;
+															}
+															
 ///---------------------------------------------------------------------
-
+void add_poscharto_table(ch_tab* tb,char* s,int id,char end){
+int co=count_char_table(tb,s,id,end),z=0,i=0;
+tb->pos[id]=malloc(co);
+while(*s!=0 && *s!=end){
+if(is_tablae_symbol(tb,id,*s)==1){tb->pos[id][z]=i;z++;}
+s++;i++;
+}
+s=s-i;
+return;	
+	}
 
 s_vect* preg(char* pt,char* str){
-int strlen=libc_strlen(str),
-patlen=libc_strlen(pt);
-//----------------------
-s_vect* vect=malloc(1);
-vect->pos=malloc(strlen);
-vect->tp=malloc(strlen);
-vect->otp=malloc(strlen);
-vect->c=malloc(strlen);
-//----------------------
-s_vect* new_vect=malloc(1);	
-new_vect->pos=malloc(strlen);
-new_vect->tp=malloc(strlen);
-new_vect->otp=malloc(strlen);
-new_vect->c=malloc(strlen);
-//----------------------
-ch_tab* tb=malloc(1);
-tb->table=malloc(1024);
-tb->table_src=malloc(1024);
-tb->flag_denial=malloc(1024);
-tb->rep=1;
-tb->length=0;
-tb->tag_start='[';
-tb->tag_end=']';
-//----------------------
-
-int i=0,z=0,n=0,co=0,flag_esc=0,count_esc=0,flag_start=0,flag_end=0,flag_star=0,flag_plus=0,
-old_i=0,old_z=0,cure=0,count17=0;
-char *p=malloc(patlen),*np=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen);
+int strlen=libc_strlen(str),patlen=libc_strlen(pt),i=0,z=0,n=0,co=0,count_esc=0,
+flag_esc=0,flag_start=0,flag_end=0,flag_star=0,flag_plus=0,flag_quest=0,flag_step=0,
+old_i=0,old_z=0,old_n,cure=0,count17=0;
+char *p=malloc(patlen),*np=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen),oc='\0',end='\n',e='\0',c,nc;
 libc_strcpy(s,str); 
 libc_strcpy(np,pt);
+//----------------------
+s_vect* vect=malloc(1); vect->pos=malloc(strlen); vect->tp=malloc(strlen); vect->otp=malloc(strlen); vect->c=malloc(strlen);
+//----------------------
+s_vect* new_vect=malloc(1); new_vect->pos=malloc(strlen); new_vect->tp=malloc(strlen); new_vect->otp=malloc(strlen); new_vect->c=malloc(strlen);
+//----------------------
+ch_tab* tb=malloc(1);
+tb->table=malloc(256);
+tb->pos=malloc(256);
+tb->flag_denial=malloc(256);
+tb->rep=1;
+tb->length=0;
 
-tb->table_count=tag_count(np,'[',']'); 
-np=bracket_table(np,tb);
-char oc='\0',end='\n',e='\0',c=*np,nc=*np++; np--;
+//----------------------
+//tb->table_count=tag_count(np,'[',']'); 
+//np=bracket_table(np,tb,'[',']');
+c=*np,nc=*np++; np--;
+//----------------------
 
+//!------------------------------------------------------------
 while (*np!=e){
 travel3(np,oc,c,nc);
 switch(*np){
-	
-case '\\':{
-if(flag_esc==0){flag_esc=1;}else{if(c==s[z]){flag_esc=0;}z++;}
-p[n]=*np;n++;
-np++;break;
-}
-case '^':{
-if(flag_esc==1){if(c==s[z]){flag_esc=0;p[n]=*np;n++;}z++;}else{flag_start=1;}
-np++;break;
-}
-case '$':{
-if(flag_esc==1){if(c==s[z]){flag_esc=0;p[n]=*np;n++;}z++;}else{flag_end=1;}
-np++;break;
-}
+case '\\':{if(flag_esc==0){flag_esc=1;}else{if(c==s[z]){flag_esc=0;}z++;}p[n]=*np;n++;np++;break;}
+case '^':{if(flag_esc==1){if(c==s[z]){flag_esc=0;p[n]=*np;n++;}z++;}else{flag_start=1;}np++;break;}
+case '*':{if(flag_esc==0){flag_star=1;}p[n]=*np;n++;np++;break;}
+case '+':{if(flag_esc==0){flag_plus=1;}p[n]=*np;n++;np++;break;}
+case '?':{if(flag_esc==0){flag_quest=1;}p[n]=*np;n++;np++;break;}
+case '[':{if(flag_esc==0){
+	p[n]=1;n++;
+	char *bsk=parce_tag(np,*np,']');
+	uni bsk_len=libc_strlen(bsk);
+	tb->table[tb->length]=bracket_string(tb,bsk);
+	add_poscharto_table(tb,s,tb->length,end);
+	free(bsk);
+	np=np+bsk_len,tb->length++;
+	break;
+}np++;break;}
+case '.':{if(flag_esc==0){p[n]=2;n++;}np++;break;}
+case '{':{if(flag_esc==0){flag_step=1;p[n]=3;n++;}np++;break;}
+case '$':{if(flag_esc==1){if(c==s[z]){flag_esc=0;p[n]=*np;n++;}z++;}else{flag_end=1;}np++;break;}
 default:{p[n]=*np;n++;np++;break;}	
-	}
+		   }
 	
 			 }
-//!-----------------------------
-n=0; z=0;
+//!------------------------------------------------------------
+while(i<libc_strlen(p)){
+printf("%c\n",p[i]);
+i++;
+}
+exit(0);/*
+n=0; z=0; flag_esc=0;
 oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
 //!-----------------------------
 while (*p!=e){
@@ -187,14 +156,14 @@ case '^':{
 		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
 		if(c!=s[z] && v_char_exists(vect)==true){printf("Report 3: no exists - \"%c\"!!! \n",c);return vect;}
 		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
-		}
+		           }
 		p++;break;}
 //----------------------------------------------------------------------
 case '$':{if(flag_esc==1){
 	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
 	if(c!=s[z] && v_char_exists(vect)==true){printf("Report 4: no exists - \"%c\"!!! \n",c);return vect;}
 	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
-	}
+						  }
 	p++;break;}
 //----------------------------------------------------------------------
 case 'b':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report 5: no exists - \"%c\"!!! \n",c);return vect;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}}p++;break;}	
@@ -203,11 +172,9 @@ case 'B':{if(flag_esc==0){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpo
 //----------------------------------------------------------------------
 case 'd':{if(flag_esc==0){
 	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
-	//if(c!=s[z] && v_char_exists(vect)==true){printf("Report 7: no exists - \"%c\" \"%c\"!!! \n",c,s[z]);return vect;}
-	//if(c==s[z]){
-		i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;
-		//}
-	}
+	if(c!=s[z] && v_char_exists(vect)==true){printf("Report 7: no exists - \"%c\" \"%c\"!!! \n",c,s[z]);return vect;}
+	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}
+						  }
 	p++;break;
 	}
 //----------------------------------------------------------------------
@@ -226,30 +193,30 @@ case '*':{
 	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
 	if(c!=s[z] && v_char_exists(vect)==true){printf("Report 13: no exists - \"%c\"!!! \n",c);return vect;}
 	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
-	}else{
-		if(oc=='.'){flag_star=1;}else if(oc==1){flag_star=1;}else{flag_star=0;}
-		i=preg_add(vect,*p,-1,i,V_STAR,V_NULL);p++; break;}p++;break;} 
+	}else{i=preg_add(vect,*p,-1,i,V_STAR,V_NULL);p++; break;}
+	p++;break;
+	} 
 //----------------------------------------------------------------------
 case '+':{
-if(flag_esc==1){
-if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
-if(c!=s[z] && v_char_exists(vect)==true){printf("Report 14: no exists - \"%c\"!!! \n",c);return vect;}
-if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
-}else{
-	if(oc=='.'){flag_plus=1;}else if(oc==1){flag_plus=1;}else{flag_plus=0;}
-	i=preg_add(vect,*p,-1,i,V_PLUS,V_NULL);p++;break;}p++;break;}
+	if(flag_esc==1){
+	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+	if(c!=s[z] && v_char_exists(vect)==true){printf("Report 14: no exists - \"%c\"!!! \n",c);return vect;}
+	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
+	}else{	i=preg_add(vect,*p,-1,i,V_PLUS,V_NULL);p++;break;}
+	p++;break;
+	}
 //----------------------------------------------------------------------
 case '?':{
 	if(flag_esc==1){
-		if(c!=s[z] && v_char_exists(vect)==true){printf("Report 15: no exists - \"%c\"!!! \n",c);return vect;}
-		if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
-		if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
-		}else{i=preg_add(vect,*p,-1,i,V_QUEST,V_NULL);p++;break;}
+	if(c!=s[z] && v_char_exists(vect)==true){printf("Report 15: no exists - \"%c\"!!! \n",c);return vect;}
+	if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}
+	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}
+	}else{i=preg_add(vect,*p,-1,i,V_QUEST,V_NULL);p++;break;}
 	p++;break;
 	} 
 //----------------------------------------------------------------------
 case '{':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report 16: no exists - \"%c\"!!! \n",c);return vect;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 case '[':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report 17: no exists - \"%c\"!!! \n",c);return vect;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
 //----------------------------------------------------------------------
 
@@ -330,6 +297,7 @@ if(vect->tp[i-1]==V_CLASS){i--; count17--; z=strlen-1;i=add_tablae_symbol(vect,t
 }
 point_reindex(vect,tb,s);
 ////////////////////////////////////////////////////////////////////////////////////////
+if(flag_quest==0 || flag_star==0 || flag_plus==0 || flag_step==1){return vect;}
 print_vect(vect);
 free(p);
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -337,13 +305,12 @@ p=vect->c;
 printf("===%s\n",p);
 n=0; z=0; i=0;
 oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
-int flag_quest=0;
 count17=0;
 while (*p!=e){
 travel3(p,oc,c,nc);
 //point_reindex(vect,tb,s);
 //if(vect->otp[n]==V_CLASS){count17++;}
-switch(*p){
+switch(*p){*/
 /*	
 case '?':{p++;n++;break;}
 
@@ -471,6 +438,7 @@ break;
 	}
 
 case '+':{p++;n++;break;}*/	
+/*
 default:{
 	if(c!=s[z] && v_char_exists(new_vect)==false){z=libc_chrpos(s,c);}
 	//if(c!=s[z] && v_char_exists(new_vect)==true){printf("Report 20: no exists - \"%c\"!!! \n",c);return vect;}
@@ -480,7 +448,7 @@ default:{
 new_vect->length=i;
 }
 free(s);
-free(bf);
+free(bf);*/
 return new_vect;
 	}
 //!------------------------------------------------------------

@@ -17,7 +17,7 @@ while(i<vect->length){if(vect->tp[i]==V_CLASS){return true;} i++;}
 return false;		
 	}
 ///---------------------------------------------------------------------
-int is_tablae_symbol(ch_tab* tb,int n,char ch){
+int isset_tablae_symbol(ch_tab* tb,int n,char ch){
 int ret=0,co=0,tblen=libc_strlen(tb->table[n]); 
 while(co<tblen){if(tb->table[n][co]==ch){ret++;break;}co++;}
 	return ret;
@@ -25,7 +25,7 @@ while(co<tblen){if(tb->table[n][co]==ch){ret++;break;}co++;}
 ///---------------------------------------------------------------------
 int add_tablae_symbol(s_vect* vect,ch_tab* tb, int tbn,char ch, int z, int i,int addflag){
 
-int fl=is_tablae_symbol(tb,tbn,ch);
+int fl=isset_tablae_symbol(tb,tbn,ch);
 if(tb->flag_denial[tbn]==0){
 if(fl>0){vect->c[i]=ch;vect->pos[i]=z;vect->tp[i]=V_CHAR;vect->otp[i]=V_CLASS;i++;}else{
 	if(addflag==1){vect->c[i]=-1;vect->pos[i]=0;vect->tp[i]=0;vect->otp[i]=0;i++;}
@@ -38,9 +38,9 @@ return i;
 	}
 
 ///------------------------------------------------------------
-int tablae_symbol(ch_tab* tb, int tbn,char ch){
+int is_tablae_symbol(ch_tab* tb, int tbn,char ch){
 
-int fl=is_tablae_symbol(tb,tbn,ch);
+int fl=isset_tablae_symbol(tb,tbn,ch);
 if(tb->flag_denial[tbn]==0){
 if(fl>0){return 1;}else{return 0;}
 	}else{
@@ -104,18 +104,6 @@ while(*p!=0){
 //	p=p-ne;
 	return ne;	
 	}
-///------------------------------------------------------------
-void table_init(char* p, ch_tab* tb, char tag_start, char tag_end){ 
-tb->table_count=tag_count(p,tag_start,tag_end);
-tb->table=malloc(tb->table_count);
-tb->table_src=malloc(tb->table_count);
-tb->flag_denial=malloc(tb->table_count);
-tb->rep=1;
-tb->length=0;
-tb->tag_start=tag_start;
-tb->tag_end=tag_end;
-return;
-																	}
 
 ///---------------------------------------------------------------------
 int preg_add(s_vect* vect,char ch,int pos, int i, vect_type type,vect_type old_type){
@@ -137,7 +125,7 @@ if(vect->tp[i]==V_CHAR && vect->tp[i+1]==V_POINT){printf("pfl:reindex-next\n");v
 
 if(vect->tp[i]==V_CHAR && vect->tp[i+1]==V_CLASS){
 
-fl=is_tablae_symbol(tb,vect->pos[i+1],s[vect->pos[i]+1]);
+fl=isset_tablae_symbol(tb,vect->pos[i+1],s[vect->pos[i]+1]);
 if(tb->flag_denial[vect->pos[i+1]]==0){
 if(fl>0){vect->c[i+1]=s[vect->pos[i]+1]; vect->pos[i+1]=vect->pos[i]+1;vect->tp[i+1]=V_CHAR;vect->otp[i+1]=V_CLASS;}else{vect->c[i+1]=1;vect->pos[i+1]=0;vect->tp[i+1]=0;vect->otp[i+1]=0;}
 	}else{
@@ -159,7 +147,7 @@ while(i>0){
 
 //printf("%i|%i\n",vect->tp[i],vect->tp[i-1]);	
 if(vect->tp[i]==V_CHAR && vect->tp[i-1]==V_CLASS){
-fl=is_tablae_symbol(tb,vect->pos[i-1],s[vect->pos[i]-1]);
+fl=isset_tablae_symbol(tb,vect->pos[i-1],s[vect->pos[i]-1]);
 //printf("fl=%i\n",fl);
 if(tb->flag_denial[vect->pos[i-1]]==0){
 if(fl>0){
