@@ -344,6 +344,7 @@ travel3(p,oc,c,nc);
 //point_reindex(vect,tb,s);
 //if(vect->otp[n]==V_CLASS){count17++;}
 switch(*p){
+/*	
 case '?':{p++;n++;break;}
 
 case '*':{
@@ -469,10 +470,10 @@ break;
 	n++;p++;break;
 	}
 
-case '+':{p++;n++;break;}	
+case '+':{p++;n++;break;}*/	
 default:{
 	if(c!=s[z] && v_char_exists(new_vect)==false){z=libc_chrpos(s,c);}
-	if(c!=s[z] && v_char_exists(new_vect)==true){printf("Report 20: no exists - \"%c\"!!! \n",c);return vect;}
+	//if(c!=s[z] && v_char_exists(new_vect)==true){printf("Report 20: no exists - \"%c\"!!! \n",c);return vect;}
 	if(c==s[z]){i=preg_add(new_vect,s[z],z,i,V_CHAR,V_NULL);z++;}	
 	p++;n++;break;}	
 	}
