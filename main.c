@@ -103,23 +103,9 @@ id=getptrid(buff);
 
 nom=hope.i+1;
 printf("size:%i\n",sizeof(hope));
+   
 
-    
-
-
-char* bf;
-i=0;
-while(i<1000000){
-buff=realloc(buff,i+1);	
-buff[i]=libc_itos(i);
-printf("%s\n",buff[i]);
-free(buff[i]);
-
-
-	i++;
-	}	
 */
-
 return 0;
 						}
 
