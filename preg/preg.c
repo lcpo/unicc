@@ -302,7 +302,7 @@ if(c!=s[z] && v_char_exists(vect)==false){int fltbco=0,fltb=0,z0=0;z=0;while(*p=
 			 }
 count17++;p++;
 break;
-		}	
+		}	    
 //----------------------------------------------------------------------
 case '(':{if(flag_esc==1){if(c!=s[z] && v_char_exists(vect)==false){z=libc_chrpos(s,c);}if(c!=s[z] && v_char_exists(vect)==true){printf("Report 18: no exists - \"%c\"!!! \n",c);return vect;}if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;flag_esc=0;}}p++;break;}
 //----------------------------------------------------------------------
