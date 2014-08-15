@@ -50,7 +50,33 @@ int count_char_table(ch_tab* tb,char* s,int id,char end){
 		s=s-i;
 	return co;
 															}
-															
+///---------------------------------------------------------------------
+void wavy_string(ch_stp* wb,char* wsk){
+uni wlen=libc_strlen(wsk);
+char* bf1=malloc(wlen), *bf2=malloc(wlen);
+int n=0,fl=0,co=1,pos=libc_strpos(wsk,",");
+bf1="",bf2="";
+
+//if(*wsk=='{'){wsk++;}
+while(*wsk!='\0'){
+if(*wsk==','){fl=1;co++;n=0;}
+
+if(fl==0){
+printf("%c|%i\n",*wsk,fl);	
+	}else{
+printf("%c|%i\n",*wsk,fl);
+		}
+wsk++;
+
+					}
+					/* 
+wb->min[wb->length]=libc_stoi(bf1);
+wb->max[wb->length]=libc_stoi(bf2);
+wb->count[wb->length]=co;*/
+ //free(bf1);
+ //free(bf2);
+return;
+	}															
 ///---------------------------------------------------------------------
 void add_poscharto_table(ch_tab* tb,char* s,int id,char end){
 int co=count_char_table(tb,s,id,end),z=0,i=0;
@@ -70,23 +96,28 @@ old_i=0,old_z=0,old_n,cure=0,count17=0;
 char *p=malloc(patlen),*np=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen),oc='\0',end='\n',e='\0',c,nc;
 libc_strcpy(s,str); 
 libc_strcpy(np,pt);
-//----------------------
+//---------------------
 s_vect* vect=malloc(1); vect->pos=malloc(strlen); vect->tp=malloc(strlen); vect->otp=malloc(strlen); vect->c=malloc(strlen);
 //----------------------
 s_vect* new_vect=malloc(1); new_vect->pos=malloc(strlen); new_vect->tp=malloc(strlen); new_vect->otp=malloc(strlen); new_vect->c=malloc(strlen);
-//----------------------
+//---------------------
 ch_tab* tb=malloc(1);
 tb->table=malloc(256);
 tb->pos=malloc(256);
 tb->flag_denial=malloc(256);
-tb->rep=1;
 tb->length=0;
+//---------------------
+ch_stp* wb=malloc(1);
+wb->min=malloc(256);
+wb->max=malloc(256);
+wb->count=malloc(256);
+wb->length=0;
 
-//----------------------
+//---------------------
 //tb->table_count=tag_count(np,'[',']'); 
 //np=bracket_table(np,tb,'[',']');
 c=*np,nc=*np++; np--;
-//----------------------
+//---------------------
 
 //!------------------------------------------------------------
 while (*np!=e){
@@ -108,7 +139,17 @@ case '[':{if(flag_esc==0){
 	break;
 }np++;break;}
 case '.':{if(flag_esc==0){p[n]=2;n++;}np++;break;}
-case '{':{if(flag_esc==0){flag_step=1;p[n]=3;n++;}np++;break;}
+case '{':{if(flag_esc==0){flag_step=1;p[n]=3;n++;
+	char *wsk=parce_tag(np,*np,'}');
+	uni wsk_len=libc_strlen(wsk);
+	printf("wsk=%s\n",wsk);
+	wavy_string(wb,wsk);
+	//printf("%i|min=%i\n",wb->length,wb->min[wb->length]);
+	//printf("%i|max=%i\n",wb->length,wb->max[wb->length]);
+	
+	np=np+wsk_len,wb->length++;
+	break;
+}np++;break;}
 case '$':{if(flag_esc==1){if(c==s[z]){flag_esc=0;p[n]=*np;n++;}z++;}else{flag_end=1;}np++;break;}
 default:{p[n]=*np;n++;np++;break;}	
 		   }

@@ -13,7 +13,7 @@
 int main(int argc, char** argv) {
 
 //s_vect* vect=preg("^ab[c]*[0-9].*[a-z]..","abcccc12345678def");
-s_vect* vect=preg("ab...[a-z]12[0-9]te","abcccc12345678tef");
+s_vect* vect=preg("a{1,}b...{0,1}?[a-z]1{,1}2[0-9]{5}te","abcccc12345678tef");
 /*
 int z=0;
 while(z<255){

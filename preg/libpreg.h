@@ -16,11 +16,16 @@ size_t length;
 
 ///------------------------------------------------------------
 typedef struct ch_tab{
-int rep;
-char** table; 	  //char table
-char** pos; 	  //pos to src str
-unsigned char* flag_denial; // denial 
+char** table; 	          		//char table
+char** pos; 	  				//pos to src str
+unsigned char* flag_denial;   //denial 
 uni length;
-
 						}ch_tab;
+///------------------------------------------------------------
+typedef struct ch_stp{
+uni* min;
+uni* max;
+uni* count;
+uni length;
+						}ch_stp;
 ///------------------------------------------------------------
