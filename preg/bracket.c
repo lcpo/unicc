@@ -11,18 +11,19 @@ char ooscl='\0',oscl='\0',nscl='\0';
 char* table=malloc(1024);
 tb->flag_denial[tb->length]=0;
 scl++;
-while(*scl!=']'){
+while(*scl!='\0'){
 scl--; oscl=*scl; scl++;
 scl++; nscl=*scl; scl--;
 if(oscl!='\\' && *scl==' '){scl++;continue;}
 if(oscl!='\\' && *scl=='^'){tb->flag_denial[tb->length]=1;scl++;continue;}
 if(oscl!='\\' && *scl==1){table[a]='\\';a++;}
 if(oscl=='\\' && *scl==1){table[a]=1;	a++;}
-if(oscl=='\\' && *scl=='-' && libc_isalpha(nscl)!=0){table[a]=nscl;a++;}
-if(oscl=='\\' && *scl=='-'){table[a]=*scl;a++;}
-if(oscl=='\\' && (*scl=='[' || *scl==']')){table[a]=*scl;a++;}
-if(oscl!='\\' && (*scl=='[' || *scl==']')){printf("error: character is not shielded '%c' !!!\n",*scl);return scl;}
-
+//if(oscl=='\\' && *scl=='-' && libc_isalpha(nscl)!=0){table[a]=nscl;a++;}
+//if(oscl=='\\' && *scl=='-'){table[a]=*scl;a++;}
+if(libc_isspace(*scl)!=0){table[a]=*scl;a++;}
+if(oscl=='\\' && (*scl=='[' && *scl==']')){table[a]=*scl;a++;}
+if(oscl!='\\' && (*scl=='[' && *scl==']')){printf("error: character is not shielded '%c' !!!\n",*scl);return scl;}
+if(oscl=='\\' && libc_ispunct(*scl)!=0){table[a]=*scl;a++;}
 	/**/
 if(*scl=='-' && libc_isdigit(nscl)!=0 && libc_isdigit(oscl)!=0){
 if((oscl)<(nscl)){
@@ -72,40 +73,4 @@ co++; scl++;
 	}																		
 	
 ///------------------------------------------------------------	
-/*
-char* bracket_table(char* p,ch_tab *tb, char tag_start, char tag_end){
-int i=0,plen=libc_strlen(p),psmes=0,psum=0; 
-char* scl,bf[1];
 
-tb->table_count=tag_count(p,tag_start,tag_end);
-
-
-while(i<tb->table_count){
-scl=parce_tag(p,tag_start,tag_end);
-tb->table[tb->length]=bracket_string(tb,scl);
-tb->table_src[tb->length]=scl;
-psmes=libc_strpos(p,scl)+libc_strlen(scl);
-p=p+psmes;
-psum=psum+psmes;
-tb->length++;
-i++;
-						}
-p=p-psum;
-
-bf[0]=tb->rep;
-bf[1]='\0';
-char* out;
-	//printf("=>%s\n",p);
-i=0;
-while(i<tb->table_count){
-
-out=libc_string_replace(p,tb->table_src[i],bf);
-//free(p);
-p=out;
-free(tb->table_src[i]);
-	i++;
-						}
-
-return p;	
-										}*/
-///------------------------------------------------------------	
