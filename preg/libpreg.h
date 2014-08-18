@@ -3,7 +3,7 @@
 #define travel5(str,ooc,oc,c,nc,nnc)({c=*str;str--;str--;ooc=*str;str++;str++;str--;oc=*str;str++;str++;nc=*str;str--;str++;str++;nc=*str;str--;str--;})
 ///------------------------------------------------------------
 typedef enum {false,true}bool;
-typedef enum {V_NULL,V_CHAR,V_POINT,V_CLASS,V_STAR,V_PLUS,V_QUEST,V_STEP,V_GROUP}vect_type;
+typedef enum {V_NULL,V_CHAR,V_POINT,V_CLASS,V_STEP,V_GROUP}vect_type;
 ///------------------------------------------------------------
 
 typedef struct s_vect{
