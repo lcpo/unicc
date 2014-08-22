@@ -13,7 +13,7 @@
 int main(int argc, char** argv) {
 
 //s_vect* vect=preg("^ab[c]*[0-9].*[a-z]..","abcccc12345678def");
-s_vect* vect=preg("...","abcccc12345678tef");
+s_vect* vect=preg("^[a-z][a-z][a-z].*[a-z]$","abc12345678tef");
 
 /*
 int z=0;
@@ -21,6 +21,7 @@ while(z<255){
 printf("%i|%c\n",z,z);
 z++;}
 */
+
 print_vect(vect);
 free_vect(vect);
 

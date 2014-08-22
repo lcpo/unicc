@@ -25,23 +25,23 @@ printf("%s\n",vect->c);
 return;
 	}
 ///------------------------------------------------------------
-const char break_symbols[]={'*','+','?',1,2,3,4};
+
 int isbreak(int ch){
 int i;
-for(i=0;i<6;i++){
+for(i=0;i<3;i++){
 if(break_symbols[i]==ch){return 1;}	
 				}
 return 0;		
 					}
 ///------------------------------------------------------------
-void gainvalknownbreak(char* bf,char* p){
+/*void gainvalknownbreak(char* bf,char* p){
 int n=0; int fl=0;
 while(*p!=0){
 	if(*p!=0 && isbreak(*p)==0){bf[n]=*p;n++;p++;}else{break;}
 	}
 
 return;
-}	
+}*/	
 ///------------------------------------------------------------
 int count_char_table(ch_tab* tb,char* s,int id,char end){
 	int co=0,i=0;
@@ -89,7 +89,7 @@ printf("//---------------------------\n");
 wb->min[wb->length]=libc_stoi(bf1);
 wb->max[wb->length]=libc_stoi(bf2);
 wb->count[wb->length]=co;
- free(np); free(bf1); free(bf2);
+free(np); free(bf1); free(bf2);
 return;
 	}															
 ///------------------------------------------------------------
@@ -97,7 +97,7 @@ void add_poscharto_table(ch_tab* tb,char* s,int id,char end){
 int co=count_char_table(tb,s,id,end),z=0,i=0;
 tb->pos[id]=malloc(co);
 while(*s!=0 && *s!=end){
-if(is_tablae_symbol(tb,id,*s)==1){tb->pos[id][z]=i;z++;}
+if(is_tablae_symbol(tb,id,*s)==1){tb->pos[id][z]=i;z++;}//else{tb->pos[id][z]=-1;z++;}
 s++;i++;
 }
 s=s-i;
@@ -107,7 +107,7 @@ return;
 s_vect* preg(char* pt,char* str){
 int strlen=libc_strlen(str),patlen=libc_strlen(pt),i=0,z=0,n=0,co=0,count_esc=0,
 flag_esc=0,flag_start=0,flag_end=0,flag_step=0,
-old_i=0,old_z=0,old_n,cure=0,count1=0;
+old_i=0,old_z=0,old_n,cure=0,count1=0,count2=0;
 char *p=malloc(patlen),*np=malloc(patlen),*s=malloc(strlen),*bf=malloc(patlen),oc='\0',end='\n',e='\0',c,nc;
 libc_strcpy(s,str); 
 libc_strcpy(np,pt);
@@ -166,7 +166,10 @@ case '[':{if(flag_esc==0){p[n]=1;n++;
 	np=np+bsk_len,tb->length++;
 	break;
 }else{p[n]=*np;n++;np++;break;}}
-case '.':{if(flag_esc==0){p[n]=2;n++;}else{p[n]=*np;n++;np++;break;}}
+case '.':{
+	if(flag_esc==0){p[n]=2;n++;np++;break;}else{p[n]=*np;n++;np++;break;}
+	}
+
 case 'w':{if(flag_esc==1){p[n]=1;n++;
 	tb->table[tb->length]=bracket_string(tb,"[A-Za-z0-9\\_]");
 	add_poscharto_table(tb,s,tb->length,end);
@@ -231,7 +234,10 @@ default:{p[n]=*np;n++;np++;break;}
 	
 			 }
 //!------------------------------------------------------------
+///~ end preg_compile
+//!------------------------------------------------------------
 /*
+ * 
 i=0;
 while(p[i]){
 printf("%c\n",p[i]);
@@ -241,57 +247,101 @@ printf("%s\n",p);
 exit(0);
 */
 printf("%s\n",p);
-n=0; z=0; flag_esc=0;
-oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
+n=0; z=0; flag_esc=0; patlen=libc_strlen(p);
+oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--; i=0;
+int cpos=0,spos=0,fladd=0,ic=0,oic=0,ri=0,ri2=0;
 //!-----------------------------
-while (*p!=e){
+if(flag_end==1){n=patlen;p=p+patlen; count1=tb->length-1; count2=wb->length-1; z=strlen-1; i=patlen-1;}
+while (is_i_flag(flag_end,n,patlen)!=false){
 travel3(p,oc,c,nc);
+if(c=='\0'){i_flag_end(flag_end,p);continue;}
+point_reindex(vect,tb,s);
 
 switch(*p){
 //----------------------------------------------------------------------
-case 1:{ //class
-if(z==0){
-if(flag_start==1 && is_tablae_symbol(tb, count1,s[z])==1){i=preg_add(vect,s[z],z,i,V_CHAR,V_CLASS);z++; count1++;p++;break;}
-if(flag_start==1 && is_tablae_symbol(tb, count1,s[z])==0){printf("err0\n");return vect;}
-}
-if(z==strlen-1 && nc=='\0'){
-if(flag_end==1 && is_tablae_symbol(tb, count1,s[z])==1){i=preg_add(vect,s[z],z,i,V_CHAR,V_CLASS);z++; count1++;p++;break;}
-if(flag_end==1 && is_tablae_symbol(tb, count1,s[z])==0){printf("err1\n");return vect;}
-}
+case 1:{
+	
+	if(v_char_exists_vect(vect)==false && flag_end==0 && flag_start==0 && tb->pos[count1+1]!=NULL && nc==1){
+		printf("cl1|%c\n",nc);
+	while(tb->pos[count1][ri]!=NULL || tb->pos[count1+1][ri2]!=NULL){
+	printf("%c|%c|%i|%i|%i\n",s[tb->pos[count1][ri]],s[tb->pos[count1+1][ri2]],tb->pos[count1][ri],tb->pos[count1+1][ri2],(tb->pos[count1][ri]-tb->pos[count1+1][ri2]));
+	if(tb->pos[count1][ri]>tb->pos[count1+1][ri2]){
+		ri2++;
+		//i_flag_end(flag_end,ri2);
+												}
+	if((tb->pos[count1][ri]-tb->pos[count1+1][ri2])==-1){z=tb->pos[count1][ri];break;}else{
+		ri++;
+		//i_flag_end(flag_end,ri);
+		}
+	if(tb->pos[count1][ri]==NULL && tb->pos[count1+1][ri2]!=NULL){ri=0;}
+	if(tb->pos[count1][ri]!=NULL && tb->pos[count1+1][ri2]==NULL){ri2=0;}
+	if(tb->pos[count1][ri]==NULL && tb->pos[count1+1][ri2]==NULL){z=0;printf("-err\n");break;}
+	}
+																		}
+	if(v_char_exists_vect(vect)==false && flag_end==0 && flag_start==0 && tb->pos[count1+1]==NULL && isbreak(nc)==0){
+	printf("cl2|%c\n",nc);
+	while(tb->pos[count1][ri]!=NULL){
+	if(s[tb->pos[count1][ri]+1]==nc){z=tb->pos[count1][ri];break;}	
+	printf("%c|%c|%i|%i\n",s[tb->pos[count1][ri]],s[tb->pos[count1][ri]+1],tb->pos[count1][ri]);
+	ri++;
+	//i_flag_end(flag_end,ri);
+									}
+								
+		}
 
-	p++;
+	if(is_tablae_symbol(tb, count1,s[z]) && isbreak(vect->c[i+1])!=1){
+	i=preg_add(vect,s[z],z,i,V_CHAR,V_CLASS,flag_end);
+	i_flag_end(flag_end,z);
+	i_flag_end(flag_end,count1);
+	}else{
+	i=preg_add(vect,1,count1,i,V_CLASS,V_NULL,flag_end);
+	i_flag_end(flag_end,z);
+	i_flag_end(flag_end,count1);	
+		}
+	i_flag_end(flag_end,p);
 	break;
 	}
 //----------------------------------------------------------------------
-case 2:{ //pointer
-if(z==0){
-if(flag_start==1 && s[z]!=e && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}
-if(flag_start==1 && s[z]==e && s[z]==end){printf("err2\n");return vect;}
-		}
-if(z==strlen-1 && nc=='\0'){		
-if(flag_end==1 && s[z]!=e && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}
-if(flag_end==1 && s[z]==e && s[z]==end){printf("err3\n");return vect;}
-}
-
-if(flag_step==0){
-if(flag_end==0 && s[z]!=e && s[z]!=end){i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;}
-if(flag_end==0 && s[z]==e && s[z]==end){printf("err4\n");return vect;}
-}
-p++;break;}
+case 2:{
+	//i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);
+if(vect->tp[i+1]==V_CHAR && s[z]!=e && s[z]!=end){printf("pfl:next\n");i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT,flag_end);}else
+if(vect->tp[i-1]==V_CHAR && s[z]!=e && s[z]!=end){printf("pfl:prev\n");i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT,flag_end);}
+else{printf("pfl:null\n");i=preg_add(vect,2,-1,i,V_POINT,V_NULL,flag_end);}
+	i_flag_end(flag_end,z);
+	i_flag_end(flag_end,p);
+	break;
+	}
 //----------------------------------------------------------------------
-case 3:{p++;break;}
+case 3:{
+	printf("-------------------------\n");
+	printf("min=%i|max=%i|count=%i\n",wb->min[count2],wb->max[count2],wb->count[count2]);
+	printf("-------------------------\n");
+	i=preg_add(vect,3,count2,i,V_STEP,V_NULL,flag_end);
+	i_flag_end(flag_end,count2);
+	i_flag_end(flag_end,p);
+	break;
+	}
 //---------------------------------------------------------------------- 
-
-//----------------------------------------------------------------------
 default:{
-	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL);z++;}
-	p++;break;
+	if(*p!=0){
+	if(flag_start==0 && z==0){if(c!=s[z]){z=libc_chrpos(s,c);}}
+	if(c==s[z]){
+	i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL,flag_end);
+	i_flag_end(flag_end,z);
+	}
+	}
+	i_flag_end(flag_end,p);
+	
+	break;
 		}
 //----------------------------------------------------------------------
 				}
+if(i<0){i=patlen;}				
 vect->length=i;
+i_flag_end(flag_end,n);
 		}
-if(flag_start==1 && flag_end==1 && vect->length!=strlen){printf("errlen\n");return vect;}
+		
+if(flag_start==1 && flag_end==1 && flag_step!=1 && vect->length!=strlen){printf("errlen\n");return vect;}
 ////////////////////////////////////////////////////////////////////////////////////////
 if(flag_step==0){return vect;}
 print_vect(vect);
@@ -299,7 +349,9 @@ free(p);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 p=vect->c;
-printf("===%s\n",p);/*
+printf("===%s\n",p);
+
+/*
 n=0; z=0; i=0;
 oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
 count17=0;
@@ -450,3 +502,84 @@ return new_vect;
 	}
 //!------------------------------------------------------------
 
+
+
+
+
+/*
+if(flag_step==0){
+//-----------	
+if(flag_end==0 && s[z]!=e && s[z]!=end && v_char_exists_pattern(p-n)==true && v_char_exists_vect(vect)==false){
+    printf("poin0-0\n");
+	cpos=v_char_pos_pattern(p-n),spos=libc_chrpos(s,p[cpos]),fladd=0;
+    cpos--; spos--;
+	ic=0,oic=cpos;
+while(cpos>=ic){if(p[ic]==2){i=preg_add(vect,s[spos-oic],spos-oic,i,V_CHAR,V_POINT);z++;p++;break;}ic++;oic--;}
+	z=vect->pos[i-1]+1;
+	break;
+			}
+//-----------
+if(flag_end==0 && s[z]!=e && s[z]!=end && v_char_exists_pattern(p-n)==true && v_char_exists_vect(vect)==true){
+	printf("poin0-1\n");
+i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;
+	}
+//-----------
+if(flag_end==0 && s[z]!=e && s[z]!=end && v_char_exists_pattern(p-n)==false && v_char_exists_vect(vect)==true){
+	printf("poin0-2\n");
+i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);z++;p++;break;
+	}	
+//-----------
+if(flag_end==0 && s[z]!=e && s[z]!=end && v_char_exists_pattern(p-n)==false && v_char_exists_vect(vect)==false){
+	printf("poin0-3\n");
+	i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);
+	z++;p++;break;
+	}
+//-----------	
+if(flag_end==1 && s[z]!=e && s[z]!=end && v_char_exists_pattern(p-n)==false && v_char_exists_vect(vect)==false){
+printf("poin1-0\n");
+//printf("%i\n",n);
+z=z+strlen-patlen;
+cpos=patlen;
+while(cpos>0){
+if(*p==2){	
+i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);
+z++;p++;
+		  }
+cpos--;
+}
+
+break;
+																	    }
+//-----------																	    
+if(flag_end==1 && s[z]!=e && s[z]!=end && v_char_exists_pattern(p-n)==false && v_char_exists_vect(vect)==true){
+printf("poin1-1\n");
+	i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT);
+	z++;p++;break;	
+	}
+	
+//-----------																	 
+if(flag_end==1 && s[z]!=e && s[z]!=end && v_char_exists_pattern(p-n)==true && v_char_exists_vect(vect)==false){
+printf("poin1-2\n");
+//i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT); z++; p++; break;
+	cpos=v_char_pos_pattern(p-n),spos=libc_chrpos(s,p[cpos]),fladd=0;
+    cpos--; spos--;
+	ic=0,oic=cpos;
+	//printf("cpos=%i|spos=%i\n",cpos,spos);
+while(cpos>=ic){
+	//printf("pic==%c",p[ic]);
+	if(p[ic]==2){
+	i=preg_add(vect,s[spos-oic],spos-oic,i,V_CHAR,V_POINT);z++;p++;break;
+	//printf("ddp\n");
+	}
+	ic++;oic--;
+	
+	}
+	z=vect->pos[i-1]+1;
+	break;																	      }
+//-----------																	 
+if(flag_end==1 && s[z]!=e && s[z]!=end && v_char_exists_pattern(p-n)==true && v_char_exists_vect(vect)==true){
+printf("poin1-3\n");	
+i=preg_add(vect,s[z],z,i,V_CHAR,V_POINT); z++; p++; break;
+				}
+}
+*/
