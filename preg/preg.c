@@ -247,6 +247,7 @@ printf("%s\n",p);
 exit(0);
 */
 printf("%s\n",p);
+
 n=0; z=0; flag_esc=0; patlen=libc_strlen(p);
 oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--; i=0;
 int cpos=0,spos=0,fladd=0,ic=0,oic=0,ri=0,ri2=0;
@@ -267,12 +268,8 @@ case 1:{
 	printf("%c|%c|%i|%i|%i\n",s[tb->pos[count1][ri]],s[tb->pos[count1+1][ri2]],tb->pos[count1][ri],tb->pos[count1+1][ri2],(tb->pos[count1][ri]-tb->pos[count1+1][ri2]));
 	if(tb->pos[count1][ri]>tb->pos[count1+1][ri2]){
 		ri2++;
-		//i_flag_end(flag_end,ri2);
 												}
-	if((tb->pos[count1][ri]-tb->pos[count1+1][ri2])==-1){z=tb->pos[count1][ri];break;}else{
-		ri++;
-		//i_flag_end(flag_end,ri);
-		}
+	if((tb->pos[count1][ri]-tb->pos[count1+1][ri2])==-1){z=tb->pos[count1][ri];break;}else{ri++;}
 	if(tb->pos[count1][ri]==NULL && tb->pos[count1+1][ri2]!=NULL){ri=0;}
 	if(tb->pos[count1][ri]!=NULL && tb->pos[count1+1][ri2]==NULL){ri2=0;}
 	if(tb->pos[count1][ri]==NULL && tb->pos[count1+1][ri2]==NULL){z=0;printf("-err\n");break;}
@@ -284,7 +281,6 @@ case 1:{
 	if(s[tb->pos[count1][ri]+1]==nc){z=tb->pos[count1][ri];break;}	
 	printf("%c|%c|%i|%i\n",s[tb->pos[count1][ri]],s[tb->pos[count1][ri]+1],tb->pos[count1][ri]);
 	ri++;
-	//i_flag_end(flag_end,ri);
 									}
 								
 		}
@@ -313,9 +309,9 @@ else{printf("pfl:null\n");i=preg_add(vect,2,-1,i,V_POINT,V_NULL,flag_end);}
 	}
 //----------------------------------------------------------------------
 case 3:{
-	printf("-------------------------\n");
-	printf("min=%i|max=%i|count=%i\n",wb->min[count2],wb->max[count2],wb->count[count2]);
-	printf("-------------------------\n");
+//	printf("-------------------------\n");
+//	printf("min=%i|max=%i|count=%i\n",wb->min[count2],wb->max[count2],wb->count[count2]);
+//	printf("-------------------------\n");
 	i=preg_add(vect,3,count2,i,V_STEP,V_NULL,flag_end);
 	i_flag_end(flag_end,count2);
 	i_flag_end(flag_end,p);
@@ -324,12 +320,19 @@ case 3:{
 //---------------------------------------------------------------------- 
 default:{
 	if(*p!=0){
-	if(flag_start==0 && z==0){if(c!=s[z]){z=libc_chrpos(s,c);}}
+	if(flag_start==0 && z==0){
+		if(c!=s[z]){z=libc_chrpos(s,c);}
+		}
 	if(c==s[z]){
 	i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL,flag_end);
 	i_flag_end(flag_end,z);
-	}
-	}
+				}else{
+	i=preg_add(vect,*p,-1,i,V_CHAR,V_NULL,flag_end);
+	i_flag_end(flag_end,z);
+
+					}
+				
+			}
 	i_flag_end(flag_end,p);
 	
 	break;
@@ -350,154 +353,51 @@ free(p);
 ////////////////////////////////////////////////////////////////////////////////////////
 p=vect->c;
 printf("===%s\n",p);
+///------------------------------------------------------------
+n=0; z=0; flag_esc=0; patlen=libc_strlen(p);
+oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--; i=0;
+cpos=0,spos=0,fladd=0,ic=0,oic=0,ri=0,ri2=0,count1=0,count2=0;
 
-/*
-n=0; z=0; i=0;
-oc='\0',end='\n',e='\0',c=*p,nc=*p++; p--;
-count17=0;
-while (*p!=e){
+while(*p!=e){
 travel3(p,oc,c,nc);
-//point_reindex(vect,tb,s);
-//if(vect->otp[n]==V_CLASS){count17++;}
-switch(*p){*/
-/*	
-case '?':{p++;n++;break;}
-
-case '*':{
-	//printf("%c|otpold:%i|tpold:%i|otpnew:%i|tpnew:%i|\n",*p,vect->otp[n-1],vect->tp[n-1],vect->otp[n+1],vect->tp[n+1]);
+switch(*p){
+case 1:{
+if(is_tablae_symbol(tb, count1,s[z])){i=preg_add(new_vect,s[z],z,i,V_CHAR,V_CLASS,0);count1++;}
+z++;
 p++;
-if(nc=='?' && c!='\\'){p++;flag_quest=1;}
-gainvalknownbreak(bf,p); 
-printf("bf=%s\n",bf);
+break;}
+case 2:{i=preg_add(new_vect,s[z],z,i,V_CHAR,V_POINT,0);z++;p++;break;}
+case 3:{
+printf("min=%i|max=%i|count=%i\n",wb->min[count2],wb->max[count2],wb->count[count2]);
 
-//!************************************************************
-if(vect->otp[n-1]==V_POINT && vect->tp[n-1]==V_CHAR && vect->tp[n+1]==V_CHAR){ printf("sfl1\n");
+for(n=0;n<wb->min[count2]-1;n++){
+if(isbreak(oc)==0 && s[z]==oc){
+	i=preg_add(new_vect,s[z],z,i,V_CHAR,V_NULL,0);z++;
+	}else{
+		printf("err1\n");return new_vect;
+		}
+								}
+if(wb->count[count2]==1 && s[z]==oc){printf("err2\n");return new_vect;}
 
-if(flag_quest==1){
-do{
-new_vect->c[i]=s[new_vect->pos[i-1]+1]; new_vect->pos[i]=new_vect->pos[i-1]+1; new_vect->tp[i]=V_CHAR; new_vect->otp[i]=V_POINT;i++;z++;
-}while(libc_strncmp(s+z,bf,libc_strlen(bf))!=0 && s[z]!=end && s[z]!=0);
-bf="";
-n++;n++;break;
-				}else{
-do{
-new_vect->c[i]=s[new_vect->pos[i-1]+1]; new_vect->pos[i]=new_vect->pos[i-1]+1; new_vect->tp[i]=V_CHAR; new_vect->otp[i]=V_POINT;i++;z++;
-}while(libc_substr_count(s+(z+1),bf)>0 && s[z+1]!=end && s[z]!=0);
-bf="";
-n++;break;
-					}
-													}
-//!************************************************************													
-if(vect->otp[n-1]==V_NULL && vect->tp[n-1]==V_CHAR && vect->tp[n+1]==V_CHAR){ printf("sfl2\n");
-
-if(flag_quest==1){
-do{
-if(s[new_vect->pos[i-1]+1]==*p){	
-new_vect->c[i]=s[new_vect->pos[i-1]+1]; new_vect->pos[i]=new_vect->pos[i-1]+1; new_vect->tp[i]=V_CHAR; new_vect->otp[i]=V_NULL;i++;z++;
-}else{
-new_vect->c[i]=-1; new_vect->pos[i]=-1; new_vect->tp[i]=V_CHAR; new_vect->otp[i]=V_NULL;i++;z++;	
+if(wb->max[count2]!=-1){
+for(n=0;n<wb->max[count2]-1;n++){
+	if(isbreak(oc)==0){
+	if(s[z]==oc){i=preg_add(new_vect,s[z],z,i,V_CHAR,V_NULL,0);z++;}else{printf("err3\n");return new_vect;}		
+		}
 	}
-}while(libc_strncmp(s+z,bf,libc_strlen(bf))!=0 && s[z]!=end && s[z]!=0);
-bf="";
-n++;n++;break;	
-				}else{
-do{
-new_vect->c[i]=s[new_vect->pos[i-1]+1]; new_vect->pos[i]=new_vect->pos[i-1]+1; new_vect->tp[i]=V_CHAR; new_vect->otp[i]=V_NULL;i++;z++;
-}while(libc_substr_count(s+(z+1),bf)>0 && s[z+1]!=end && s[z]!=0);
-bf="";
-n++;break;
-					}
-													}													
-//!************************************************************													
-if(vect->otp[n-1]==V_CLASS && vect->tp[n-1]==V_CHAR && vect->tp[n+1]==V_CHAR){ printf("sfl3\n");
-
-if(flag_quest==1){
-do{
-i=add_tablae_symbol(new_vect,tb,count17,s[z],z,i,1);z++;
-}while(libc_strncmp(s+z,bf,libc_strlen(bf))!=0 && s[z]!=end && s[z]!=0);
-bf="";
-	count17++;
-	n++;n++;break;
-				}else{
-do{
-i=add_tablae_symbol(new_vect,tb,count17,s[z],z,i,1);z++;
-}while(libc_substr_count(s+(z+1),bf)>0 && s[z+1]!=end && s[z]!=0);
-bf="";
-count17++;
-n++;break;
-					}
-													}
-//!************************************************************
-
-if(vect->otp[n-1]==V_CLASS && vect->tp[n-1]==V_CHAR && vect->tp[n+1]!=V_CHAR){printf("===================sfl4\n");
-//!====buf
-int z0=0,z1=0,z2=0,z3=0,bacount17=count17;				
-while(*p==1 && *p!=0){z0++;p++;}		
-if(flag_quest==1){n++;}
-printf("==%i\n",z);
-do{
-if(tablae_symbol(tb,vect->pos[n+1],s[z])!=0 && vect->tp[n+1]==V_CLASS){bf[z2]=s[z];z2++;z1++;n++;}
-z++;z3++;
-if(s[z]==e && s[z]==end){break;}
-}while(z0>z1);
-
-printf("--%c\n",s[z]);
-z=z-z3;
-n=n-z0;
-printf("++%c\n",s[z]);
-printf("p-->%s\n",p-n);
-printf("bf-->%s|\n",bf);
-//!====buf
-count17=bacount17;
-
-
-
-if(flag_quest==1){
-do{i=add_tablae_symbol(new_vect,tb,count17,s[z],z,i,1);z++;}while(libc_strncmp(s+z,bf,libc_strlen(bf))!=0 && s[z]!=end && s[z]!=0);
-//!=====addbuf
-while(z0>0){new_vect->c[i]=s[new_vect->pos[i-1]+1]; new_vect->pos[i]=new_vect->pos[i-1]+1; new_vect->tp[i]=V_CHAR; new_vect->otp[i]=V_CLASS;i++;z++;z0--;}
-//!=====addbuf
-bf="";count17++;n++;n++;break;
-				}else{
-z1=0;
-do{
-i=add_tablae_symbol(new_vect,tb,count17,s[z],z,i,1);z++;z1++;
-}while(libc_substr_count(s+(z+1),bf)>0 && s[z+1]!=end && s[z]!=0);
-//z=z-z1;
-//!=====addbuf
-while(z0>0){
-new_vect->c[i]=s[new_vect->pos[i-1]+1];
-new_vect->pos[i]=new_vect->pos[i-1]+1;
-new_vect->tp[i]=V_CHAR;
-new_vect->otp[i]=V_CLASS;i++;z++;z0--;
-	}
-bf="";	 
-z=new_vect->pos[i-1];
-printf("%c|p=%s\n",*p,p);
-printf("%c|p=%s\n",*p,p+n);
-count17++; 
-
-break;
-					}
-
-
-																			 }
-//!************************************************************	
-	n++;p++;break;
-	}
-
-case '+':{p++;n++;break;}*/	
-/*
+										  
+					   }
+					   	
+	p++;count2++;break;
+	}	
 default:{
-	if(c!=s[z] && v_char_exists(new_vect)==false){z=libc_chrpos(s,c);}
-	//if(c!=s[z] && v_char_exists(new_vect)==true){printf("Report 20: no exists - \"%c\"!!! \n",c);return vect;}
-	if(c==s[z]){i=preg_add(new_vect,s[z],z,i,V_CHAR,V_NULL);z++;}	
-	p++;n++;break;}	
+	printf(">%c\n",s[z]);
+	i=preg_add(new_vect,s[z],z,i,V_CHAR,V_NULL,0);
+	z++;p++;break;}	
+			}	
+new_vect->length=i;	
 	}
-new_vect->length=i;
-}
-free(s);
-free(bf);*/
+	
 return new_vect;
 	}
 //!------------------------------------------------------------

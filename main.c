@@ -10,11 +10,12 @@
 //http://www.illusionsphotographic.com/analog/src/pcre/
 //#include "preg.h"
 ///------------------------------------------------------------																		
-int main(int argc, char** argv) {
+int main(int argc, char** argv){
 
 //s_vect* vect=preg("^ab[c]*[0-9].*[a-z]..","abcccc12345678def");
-s_vect* vect=preg("^[a-z][a-z][a-z].*[a-z]$","abc12345678tef");
+//s_vect* vect=preg("[a-z][a-z][a-z].*[a-z]$","abc12345678tef");
 
+s_vect* vect=preg("colou{2,4}r","colouuuur");
 /*
 int z=0;
 while(z<255){

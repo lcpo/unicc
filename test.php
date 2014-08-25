@@ -4,10 +4,10 @@
 //print_r($out);
 
 //preg_match("|.*|","abcdef",$out);
-
+/*
 preg_match("|[a-z][0-9]|","abcccc12345678def",$out);
 print_r($out);
-
+*/
 /*
 preg_match("|colou*r|","color",$out);
 print_r($out);
@@ -18,5 +18,15 @@ print_r($out);
 preg_match("|colou*r|","colouur",$out);
 print_r($out);
 */
+preg_match("|colou{2}r|","color",$out);
+print_r($out);
+
+preg_match("|colou{2}r|","colour",$out);
+print_r($out);
+
+preg_match("|colou{2}r|","colouur",$out);
+print_r($out);
+
+
 ?>
    
