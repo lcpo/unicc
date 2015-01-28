@@ -1,14 +1,6 @@
-/*
-rtrue 2
-true 1
-null 0 
-false -1
-rfalse -2
-inf (max) (infinity)
-*/
 #include "unicc.c"
-//#include "json/json.c"
-//#include "preg/preg.c"
+#include "json/json.c"
+
 
 //#include "external/pcre/pcre.h"
 //#include "external/pcre/pcre.c"
@@ -16,45 +8,13 @@ inf (max) (infinity)
 //void __stack_chk_fail(void){return;}
 //http://netlib.narod.ru/library/book0003/ch08_07.htm
 //http://www.illusionsphotographic.com/analog/src/pcre/
-//#include "preg.h"
+
+
 
 ///------------------------------------------------------------																		
 int main(int argc, char** argv){
-printf("argc=%i\n",argc);
-char* path=malloc(1024);
-strcpy(path,"/home/is/unicc/web/www/index.html");
-struct stat_f *fi=malloc(sizeof(struct stat_f*));
-stat(path,fi);
-printf("mode=%l\n",fi->st_mode);
-printf("st_size=%l\n",fi->st_size);
-int total=libc_ltoct(fi->st_mode-98304);
-printf("mode=%l\n",total);
 
-//s_vect* vect=preg(".*[a-z]..","abcccc12345678def");
-//print_vect(vect);
-//free_vect(vect);
-//*****
-//s_vect* vect=preg("[0-9].*[0-9][0-9][a-z][a-z]","abc12345678tef");
-
-//s_vect* vect=preg("colo[a-z].+?tt","colouuuuurttaaaaartt");
-/*
-int z=0;
-while(z<255){
-printf("%i|%c\n",z,z);
-z++;}
-*/
-
-
-
-
-//preg(vect,"..\\.e{1}","abcde.ftessssst5str|12345sp56");
-//preg(vect,"colo.*r1","colouuuuuuuur123r15\n6r1789");
-//colo[0-9]*a[0-9]*ro
-
-
-					 
-
-
+system("echo \"<?echo \"123\'\";?>\" >> /home/ss/unicc/tmp.php");
 
 /*
 wchar tst[]=L"я";
@@ -63,10 +23,6 @@ printf("%c\n",tst[2]);
 printf("\n");*/
 //printf("%s\n",strpartlr("abcdef123456789",2,4,6));
 //printf("%s\n",strpart("abcdef123456789",6,5));
-
-
-
-
 
 
 /*

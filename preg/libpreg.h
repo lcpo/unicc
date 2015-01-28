@@ -5,7 +5,7 @@
 typedef enum {false,true}bool;
 typedef enum {V_NULL,V_CHAR,V_POINT,V_CLASS,V_STEP,V_GROUP}vect_type;
 ///------------------------------------------------------------
-const char break_symbols[]={1,2,3,4};
+const char break_symbols[]={1,2,3};
 ///------------------------------------------------------------
 typedef struct s_vect{
 char* c;	
@@ -19,6 +19,7 @@ size_t length;
 typedef struct ch_tab{
 char** table; 	          		//char table
 char** pos; 	  				//pos to src str
+uni* copos;
 unsigned char* flag_denial;   //denial 
 uni length;
 						}ch_tab;
@@ -26,11 +27,11 @@ uni length;
 typedef struct ch_stp{
 uni* min;
 uni* max;
-uni* count;
 uni length;
 						}ch_stp;
 ///------------------------------------------------------------
 #define  i_flag_end(flag,x)(flag==0)?x++:x--;
+#define  i_flag_end_rev(flag,x)(flag==0)?x--:x++;
 ///------------------------------------------------------------
 bool is_i_flag(int flag,int i,int max){
 max--;

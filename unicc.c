@@ -8,7 +8,7 @@
 */
 
 #include "unicc.h"
-
+/*
 //----------------------------------------------------------------------
 #define INITIAL_ARGV_MAX 1024
 char *initial_argv[INITIAL_ARGV_MAX];
@@ -132,7 +132,7 @@ close(tpipe[1]);
 exit(0);			
 }
 close(tpipe[1]);
-char* buff=libc_malloc(4096);
+char* buff=malloc(4096);
 int ret=read(tpipe[0],buff,4096);
 close(tpipe[0]);
 libc_print_str(buff);
@@ -140,10 +140,12 @@ free(buff);
 return ret;	
 						  }
 //----------------------------------------------------------------------
-
+*/
 #ifdef __NO_START
-#define main _start
-#else						  	
+/**/
+//#define main _start
+#else
+/*						  	
 void _start() {
 char* _startout=getcmd();
 long argc=0;
@@ -158,6 +160,19 @@ exit(result);
 return;
  
 	}
+*/
+
+int _start(uni argc){
+
+printf("%s\n",argc);	
+char** argv=(char**)&argc;
+printf("%s\n",argv[7]);
+
+//	exit(main(argc, argv));
+exit(0);
+	return 0;
+}	
+	
 #endif	
 //----------------------------------------------------------------------
 

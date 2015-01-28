@@ -18,15 +18,22 @@ print_r($out);
 preg_match("|colou*r|","colouur",$out);
 print_r($out);
 */
-preg_match("|colou{2}r|","color",$out);
+/*
+preg_match("|colou{0,4}r|","color",$out);
 print_r($out);
 
-preg_match("|colou{2}r|","colour",$out);
+preg_match("|colou{0,4}r|","colour",$out);
 print_r($out);
 
-preg_match("|colou{2}r|","colouur",$out);
+preg_match("|colo[a-z]+[a-z][a-z]|","colouuuuurttaaaaartt",$out);
 print_r($out);
-
-
+*/
+/*
+preg_match("|[0-9]..[a-z][a-z]|","abc12345678tef",$out);
+print_r($out);
+*/
+//preg_match("|abc.*[0-9].*[a-z]..$|","abc456abc12345678tef",$out);
+preg_match("|[a-z]..$|","abc456abc12345678tef",$out);
+print_r($out);
 ?>
    

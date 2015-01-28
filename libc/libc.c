@@ -1,3 +1,22 @@
+///------------------------------------------------------------	
+int libc_pow_int(int base, int exp){
+    int result = 1;
+    while(exp) { result *= base; exp--; }
+    return result;
+}
+///------------------------------------------------------------	
+
+long libc_ltoct(long dec){
+long oct=0;
+int n=0;
+while (dec > 0) {
+  oct += (libc_pow_int(10,n++))*(dec % 8);
+  dec /= 8;
+}	
+return oct;	
+	}
+//!---------------------------------------------------------------------
+
 char* libc_itos(int n);
 //!---------------------------------------------------------------------
 size libc_count(void** v) {
@@ -811,31 +830,52 @@ char * libc_trim(char *str) {
   return str;
 }
 ///---------------------------------------------------------------------
+void clear_stat(struct stat_f* fi){
+  fi->st_dev=0;
+  fi->st_ino=0;
+  fi->st_mode=0;
+  fi->st_nlink=0;
+  fi->st_uid=0;
+  fi->st_gid=0;
+  fi->st_rdev=0;
+  fi->st_size=0;
+  fi->st_atime=0;
+  fi->st_mtime=0;
+  fi->st_ctime=0;
+  return;	
+	}
+///---------------------------------------------------------------------
 int libc_file_exists(char* filename){
-struct stat_f *fi=libc_malloc(0);
+struct stat_f *fi=malloc(sizeof(struct stat_f*));
 stat(filename,fi);
 if(fi->st_atime==0 && fi->st_mtime==0 && fi->st_ctime==0){
+	clear_stat(fi);
 	free((void*)fi);
 	return 0;
 	}else{
-		return 1;}
+	clear_stat(fi);
+	free((void*)fi);	
+		return 1;
+		}
 	} 
 //!------------------------------------------------------------
 size libc_filesize(char* filename){
-struct stat_f *fi=libc_malloc(0);
+struct stat_f *fi=malloc(sizeof(struct stat_f*));
 stat(filename,fi);
 int out=fi->st_gid;
+clear_stat(fi);
 free(fi);
 return out;
 							}
 //!------------------------------------------------------------
 char* libc_file_get_contents(char* filename){
-struct stat_f *fi=libc_malloc(0);
+struct stat_f *fi=malloc(sizeof(struct stat_f*));
 int res=open(filename,O_RDONLY,0);
 fstat(res,fi);
-char* buff=libc_malloc(fi->st_gid);
+char* buff=malloc(fi->st_gid);
 read(res,buff,fi->st_gid);
 close(res);
+clear_stat(fi);
 free((void*)fi);
 return buff;
 										}
@@ -1498,89 +1538,52 @@ return;
 					}
 #define echo(x...) (__echo(x,NULL))
 ///------------------------------------------------------------
-typedef struct {
+ struct parsed_url{
 char *scheme, *host, *port, *path, *query, *fragment, *username, *password;
-}parsed_url;
+};
 ///------------------------------------------------------------
 int _is_scheme_char(int c){
     return (!isalpha(c) && '+' != c && '-' != c && '.' != c) ? 0 : 1;
 }
 ///---------------------------------------------------------------------
-void parsed_url_free(parsed_url* purl){
-    if ( NULL != purl ) {
-        if ( NULL != purl->scheme ) {
+void parsed_url_free(struct parsed_url* purl){
             free((void *)purl->scheme);
-        }
-        if ( NULL != purl->host ) {
             free((void *)purl->host);
-        }
-        if ( NULL != purl->port ) {
             free((void *)purl->port);
-        }
-        if ( NULL != purl->path ) {
             free((void *)purl->path);
-        }
-        if ( NULL != purl->query ) {
             free((void *)purl->query);
-        }
-        if ( NULL != purl->fragment ) {
             free((void *)purl->fragment);
-        }
-        if ( NULL != purl->username ) {
             free((void *)purl->username);
-        }
-        if ( NULL != purl->password ) {
             free((void *)purl->password);
-        }
-        free((void *)purl);
-    }
 }
 ///---------------------------------------------------------------------
-parsed_url *parse_url(char *url){
-    parsed_url *purl;
-    char *tmpstr;
-    char *curstr;
+struct parsed_url *parse_url(char *url, struct parsed_url *purl){
+    
+    char *tmpstr=malloc(512);
+    char *curstr=malloc(512);
+    purl->scheme = malloc(128);
+    purl->username = malloc(256);    
+    purl->password = malloc(256);
+    purl->host = malloc(1024);
+    purl->port = malloc(1024);
+    purl->path = malloc(1024);
+    purl->query = malloc(1024);
+    purl->fragment = malloc(1024);
+
     int len;
     int i;
     int userpass_flag;
     int bracket_flag;
 
-
-    purl = malloc(sizeof(parsed_url));
-    if ( NULL == purl ) {
-        return NULL;
-    }
-    purl->scheme = NULL;
-    purl->host = NULL;
-    purl->port = NULL;
-    purl->path = NULL;
-    purl->query = NULL;
-    purl->fragment = NULL;
-    purl->username = NULL;
-    purl->password = NULL;
-
     curstr = url;
-
-
     tmpstr = libc_strchr(curstr, ':');
-    if ( NULL == tmpstr ) {
-        parsed_url_free(purl);
-        return NULL;
-    }
+
 
     len = tmpstr - curstr;
     for ( i = 0; i < len; i++ ) {
-        if ( !_is_scheme_char(curstr[i]) ) {
-            parsed_url_free(purl);
-            return NULL;
-        }
+        if ( !_is_scheme_char(curstr[i]) ) { }//??break
     }
 
-    purl->scheme = malloc(len+1);
-    if ( NULL == purl->scheme ) {
-        parsed_url_free(purl);
-        return NULL;
-    }
     libc_strncpy(purl->scheme, curstr, len);
     purl->scheme[len] = '\0';
 
@@ -1592,10 +1595,7 @@ parsed_url *parse_url(char *url){
     curstr = tmpstr;
 
     for ( i = 0; i < 2; i++ ) {
-        if ( '/' != *curstr ) {
-            parsed_url_free(purl);
-            return NULL;
-        }
+        if ( '/' != *curstr ) { } //??break;
         curstr++;
     }
 
@@ -1621,11 +1621,7 @@ parsed_url *parse_url(char *url){
             tmpstr++;
         }
         len = tmpstr - curstr;
-        purl->username = malloc(len + 1);
-        if ( NULL == purl->username ) {
-            parsed_url_free(purl);
-            return NULL;
-        }
+
         (void)libc_strncpy(purl->username, curstr, len);
         purl->username[len] = '\0';
 
@@ -1638,20 +1634,12 @@ parsed_url *parse_url(char *url){
                 tmpstr++;
             }
             len = tmpstr - curstr;
-            purl->password = malloc(len + 1);
-            if ( NULL == purl->password ) {
-                parsed_url_free(purl);
-                return NULL;
-            }
             (void)strncpy(purl->password, curstr, len);
             purl->password[len] = '\0';
             curstr = tmpstr;
         }
 
-        if ( '@' != *curstr ) {
-           parsed_url_free(purl);
-            return NULL;
-        }
+        if ( '@' != *curstr ) { }//??break
         curstr++;
     }
 
@@ -1674,11 +1662,7 @@ parsed_url *parse_url(char *url){
         tmpstr++;
     }
     len = tmpstr - curstr;
-    purl->host = malloc(len + 1);
-    if ( NULL == purl->host || len <= 0 ) {
-       parsed_url_free(purl);
-        return NULL;
-    }
+    if ( NULL == purl->host || len <= 0 ) {}//??break
     libc_strncpy(purl->host, curstr, len);
     purl->host[len] = '\0';
     curstr = tmpstr;
@@ -1692,11 +1676,6 @@ parsed_url *parse_url(char *url){
             tmpstr++;
         }
         len = tmpstr - curstr;
-        purl->port = malloc(len + 1);
-        if ( NULL == purl->port ) {
-            parsed_url_free(purl);
-            return NULL;
-        }
         libc_strncpy(purl->port, curstr, len);
         purl->port[len] = '\0';
         curstr = tmpstr;
@@ -1708,10 +1687,7 @@ parsed_url *parse_url(char *url){
     }
 
 
-    if ( '/' != *curstr ) {
-        parsed_url_free(purl);
-        return NULL;
-    }
+    if ( '/' != *curstr ) {}//??break
     curstr++;
 
 
@@ -1720,11 +1696,6 @@ parsed_url *parse_url(char *url){
         tmpstr++;
     }
     len = tmpstr - curstr;
-    purl->path = malloc(len + 1);
-    if ( NULL == purl->path ) {
-        parsed_url_free(purl);
-        return NULL;
-    }
     libc_strncpy(purl->path, curstr, len);
     purl->path[len] = '\0';
     curstr = tmpstr;
@@ -1739,11 +1710,6 @@ parsed_url *parse_url(char *url){
             tmpstr++;
         }
         len = tmpstr - curstr;
-        purl->query = malloc(len + 1);
-        if ( NULL == purl->query ) {
-           parsed_url_free(purl);
-            return NULL;
-        }
         libc_strncpy(purl->query, curstr, len);
         purl->query[len] = '\0';
         curstr = tmpstr;
@@ -1759,16 +1725,12 @@ parsed_url *parse_url(char *url){
             tmpstr++;
         }
         len = tmpstr - curstr;
-        purl->fragment = malloc(len + 1);
-        if ( NULL == purl->fragment ) {
-            parsed_url_free(purl);
-            return NULL;
-        }
         libc_strncpy(purl->fragment, curstr, len);
         purl->fragment[len] = '\0';
         curstr = tmpstr;
     }
-
+    free(tmpstr);
+    free(curstr);
     return purl;
 }
 

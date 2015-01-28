@@ -4,46 +4,6 @@
 //http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64
 //http://numactl.sourcearchive.com/documentation/0.9/syscall_8c-source.html!!!
 ///------------------------------------------------------------
-char ccpy(char a){
-char b=0;
-switch(a){
-case '!':b='!';break;case '"':b='"';break;case '#':b='#';break;case '$':b='$';break;
-case '%':b='%';break;case '&':b='&';break;case '\'':b='\'';break;case '(':b='(';break;
-case ')':b=')';break;case '*':b='*';break;case '+':b='+';break;case ',':b=',';break;
-case '-':b='-';break;case '.':b='.';break;case '/':b='/';break;case '{':b='{';break;
-case '|':b='|';break;case '}':b='}';break;case '~':b='~';break;case '[':b='[';break;
-case '\\':b='\\';break;case ']':b=']';break;case '^':b='^';break;case '_':b='_';break;
-case '`':b='`';break;case ':':b=':';break;case ';':b=';';break;case '<':b='<';break;
-case '=':b='=';break;case '>':b='>';break;case '?':b='?';break;case '@':b='@';break;
-
-case '0':b='0';break;case '1':b='1';break;case '2':b='2';break;case '3':b='3';break;
-case '4':b='4';break;case '5':b='5';break;case '6':b='6';break;case '7':b='7';break;
-case '8':b='8';break;case '9':b='9';break;
-
-case 'A':b='A';break;case 'B':b='B';break;case 'C':b='C';break;
-case 'D':b='D';break;case 'E':b='E';break;case 'F':b='F';break;
-case 'G':b='G';break;case 'H':b='H';break;case 'I':b='I';break;
-case 'J':b='J';break;case 'K':b='K';break;case 'L':b='L';break;
-case 'M':b='M';break;case 'N':b='N';break;case 'O':b='O';break;
-case 'P':b='P';break;case 'Q':b='Q';break;case 'R':b='R';break;
-case 'S':b='S';break;case 'T':b='T';break;case 'U':b='U';break;
-case 'V':b='V';break;case 'W':b='W';break;case 'X':b='X';break;
-case 'Y':b='Y';break;case 'Z':b='Z';break;
-
-case 'a':b='a';break;case 'b':b='b';break;case 'c':b='c';break;
-case 'd':b='d';break;case 'e':b='e';break;case 'f':b='f';break;
-case 'g':b='g';break;case 'h':b='h';break;case 'i':b='i';break;
-case 'j':b='j';break;case 'k':b='k';break;case 'l':b='l';break;
-case 'm':b='m';break;case 'n':b='n';break;case 'o':b='o';break;
-case 'p':b='p';break;case 'q':b='q';break;case 'r':b='r';break;
-case 's':b='s';break;case 't':b='t';break;case 'u':b='u';break;
-case 'v':b='v';break;case 'w':b='w';break;case 'x':b='x';break;
-case 'y':b='y';break;case 'z':b='z';break;
-
-	}
-	return b;	
-	}
-//!-------------------------------------------------------------	
 #ifdef __x86_64__
 #include "sys/stdarg.h"
 #endif
@@ -97,11 +57,11 @@ asm("__syscall:\n" "movq %rdi,%rax\n" "movq %rsi,%rdi\n" "movq %rdx,%rsi\n"
 "syscall\n" "ret\n" );
 #endif
 ///------------------------------------------------------------
-long __syscall(long ns, long a, long b, long c, long d, long e, long f, long g);
+long __syscall(long ns, long a, long b, long c, long d, long e, long f);
 ///------------------------------------------------------------
 long __sysrun(long ns, ...){
 	va_list atr;
-	long  a,b,c,d,e,f,g;
+	long  a,b,c,d,e,f;
 	va_start(atr, ns);
 	a=va_arg(atr, long);
 	b=va_arg(atr, long);
@@ -109,9 +69,8 @@ long __sysrun(long ns, ...){
 	d=va_arg(atr, long);
 	e=va_arg(atr, long);
 	f=va_arg(atr, long);
-	g=va_arg(atr, long);
 	va_end(atr);
-	return (long)(__syscall(ns,a,b,c,d,e,f,g));
+	return (long)(__syscall(ns,a,b,c,d,e,f));
 }
 ///------------------------------------------------------------
 #define __syscall0(n) __sysrun(n)
@@ -121,7 +80,6 @@ long __sysrun(long ns, ...){
 #define __syscall4(n,a,b,c,d) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d))
 #define __syscall5(n,a,b,c,d,e) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e))
 #define __syscall6(n,a,b,c,d,e,f) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e),(long)(f))
-#define __syscall7(n,a,b,c,d,e,f,g) __sysrun(n,(long)(a),(long)(b),(long)(c),(long)(d),(long)(e),(long)(f),(long)(g))
 ///------------------------------------------------------------
 struct stat_f{
   long st_dev;
@@ -138,7 +96,7 @@ struct stat_f{
 };
 ///------------------------------------------------------------
 uni open(char * filename, uni flags, uni mode) {return __syscall3(__NR_open,filename,flags,mode);}
-int close(uni fd) {return __syscall1(__NR_close,fd);}
+void close(uni fd) {__syscall1(__NR_close,fd);}
 uni stat(char * filename, struct stat_f *buf) {return __syscall2(__NR_stat,filename,buf);}
 uni fstat(int fd, struct stat_f *buf) {return __syscall2(__NR_fstat,fd,buf);}
 uni lstat(char * filename, struct stat_f *buf) {return __syscall2(__NR_lstat,filename,buf);}
@@ -160,75 +118,14 @@ int unlink(char* filename){return __syscall1(__NR_unlink,filename);}
 uni nanosleep(uni rqtp, uni rmtp){return __syscall2(__NR_nanosleep,rqtp,rmtp);}
 int readlink(char* path, char * buf, int bufsize){return __syscall3(__NR_readlink,path,buf,bufsize);}
 int ioctl(unsigned int fd, unsigned int cmd, unsigned int arg){return __syscall3(__NR_ioctl,fd,cmd,arg);}
-	#ifdef __i386__
-#define __NR_UN_socket      1
-#define __NR_UN_bind        2
-#define __NR_UN_connect     3
-#define __NR_UN_listen      4
-#define __NR_UN_accept      5
-#define __NR_UN_getsockname 6
-#define __NR_UN_getpeername 7
-#define __NR_UN_socketpair  8
-#define __NR_UN_send        9
-#define __NR_UN_recv        10
-#define __NR_UN_sendto      11
-#define __NR_UN_recvfrom    12
-#define __NR_UN_shutdown    13
-#define __NR_UN_setsockopt  14
-#define __NR_UN_getsockopt  15
-#define __NR_UN_sendmsg     16
-#define __NR_UN_recvmsg     17
-#define socketcall(nr, a, b, c, d, e, f) __syscall2(__NR_socketcall, __NR_UN_##nr, ((long [6]){ (long)a, (long)b, (long)c, (long)d, (long)e, (long)f }))
-#endif
 
-	#ifdef __x86_64__
-#define socketcall(nr,a,b,c,d,e,f) __syscall6(__NR_##nr,a,b,c,d,e,f)
-	#endif
+//int bind(unsigned int fd,struct sokaddr *umyaddr, int addrlen){return __syscall3(__NR_mbind,fd,umyaddr,addrlen);}
+//listen
+//getsockname
+//socket
+//setsockopt
+//getsockopt
 
-int socket(int domain, int type, int protocol){return socketcall(socket,domain, type, protocol, 0, 0, 0);}
-int bind(int fd, const struct sockaddr *addr, socklen_t len){return socketcall(bind, fd, addr, len, 0, 0, 0);}
-int accept(int fd, struct sockaddr *addr, socklen_t *len){int ret=-1;ret = socketcall(accept, fd, addr, len, 0, 0, 0);return ret;}
-int connect(int fd, const struct sockaddr *addr, socklen_t len){int ret=-1;ret = socketcall(connect, fd, addr, len, 0, 0, 0);	return ret;}
-int listen(int fd, int backlog){return socketcall(listen, fd, backlog, 0, 0, 0, 0);}
-int getsockname(int fd, struct sockaddr *addr, socklen_t *len){	return socketcall(getsockname, fd, addr, len, 0, 0, 0);}
-int setsockopt(int fd, int level, int optname, const void *optval, socklen_t optlen){return socketcall(setsockopt, fd, level, optname, optval, optlen, 0);}
-int getsockopt(int fd, int level, int optname, void *optval, socklen_t *optlen){	return socketcall(getsockopt, fd, level, optname, optval, optlen, 0);}
-int sendto(int fd, const void *buf, size_t len, int flags, const struct sockaddr *addr, socklen_t alen){int r=-1;r = socketcall(sendto, fd, buf, len, flags, addr, alen);return r;}
-int send(int fd, const void *buf, size_t len, int flags){return sendto(fd, buf, len, flags, 0, 0);}
-
-int recvfrom(int fd, void *buf, int len, int flags, struct sockaddr *addr, socklen_t *alen){
-	int r=-1;
-	r = socketcall(recvfrom, fd, buf, len, flags, addr, alen);
-	return r;
-}
-int recv(int fd, void *buf, int len, int flags)
-{
-	return recvfrom(fd, buf, len, flags, 0, 0);
-}
-
-//select
-//idtype_t
-
-uni waitid(long type, long id, siginfo_t *info, int options)
-{
-	int r=-1;
-	r = __syscall5(__NR_waitid, type, id, info, options, 0);
-	return r;
-}
-
-uni waitpid(uni pid, int *status, int options)
-{
-	int r=-1;
-	r = __syscall4(__NR_wait4, pid, status, options, 0);
-	return r;
-}
-
-int select(int n, fd_set *rfds, fd_set *wfds, fd_set *efds, struct timeval *tv)
-{
-	int r=-1;
-	r = __syscall5(__NR_select, n, rfds, wfds, efds, tv);
-	return r;
-}
 int execve(const char* filename, char * const argv[], char *const envp[]){return __syscall3(__NR_execve,filename,argv,envp);}
 size write(int fd, void* buf, size count) {return __syscall3(__NR_write,fd,buf,count);}
 int mprotect(void* start, size_t len, long prot) {return __syscall3(__NR_mprotect,start,len,prot);}
@@ -405,4 +302,3 @@ uni i=0,z=0,id=getptrid(ptr);
         return newptr;
 }
 
-#define calloc(m,n) malloc((m)+(n))

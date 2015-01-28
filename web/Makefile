@@ -1,9 +1,9 @@
 CC=gcc
 LIBCOMP=ranlib
 LIBCOMPA=ar rc
-LIBS= -lpcre  `pcre-config --libs`
+LIBS= #-lpcre  `pcre-config --libs`
 EXECUTABLE=unicc
-SOURCES=main.c unicc.c
+SOURCES=main.c #unicc.c
 OBJECTS=main.o
 OBJECTSLIB=unicc.o
 #libpcre3-dev -ok
@@ -12,20 +12,20 @@ OBJECTSLIB=unicc.o
 SOPTS=  -O3 -nostdinc -fverbose-asm -fno-builtin -nostartfiles -nostdlib #-lcurl -lmysqlclient # -w -fPIC
 
 all:
-	make clear
-	$(CC) -c -D __NO_DEBUG -D __NO_START $(SOURCES)
-	$(LIBCOMPA) lib$(EXECUTABLE).a $(OBJECTSLIB)
-	$(LIBCOMP) lib$(EXECUTABLE).a
-	make break
-	$(CC) -c -D __NO_DEBUG -D __NO_START $(SOURCES)
-	$(CC) -shared $(SOPTS) -o $(EXECUTABLE).so $(OBJECTSLIB)	
-	make break
-	$(CC) -c -D __NO_DEBUG -D __NO_START $(SOURCES)
-	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
-	make break
+#	make clear
+#	$(CC) -c -w -D __NO_DEBUG -D __NO_START $(SOURCES)
+#	$(LIBCOMPA) lib$(EXECUTABLE).a $(OBJECTSLIB)
+#	$(LIBCOMP) lib$(EXECUTABLE).a
+#	make break
+#	$(CC) -c -w -D __NO_DEBUG -D __NO_START $(SOURCES)
+#	$(CC) -shared $(SOPTS) -o $(EXECUTABLE).so $(OBJECTSLIB)	
+#	make break
+#	$(CC) -c -w -D __NO_DEBUG -D __NO_START $(SOURCES)
+#	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
+#	make break
 test:
 	make clear
-	$(CC) -c $(SOURCES)
+	$(CC) -c -w $(SOURCES)
 	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 	strip -s ./$(EXECUTABLE)
 	#strip ./$(EXECUTABLE) -R .dtors #-lpcre requires .dtors          
@@ -52,12 +52,12 @@ test:
 
 testlog:
 	make clear
-	$(CC) -c $(SOURCES)
+	$(CC) -c -w $(SOURCES)
 	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 	strace ./$(EXECUTABLE) "arg1" "arg2"
 testasm:
 	make clear
-	$(CC) -c $(SOURCES)
+	$(CC) -c -w $(SOURCES)
 	$(CC) $(SOPTS) -o $(EXECUTABLE) $(OBJECTS) $(LIBS)
 	./$(EXECUTABLE)
 	strip -s ./$(EXECUTABLE)

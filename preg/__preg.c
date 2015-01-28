@@ -290,163 +290,65 @@ int cpos=0,spos=0,fladd=0,flok=0,ic=0,oic=0,onz=0,ri0=0,ri1=0,ri2=0,cori0=0,cori
 //!-----------------------------
 int* copos=malloc(patlen);
 //!-----------------------------
-if(flag_end==1){n=patlen;p=p+patlen; count1=tb->length-1; count2=wb->length-1; z=strlen-1; i=patlen-1;}
-while (is_i_flag(flag_end,n,patlen)!=false){
+while (*p!=0){
 travel3(p,oc,c,nc);
-if(c=='\0'){i_flag_end(flag_end,p);continue;}
-//point_reindex(vect,tb,s);
-
 switch(*p){
 //----------------------------------------------------------------------
 case 1:{
+if(fladd==1){nz=copos[cpos];fladd=0;}else{nz=0;}
+ic=z;
 
-if(fladd==1){nz=copos[cpos];fladd=0;}else{nz=((flag_end==1)?(tb->copos[count1]-1):0);}
-if(flag_end==1){ic=z;}else{ic=z;}
+if(cpos<0){printf("err:0\n");count1++;p++;n++;break;}
+if(cpos>patlen){printf("err:1\n");count1++;p++;n++;break;}
 
-if(cpos<0){printf("err:0\n");i_flag_end(flag_end,count1);i_flag_end(flag_end,p);i_flag_end(flag_end,n);break;}
-if(cpos>patlen){printf("err:1\n");i_flag_end(flag_end,count1);i_flag_end(flag_end,p);i_flag_end(flag_end,n);break;}
-
-
-while(((flag_end==1)?(0<nz):(tb->copos[count1]>nz))){
-if(((flag_end==1)?(n==patlen-1):(n==0))){
-if(ic==tb->pos[count1][nz]){i=preg_add(vect,s[tb->pos[count1][nz]],tb->pos[count1][nz],i,V_CHAR,V_CLASS,flag_end);onz=((flag_end==1)?(nz-1):(nz+1));flok=1;break;}else{i_flag_end(flag_end,ic);}	
+while(tb->copos[count1]>nz){
+if(n==0){
+if(ic==tb->pos[count1][nz]){i=preg_add(vect,s[tb->pos[count1][nz]],tb->pos[count1][nz],i,V_CHAR,V_CLASS,0);onz=nz+1;flok=1;break;}else{ic++;}	
 }else{
-	if(vect->tp[((flag_end==1)?(i+1):(i-1))]==V_CHAR){
-if(ic==tb->pos[count1][nz] && (tb->pos[count1][nz]-vect->pos[((flag_end==1)?(i+1):(i-1))])==((flag_end==1)?-1:1)){i=preg_add(vect,s[tb->pos[count1][nz]],tb->pos[count1][nz],i,V_CHAR,V_CLASS,flag_end);onz=((flag_end==1)?(nz-1):(nz+1));flok=1;break;}else{i_flag_end(flag_end,ic);}		
+	if(vect->tp[i-1]==V_CHAR){
+if(ic==tb->pos[count1][nz] && (tb->pos[count1][nz]-vect->pos[i-1])==1){i=preg_add(vect,s[tb->pos[count1][nz]],tb->pos[count1][nz],i,V_CHAR,V_CLASS,0);onz=nz+1;flok=1;break;}else{ic++;}		
 							 }else{
-if(ic==tb->pos[count1][nz]){i=preg_add(vect,s[tb->pos[count1][nz]],tb->pos[count1][nz],i,V_CHAR,V_CLASS,flag_end);onz=((flag_end==1)?(nz-1):(nz+1));flok=1;break;}else{i_flag_end(flag_end,ic);}									 
-								 
-
+if(ic==tb->pos[count1][nz]){i=preg_add(vect,s[tb->pos[count1][nz]],tb->pos[count1][nz],i,V_CHAR,V_CLASS,0);onz=nz+1;flok=1;break;}else{ic++;}									 
 								 }
 	  }
 
-if(((flag_end==1)?(ic<=0):(ic>=strlen))){ic=z;i_flag_end(flag_end,nz);}
+if(ic>=strlen){ic=z;nz++;}
 
 							}
-if(((flag_end==1)?(n==patlen-1):(n==0))){
-if(((flag_end==1)?(nz<=0):(nz>=tb->copos[count1]))){
+if(n==0){
+if(nz>=tb->copos[count1]){
 	printf("err:2\n");//exit(0);
-	i_flag_end(flag_end,count1);
-	i_flag_end(flag_end,p);
-	i_flag_end(flag_end,n);
+	count1++;
+	p++;
+	n++;
 	break;	
 						 }
 		}else{
-if(((flag_end==1)?(nz<=0):(nz>=tb->copos[count1]))){
+if(nz>=tb->copos[count1]){
 	fladd=1;
-	i_flag_end_rev(flag_end,count1);
-	i_flag_end_rev(flag_end,p);
-	i_flag_end_rev(flag_end,i);
-	i_flag_end_rev(flag_end,n);
-	cpos--;
+	count1--;p--;i--;n--;cpos--;
 	break;
 						}			
 			}							
-	i_flag_end(flag_end,count1);
-	i_flag_end(flag_end,p);
-	i_flag_end(flag_end,n);
-	z=ic;
+	count1++;p++;n++;
+	z=ic+1;
 	if(flok==1){copos[cpos]=onz;cpos++;flok=0;}
 	break;	
 
 	}
 //----------------------------------------------------------------------
 case 3:{
-i=preg_add(vect,3,count2,i,V_STEP,V_NULL,flag_end);
-i_flag_end(flag_end,count2);
-i_flag_end(flag_end,p);
-i_flag_end(flag_end,n);
+i=preg_add(vect,3,count2,i,V_STEP,V_NULL,0);
+count2++;p++;n++;
 break;
 }
 //---------------------------------------------------------------------- 
 default:{
-	
-
-	
-	/*
-	if(flag_end==1){
-	
-printf("!!!-->%i|c=%i|nc=%i|sum=%i\n",z,z,vect->pos[i+1],(z-vect->pos[i+1]));		
-if(vect->tp[i+1]==V_CHAR && (z-vect->pos[i+1])!=0){
-if(p[n+1]==1){
-	fladd=1;
-	i_flag_end_rev(flag_end,count1);
-	i_flag_end_rev(flag_end,p);
-	i_flag_end_rev(flag_end,i);
-	i_flag_end_rev(flag_end,n);
-	i_flag_end(flag_end,z);
-	cpos--;
-	break;													   
-			}
-							
-		
-													}
-	
-				}
-	*/
-	
-	
-//------------------------------------------------	
-	if(*p!=0 && flag_end==0){
 	if(flag_start==0 && z==0){
 		if(c!=s[z]){z=libc_chrpos(s,c);}
 		}
-	if(c==s[z]){
-	i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL,flag_end);
-	i_flag_end(flag_end,z);
-				}else{
-	i=preg_add(vect,*p,-1,i,V_CHAR,V_NULL,flag_end);
-	i_flag_end(flag_end,z);
-
-					}
-	i_flag_end(flag_end,p);
-	i_flag_end(flag_end,n);
-	break;			
-			}
-//------------------------------------------------			
-	if(*p!=0 && flag_end==1){
-	///****
-	/*  
-	if(p[n]==1){
-		
-	if(*p!=s[z] && (z-vect->pos[i+1])!=-1){
-	fladd=1;
-	i_flag_end_rev(flag_end,count1);
-	i_flag_end_rev(flag_end,p);
-	i_flag_end_rev(flag_end,i);
-	i_flag_end_rev(flag_end,n);
-	i_flag_end(flag_end,z);
-	cpos--;
-	break;		
-										   }
-
-				}
-	*/
-		
-	if(*p==s[z]){
-//		printf("==>%c|%i\n",s[z],(z-vect->pos[i+1]));
-	i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL,flag_end);
-	i_flag_end(flag_end,z);
-	}else{
-	i_flag_end(flag_end,z);
-	break;
-		  }
-							
-	//printf("pos=%i|z=%i|s=%i\n",vect->pos[i+1],z,(z-vect->pos[i+1]));
-
-	i_flag_end(flag_end,p);
-	i_flag_end(flag_end,n);
-	break;			
-			}		
-
-	
-if(*p==0){
-	i_flag_end(flag_end,p);
-	i_flag_end(flag_end,n);
-	break;			
-	}	
-			 	
-
+	if(c==s[z]){i=preg_add(vect,s[z],z,i,V_CHAR,V_NULL,0);z++;}else{i=preg_add(vect,*p,-1,i,V_CHAR,V_NULL,0);z++;}
+	p++;n++;break;
 		}
 //----------------------------------------------------------------------
 				}
@@ -454,7 +356,7 @@ if(i<0){i=patlen;}
 vect->length=i;
 
 		}
-		
+free(copos);		
 if(flag_start==1 && flag_end==1 && flag_step!=1 && vect->length!=strlen){printf("errlen\n");return vect;}
 ////////////////////////////////////////////////////////////////////////////////////////
 if(flag_step==0){return vect;}
