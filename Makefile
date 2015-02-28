@@ -2,10 +2,10 @@ CC=gcc
 LIBCOMP=ranlib
 LIBCOMPA=ar rc
 LIBS= #-lpcre  `pcre-config --libs`
-EXECUTABLE=tact
-SOURCES=main.c tact.c
+EXECUTABLE=unicc
+SOURCES=main.c unicc.c
 OBJECTS=main.o
-OBJECTSLIB=tact.o
+OBJECTSLIB=unicc.o
 #libpcre3-dev -ok
 #libpcrecpp0 -ok
 
